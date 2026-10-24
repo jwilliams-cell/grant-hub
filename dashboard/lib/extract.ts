@@ -1,7 +1,7 @@
 import "server-only";
 import Anthropic from "@anthropic-ai/sdk";
 import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
-import { ContractSchema, resolveDates, type Contract } from "./contract.ts";
+import { ContractWireSchema, fromWire, resolveDates, type Contract } from "./contract.ts";
 
 const client = new Anthropic();
 
@@ -13,7 +13,9 @@ Dates:
 - The execution date is the date of the last signature or initial.
 - When the contract gives a deadline as a number of days after execution, put that number in days_after_execution and count the calendar date out from the execution date.
 - For each date, quote or cite the paragraph it came from in source.
-- Set confirm to true for any date you could not confirm from the documents, and leave date null rather than guessing.
+- Set confirm to true for any date you could not confirm from the documents, and leave date empty rather than guessing.
+
+Leave any field the contract doesn't give empty ("" for text, 0 for amounts). Don't fill it in from general knowledge.
 
 People: list every buyer and seller with whatever contact details appear. If a buyer or seller is an LLC or other entity, fill buyer_entity or seller_entity with its name and signer. Jasmine Williams is never the listing agent on a buyer-side file.
 
@@ -29,7 +31,7 @@ export async function extractContract(pdf: Buffer, filename: string): Promise<Co
     response = await client.beta.messages.parse({
       model: "claude-opus-5-5",
       max_tokens: 16000,
-      output_config: { effort: "high", format: betaZodOutputFormat(ContractSchema) },
+      output_config: { effort: "high", format: betaZodOutputFormat(ContractWireSchema) },
       betas: ["server-side-fallback-2026-07-01"],
       fallbacks: "default",
       system: SYSTEM,
@@ -54,5 +56,5 @@ export async function extractContract(pdf: Buffer, filename: string): Promise<Co
   if (response.stop_reason === "refusal") throw new ExtractionError("Claude declined to read this document.");
   if (response.stop_reason === "max_tokens") throw new ExtractionError("The contract was too long to read in one pass.");
   if (!response.parsed_output) throw new ExtractionError("Claude's answer didn't match the contract form. Try again.");
-  return resolveDates(response.parsed_output);
+  return resolveDates(fromWire(response.parsed_output));
 }
