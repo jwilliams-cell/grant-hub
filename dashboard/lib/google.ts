@@ -10,7 +10,8 @@ export const GOOGLE_SCOPES = [
 ];
 
 function required(name: string): string {
-  const value = process.env[name];
+  // Pasted values often carry a trailing space or newline, which Google rejects as invalid_client.
+  const value = process.env[name]?.trim();
   if (!value) throw new Error(`${name} is not set. See dashboard/.env.example.`);
   return value;
 }
@@ -20,7 +21,7 @@ let auth: InstanceType<typeof google.auth.OAuth2> | null = null;
 function getAuth() {
   if (!auth) {
     // Name every missing setting at once, so one redeploy fixes them all.
-    const missing = ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "GOOGLE_REFRESH_TOKEN", "TRACKER_SHEET_ID"].filter((n) => !process.env[n]);
+    const missing = ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "GOOGLE_REFRESH_TOKEN", "TRACKER_SHEET_ID"].filter((n) => !process.env[n]?.trim());
     if (missing.length) throw new Error(`Missing settings: ${missing.join(", ")}.`);
     auth = new google.auth.OAuth2(required("GOOGLE_CLIENT_ID"), required("GOOGLE_CLIENT_SECRET"));
     auth.setCredentials({ refresh_token: required("GOOGLE_REFRESH_TOKEN") });
