@@ -31,11 +31,15 @@ npm run dev             # http://localhost:3000
 
 **Anthropic:** set `ANTHROPIC_API_KEY`.
 
-**Google:** sign in as jwilliams@gremom.com.
-1. In Google Cloud Console, enable the Sheets, Drive, Calendar and Gmail APIs.
-2. Create an OAuth client of type *Desktop app*.
-3. Put its ID and secret in `.env`.
-4. Run `GOOGLE_CLIENT_ID=… GOOGLE_CLIENT_SECRET=… npm run google-auth`, sign in, and paste the printed `GOOGLE_REFRESH_TOKEN` into `.env`.
+**Google:** sign in as jwilliams@gremom.com. The live setup uses the Google Cloud project `BuySmart Desk`.
+1. In Google Cloud Console, enable the Sheets, Drive, Calendar and Gmail APIs. On the consent screen, choose Internal if offered. Otherwise choose External and **publish** the app, or the refresh token expires after 7 days.
+2. Create an OAuth client of type *Web application* with redirect URI `https://developers.google.com/oauthplayground`.
+3. In the OAuth Playground, open the gear icon and tick **Use your own OAuth credentials** with that client's ID and secret. Authorize the four scopes below, then exchange the code for a refresh token. Without the tick, the token belongs to the Playground's own client and Google returns `unauthorized_client`.
+4. Set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` and `GOOGLE_REFRESH_TOKEN`.
+
+(Alternative for a local setup: a *Desktop app* client plus `npm run google-auth`.)
+
+Error guide: `invalid_client` means the ID and secret don't match. `unauthorized_client` means the refresh token came from a different client. `invalid_grant` means the refresh token expired or was revoked, so get a new one.
 
 The scopes are Sheets, Drive, Calendar events and Gmail compose (drafts only). The app can't read Jaz's inbox.
 

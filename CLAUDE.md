@@ -28,6 +28,7 @@ The step-by-step coordinator playbook lives in `transaction-coordinator.md`, in 
 | Brand design system | `DESIGN.md` (this repo) | Done; the dashboard must follow it |
 | Drive root | `02 — Clients / Transactions` — folder id `1WIw2IbCiRf1So9VLsku8NuPBHHOKmg4s` | Created Oct 24, 2026 |
 | Active file folders | 5722 Malcolm St – McIntosh `19YY-VR8AFhgoJHIMGQYJ760GBHojICzj` (subfolders 1–6 created) · 7076 Forrest Ave `1jVrV4FBHCLb7GtJWfB136ywyndH7nEFd` · 148 Millick St `1MIblRaKMAW1CB6dEwqV5cWtrnBhBPnpb` · 125 S 54th St `13Z93C9oth1QdcRZF9L9C4NhTcuXKutZ_` · 1218 S Peach St `1mWQ4MgnscSr_KU6xK9sqJlhyom0RTXPH` · 237 Albanus St `1RP1Z5MJ-hr1Vdj9XyRDzkU8WZs9iI-7r` | The last five still need subfolders 1–6 |
+| Dashboard (live) | https://grant-hub-dashboard-sgph.vercel.app on Vercel (Pro), deploys from `claude/new-session-t9shcl`, Root Directory `dashboard`, password protected | Live Oct 24, 2026. Reads the tracker Sheet |
 | Prototype dashboard | https://claude.ai/artifact/BbChcRBdS8T11CdZN8DWEE | Reference only; replaced by this build |
 | Weekday scheduled task "TC morning drafts" | claude.ai, 6:42am Eastern, Mon–Fri | Interim. Pause it once phase 4 is live |
 
