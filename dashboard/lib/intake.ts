@@ -9,7 +9,7 @@ import { skySlopeCopy } from "./skyslope.ts";
 import { addDays, nowStampET } from "./dates.ts";
 import type { IntakePlan } from "./plan.ts";
 import {
-  ACTIVITY_COLS, DEAL_COLS, DOCUMENT_COLS, DRAFT_COLS, MILESTONE_COLS, SUBFOLDERS,
+  ACTIVITY_COLS, CONTACT_COLS, DEAL_COLS, DOCUMENT_COLS, DRAFT_COLS, MILESTONE_COLS, SUBFOLDERS,
   type Activity, type Draft, type Milestone,
 } from "./types.ts";
 
@@ -156,6 +156,8 @@ export async function runIntake(plan: IntakePlan, pdf: Buffer): Promise<IntakeRe
     received_from: "Jaz (dashboard upload)", received_at: at, skyslope_sent_at: skyslopeSentAt, gmail_message_id: "",
   }]);
   await appendRows("Drafts", DRAFT_COLS, draftRows);
+  const known = new Set(tracker.contacts.map((x) => x.email.trim().toLowerCase()).filter(Boolean));
+  await appendRows("Contacts", CONTACT_COLS, plan.contacts.filter((x) => !known.has(x.email.toLowerCase())));
   await appendRows("Activity", ACTIVITY_COLS, activity);
 
   if (plan.deal.skyslope_email === "Confirm") {

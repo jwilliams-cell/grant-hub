@@ -29,7 +29,7 @@ const SEEDS = {
   listing_agent: { ...emptyPerson, brokerage: null },
   buyer_agent: { ...emptyPerson, brokerage: null },
   buyer_agent_2: { ...emptyPerson, brokerage: null },
-  listing_coordinator: { ...emptyPerson },
+  coop_coordinator: { ...emptyPerson },
   grant_counselor: { ...emptyPerson },
   lender: { company: null, loan_officer: null, processor: null },
   title: { company: null, file_no: null },
@@ -266,11 +266,12 @@ export function IntakeFlow({ useBlob }: { useBlob: boolean }) {
           <Field label="Listing agent" value={c.listing_agent?.name} onChange={(v) => set(["listing_agent", "name"], text(v))} />
           <Field label="Listing agent email" type="email" value={c.listing_agent?.email} onChange={(v) => set(["listing_agent", "email"], text(v))} />
           <Field label="Listing brokerage" value={c.listing_agent?.brokerage} onChange={(v) => set(["listing_agent", "brokerage"], text(v))} />
-          <Field label="Seller side coordinator" value={c.listing_coordinator?.name} onChange={(v) => set(["listing_coordinator", "name"], text(v))} />
-          <Field label="Seller side coordinator email" type="email" value={c.listing_coordinator?.email} onChange={(v) => set(["listing_coordinator", "email"], text(v))} />
-          <Field label="Seller side coordinator phone" type="tel" value={c.listing_coordinator?.phone} onChange={(v) => set(["listing_coordinator", "phone"], text(v))} />
+          <Field label="Co-op transaction coordinator" value={c.coop_coordinator?.name} onChange={(v) => set(["coop_coordinator", "name"], text(v))} />
+          <Field label="Co-op coordinator email" type="email" value={c.coop_coordinator?.email} onChange={(v) => set(["coop_coordinator", "email"], text(v))} />
+          <Field label="Co-op coordinator phone" type="tel" value={c.coop_coordinator?.phone} onChange={(v) => set(["coop_coordinator", "phone"], text(v))} />
           <Field label="Housing counselor" value={c.grant_counselor?.name} onChange={(v) => set(["grant_counselor", "name"], text(v))} />
           <Field label="Housing counselor email" type="email" value={c.grant_counselor?.email} onChange={(v) => set(["grant_counselor", "email"], text(v))} />
+          <Field label="Housing counselor phone" type="tel" value={c.grant_counselor?.phone} onChange={(v) => set(["grant_counselor", "phone"], text(v))} />
           <Field label="Second buyer agent" value={c.buyer_agent_2?.name} onChange={(v) => set(["buyer_agent_2", "name"], text(v))} />
           <Field label="Second buyer agent email" type="email" value={c.buyer_agent_2?.email} onChange={(v) => set(["buyer_agent_2", "email"], text(v))} />
           <Field label="Second buyer agent brokerage" value={c.buyer_agent_2?.brokerage} onChange={(v) => set(["buyer_agent_2", "brokerage"], text(v))} />

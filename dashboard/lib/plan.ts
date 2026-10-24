@@ -10,7 +10,7 @@ import {
   type DayOneFacts, type EmailDraft,
 } from "./templates.ts";
 import { isSkySlopeAddress } from "./skyslope.ts";
-import type { Deal, Milestone } from "./types.ts";
+import type { Contact, Deal, Milestone } from "./types.ts";
 
 export interface PlannedMilestone extends Omit<Milestone, "calendar_event_id" | "source_link"> {
   calendar: boolean;
@@ -23,9 +23,12 @@ export interface IntakePlan {
   deal: Omit<Deal, "drive_folder_id">;
   milestones: PlannedMilestone[];
   drafts: EmailDraft[];
+  /** People on this file to add to the Contacts tab (the intake skips any email already there). */
+  contacts: Contact[];
   warnings: string[];
 }
 
+type PersonValueLike = { name: string | null; email: string | null };
 const BLOCKED_BY_TITLE = /@(gmail|yahoo|aol)\./i;
 /** SkySlope addresses can't be guessed; accept only what Jaz pasted, and only an @skyslope.com address. */
 const validSkySlope = isSkySlopeAddress;
@@ -50,7 +53,7 @@ export function buildPlan(c: Contract): IntakePlan {
   // On Jaz's buyer files a second buyer agent is her co-agent; on her listings it's the other side's.
   const coAgent = !isListing ? c.buyer_agent_2 : null;
   const otherSecondAgent = isListing ? c.buyer_agent_2 : null;
-  const sellerCoordinator = !isListing ? c.listing_coordinator : null;
+  const coopCoordinator = c.coop_coordinator;
   const titleCo = c.title?.company?.trim() || QUICK_ABSTRACT.name;
   const usesQuickAbstract = /quick abstract/i.test(titleCo);
 
@@ -77,8 +80,10 @@ export function buildPlan(c: Contract): IntakePlan {
     grant_program: c.grant_program ?? "",
     buyer_agent_2: [c.buyer_agent_2?.name, c.buyer_agent_2?.brokerage].filter(Boolean).join(", "),
     buyer_agent_2_email: c.buyer_agent_2?.email ?? "",
-    listing_tc: c.listing_coordinator?.name ?? "",
-    listing_tc_email: c.listing_coordinator?.email ?? "",
+    coop_tc: c.coop_coordinator?.name ?? "",
+    coop_tc_email: c.coop_coordinator?.email ?? "",
+    housing_counselor: c.grant_counselor?.name ?? "",
+    housing_counselor_email: c.grant_counselor?.email ?? "",
     notes: [c.seller_assist && `Seller assist: ${c.seller_assist}`, c.settlement_place && `Settlement at ${c.settlement_place}`]
       .filter(Boolean)
       .join(". "),
@@ -138,7 +143,7 @@ export function buildPlan(c: Contract): IntakePlan {
     coopAgentEmail: otherAgent?.email ?? "",
     coAgentName: coAgent?.name ?? "",
     coAgentEmail: coAgent?.email ?? "",
-    otherSideCc: [otherSecondAgent?.email, sellerCoordinator?.email].filter((e): e is string => !!e),
+    otherSideCc: [otherSecondAgent?.email, coopCoordinator?.email].filter((e): e is string => !!e),
     lenderName: c.lender?.company ?? "",
     loanOfficerEmail: c.lender?.loan_officer?.email ?? "",
     processorEmail: c.lender?.processor?.email ?? "",
@@ -193,6 +198,13 @@ export function buildPlan(c: Contract): IntakePlan {
   }
   if (c.grant_program) drafts.push(grantReminder(facts, c.grant_program, settlement ? addDays(settlement, -30) : null));
 
+  // Every person on the file needs a name: emails greet them by it, and the dashboard lists them.
+  const unnamed: [string, PersonValueLike | null | undefined][] = [
+    ["housing counselor", c.grant_counselor], ["co-op transaction coordinator", c.coop_coordinator], ["second buyer agent", c.buyer_agent_2],
+  ];
+  for (const [label, p] of unnamed) {
+    if (p?.email && !p.name?.trim()) warnings.push(`Add the ${label}'s name. There's an email for them but no name.`);
+  }
   if (c.skyslope_email?.trim() && !validSkySlope(c.skyslope_email)) {
     warnings.push("The SkySlope email should end in @skyslope.com. Copy it from the EMAIL field on the SkySlope transaction page.");
   } else if (!c.skyslope_email?.trim()) {
@@ -210,6 +222,19 @@ export function buildPlan(c: Contract): IntakePlan {
     }
   }
 
+  const contacts: Contact[] = [];
+  const addContact = (p: { name: string | null; email: string | null; phone?: string | null } | null | undefined, role: string, company = "") => {
+    if (!p?.email?.trim() || p.email.toLowerCase() === JAZ_EMAIL || contacts.some((x) => x.email.toLowerCase() === p.email!.toLowerCase())) return;
+    contacts.push({ name: p.name?.trim() || "Name to confirm", role, company, email: p.email.trim(), phone: p.phone ?? "", notes: `Added from ${address}` });
+  };
+  addContact(c.grant_counselor, `Housing counselor${c.grant_program ? ` (${c.grant_program})` : ""}`);
+  addContact(c.coop_coordinator, "Co-op transaction coordinator", otherAgent?.brokerage ?? "");
+  addContact(coAgent, "Co-agent (buyer side)", coAgent?.brokerage ?? "");
+  addContact(otherAgent, isListing ? "Buyer's agent" : "Listing agent", otherAgent?.brokerage ?? "");
+  addContact(otherSecondAgent, "Buyer's agent", otherSecondAgent?.brokerage ?? "");
+  addContact(c.lender?.loan_officer, "Loan officer", c.lender?.company ?? "");
+  addContact(c.lender?.processor, "Processor", c.lender?.company ?? "");
+
   const folderName = `${address} – ${lastName(c)}`;
   return {
     dealId,
@@ -217,6 +242,7 @@ export function buildPlan(c: Contract): IntakePlan {
     contractFilename: `${address} – Agreement of Sale – ${execution ?? "date to confirm"}.pdf`,
     deal,
     milestones,
+    contacts,
     // Jaz never needs a copy of her own email, e.g. as listing agent on a dual file. Her grant reminder is the exception.
     drafts: drafts
       .map((x) => (x.kind === "grant_reminder" ? x : { ...x, to: notJaz(x.to), cc: notJaz(x.cc).filter((e) => !x.to.includes(e)) }))

@@ -28,7 +28,7 @@ function sampleContract(overrides: Partial<Contract> = {}): Contract {
     listing_agent: { name: "Dave Goldsmith", brokerage: "KW Empower", email: "dave@example.com", phone: null },
     buyer_agent: { name: "Jasmine Williams", brokerage: "Realty ONE Group Focus", email: "jwilliams@gremom.com", phone: null },
     buyer_agent_2: null,
-    listing_coordinator: null,
+    coop_coordinator: null,
     lender: {
       company: "First Citizens Community Bank",
       loan_officer: { name: "Crista Lowrie", email: "clowrie@myfccb.com", phone: null },
@@ -189,7 +189,7 @@ test("today view and stepper on the Malcolm St seed", () => {
 test("co-agent, seller side coordinator and SkySlope email reach the right drafts", () => {
   const plan = buildPlan(resolveDates(sampleContract({
     buyer_agent_2: { name: "Kenya Matthews", email: "k.matthews@kw.com", phone: null, brokerage: "Keller Williams" },
-    listing_coordinator: { name: "Tara Ruiz", email: "tara@listingtc.com", phone: null },
+    coop_coordinator: { name: "Tara Ruiz", email: "tara@listingtc.com", phone: null },
     skyslope_email: " MalcolmSt5722@skyslope.com ",
   })));
   const by = (k: string) => plan.drafts.find((d) => d.kind === k)!;
@@ -200,7 +200,8 @@ test("co-agent, seller side coordinator and SkySlope email reach the right draft
   assert.ok(by("agent_timeline").cc.includes("tara@listingtc.com"));
   assert.ok(!by("buyer_congrats").cc.includes("tara@listingtc.com"));
   assert.equal(plan.deal.buyer_agent_2, "Kenya Matthews, Keller Williams");
-  assert.equal(plan.deal.listing_tc_email, "tara@listingtc.com");
+  assert.equal(plan.deal.coop_tc, "Tara Ruiz");
+  assert.equal(plan.deal.coop_tc_email, "tara@listingtc.com");
   assert.equal(plan.deal.skyslope_email, "MalcolmSt5722@skyslope.com");
   assert.ok(!plan.warnings.some((w) => w.includes("SkySlope")));
 });
@@ -303,4 +304,39 @@ test("buyer welcome email: mortgage with an inspection deadline", () => {
   assert.ok(!b.includes("POSSESSION"));
   assert.ok(b.includes("homeowners insurance quote") && b.includes("Your lender will need proof of the policy"));
   assert.ok(!b.includes("LLC"));
+});
+
+test("co-op coordinator is copied on key dates on listings too, and unnamed people are flagged", () => {
+  const listing = buildPlan(resolveDates(sampleContract({
+    side: "Listing",
+    buyer_agent: { name: "Sam Lee", email: "sam@coop.com", phone: null, brokerage: "Coop Realty" },
+    coop_coordinator: { name: "Rae Kim", email: "rae@cooptc.com", phone: null },
+  })));
+  assert.ok(listing.drafts.find((d) => d.kind === "agent_timeline")!.cc.includes("rae@cooptc.com"));
+  assert.equal(listing.deal.coop_tc, "Rae Kim");
+
+  const unnamed = buildPlan(resolveDates(sampleContract({
+    grant_counselor: { name: null, email: "counselor@housing.org", phone: null },
+    coop_coordinator: { name: " ", email: "tc@other.com", phone: null },
+  })));
+  assert.ok(unnamed.warnings.some((w) => w.includes("housing counselor's name")));
+  assert.ok(unnamed.warnings.some((w) => w.includes("co-op transaction coordinator's name")));
+  const named = buildPlan(resolveDates(sampleContract({ grant_counselor: { name: "Pat Green", email: "pgreen@housing.org", phone: null } })));
+  assert.equal(named.deal.housing_counselor, "Pat Green");
+  assert.equal(named.deal.housing_counselor_email, "pgreen@housing.org");
+  assert.ok(!named.warnings.some((w) => w.includes("name.")));
+});
+
+test("people on the file are offered to Contacts, with names, once each", () => {
+  const plan = buildPlan(resolveDates(sampleContract({
+    grant_counselor: { name: "Pat Green", email: "pgreen@housing.org", phone: "215-555-0100" },
+    coop_coordinator: { name: "Tara Ruiz", email: "tara@listingtc.com", phone: null },
+  })));
+  const byEmail = Object.fromEntries(plan.contacts.map((x) => [x.email, x]));
+  assert.equal(byEmail["pgreen@housing.org"].name, "Pat Green");
+  assert.equal(byEmail["pgreen@housing.org"].role, "Housing counselor (Affordable Housing Centers of PA)");
+  assert.equal(byEmail["tara@listingtc.com"].role, "Co-op transaction coordinator");
+  assert.equal(byEmail["dave@example.com"].role, "Listing agent");
+  assert.ok(!plan.contacts.some((x) => x.email === "jwilliams@gremom.com"));
+  assert.equal(new Set(plan.contacts.map((x) => x.email)).size, plan.contacts.length);
 });
