@@ -30,7 +30,8 @@ export async function readTracker(): Promise<Tracker> {
   } else {
     const res = await sheetsApi().spreadsheets.values.batchGet({
       spreadsheetId: trackerSheetId(),
-      ranges: TABS.map((t) => `${t}!A:AF`),
+      // A bare tab name reads every filled cell, however wide the tab is.
+      ranges: [...TABS],
       valueRenderOption: "FORMATTED_VALUE",
     });
     raw = Object.fromEntries(TABS.map((tab, i) => [tab, res.data.valueRanges?.[i]?.values as string[][] | undefined])) as Record<Tab, string[][] | undefined>;
