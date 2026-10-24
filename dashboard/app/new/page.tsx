@@ -16,7 +16,7 @@ export default function NewContractPage() {
           and the file shows on the dashboard. No email is sent: everything waits in your Gmail drafts.
         </p>
       </div>
-      <IntakeFlow useBlob={!!process.env.BLOB_READ_WRITE_TOKEN} />
+      <IntakeFlow useBlob={!!(process.env.BLOB_STORE_ID || process.env.BLOB_READ_WRITE_TOKEN)} />
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useRef, useState, useTransition } from "react";
-import { upload } from "@vercel/blob/client";
+import { uploadPresigned } from "@vercel/blob/client";
 import { createFile, readContract } from "./actions";
 import { DATE_KEYS, DATE_LABELS, resolveDates, type Contract, type PersonValue } from "@/lib/contract";
 import { buildPlan } from "@/lib/plan";
@@ -63,7 +63,7 @@ export function IntakeFlow({ useBlob }: { useBlob: boolean }) {
       if (useBlob) {
         // Hosted: send the PDF straight to private storage, past the 4.5 MB request limit.
         try {
-          const blob = await upload(`contracts/${f.name}`, f, { access: "private", handleUploadUrl: "/api/upload", contentType: "application/pdf" });
+          const blob = await uploadPresigned(`contracts/${crypto.randomUUID()}.pdf`, f, { access: "private", handleUploadUrl: "/api/upload", contentType: "application/pdf" });
           setBlobUrl(blob.url);
           fd.set("blobUrl", blob.url);
           fd.set("filename", f.name);
