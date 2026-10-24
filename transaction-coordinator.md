@@ -210,7 +210,7 @@ Never delete a deal; close or terminate it instead.
 | Carol Mehaffey | Processor: appraisals, final inspections | camehaffey@myfccb.com | 215-997-2800 |
 | Tina Waslin | Senior processor: conditions, clear to close | twaslin@myfccb.com | 215-449-3704 |
 | Jasmaine Williams | Affordable Housing Centers of PA, grants | jwilliams@ahcopa.org | |
-| Kenya Matthews | Showing agent, walk-throughs | k.matthews@kw.com | |
+| Kenya Matthews | Showing agent, walk-throughs | kmatthews@gremom.com | |
 | Liam | Crowdcopia hard money | liam@crowdcopia.com | |
 
 ---
