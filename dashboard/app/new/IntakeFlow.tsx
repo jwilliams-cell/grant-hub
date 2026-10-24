@@ -7,6 +7,7 @@ import { createFile, readContract } from "./actions";
 import { DATE_KEYS, DATE_LABELS, resolveDates, type Contract, type PersonValue } from "@/lib/contract";
 import { buildPlan } from "@/lib/plan";
 import { formatShort } from "@/lib/dates";
+import { GhlPicker } from "@/components/GhlPicker";
 import type { IntakeResult } from "@/lib/intake";
 
 type Step = "upload" | "review" | "done";
@@ -341,10 +342,16 @@ function PeopleEditor({ title, people, onChange }: { title: string; people: Pers
     <div className="stack-sm">
       <div className="label">{title}</div>
       {people.map((p, i) => (
-        <div key={i} className="form-grid">
-          <Field label={`${title.slice(0, -1)} ${i + 1} name`} value={p.name} onChange={(v) => update(i, "name", v)} />
-          <Field label={`${title.slice(0, -1)} ${i + 1} email`} type="email" value={p.email} onChange={(v) => update(i, "email", v)} />
-          <Field label={`${title.slice(0, -1)} ${i + 1} phone`} type="tel" value={p.phone} onChange={(v) => update(i, "phone", v)} />
+        <div key={i} className="stack-sm" style={{ gap: 4 }}>
+          <div className="form-grid">
+            <Field label={`${title.slice(0, -1)} ${i + 1} name`} value={p.name} onChange={(v) => update(i, "name", v)} />
+            <Field label={`${title.slice(0, -1)} ${i + 1} email`} type="email" value={p.email} onChange={(v) => update(i, "email", v)} />
+            <Field label={`${title.slice(0, -1)} ${i + 1} phone`} type="tel" value={p.phone} onChange={(v) => update(i, "phone", v)} />
+          </div>
+          <GhlPicker
+            name={p.name ?? ""}
+            onPick={(m) => onChange(people.map((q, j) => (j === i ? { ...q, email: m.email || q.email, phone: m.phone || q.phone } : q)))}
+          />
         </div>
       ))}
       <div><button className="btn btn-ghost btn-small" onClick={() => onChange([...people, { ...emptyPerson }])}>Add {title.slice(0, -1).toLowerCase()}</button></div>

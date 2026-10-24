@@ -72,3 +72,44 @@ export async function appendRows<C extends readonly string[]>(
     requestBody: { values: rows.map((row) => cols.map((c) => cell(row[c as C[number]]))) },
   });
 }
+
+function columnLetter(index: number): string {
+  let n = index + 1;
+  let s = "";
+  while (n > 0) {
+    const r = (n - 1) % 26;
+    s = String.fromCharCode(65 + r) + s;
+    n = Math.floor((n - 1) / 26);
+  }
+  return s;
+}
+
+/**
+ * Updates named cells on one Deals row, found by deal_id at the time of writing (so rows Jaz
+ * added or sorted by hand don't throw it off). Returns the old value of each cell it changed.
+ */
+export async function updateDealCells(dealId: string, changes: Record<string, string>): Promise<Record<string, { from: string; to: string }>> {
+  const api = sheetsApi().spreadsheets.values;
+  const spreadsheetId = trackerSheetId();
+  const res = await api.get({ spreadsheetId, range: "Deals", valueRenderOption: "FORMATTED_VALUE" });
+  const rows = (res.data.values ?? []) as string[][];
+  const header = rows[0] ?? [];
+  const idCol = header.indexOf("deal_id");
+  const rowIndex = rows.findIndex((r, i) => i > 0 && r[idCol] === dealId);
+  if (idCol < 0 || rowIndex < 0) throw new Error(`Couldn't find ${dealId} in the tracker.`);
+
+  const changed: Record<string, { from: string; to: string }> = {};
+  const data: { range: string; values: (string | number | boolean)[][] }[] = [];
+  for (const [field, value] of Object.entries(changes)) {
+    const col = header.indexOf(field);
+    if (col < 0) throw new Error(`The tracker has no ${field} column.`);
+    const from = rows[rowIndex][col] ?? "";
+    if (from === value) continue;
+    changed[field] = { from, to: value };
+    data.push({ range: `Deals!${columnLetter(col)}${rowIndex + 1}`, values: [[cell(value)]] });
+  }
+  if (data.length) {
+    await api.batchUpdate({ spreadsheetId, requestBody: { valueInputOption: "USER_ENTERED", data } });
+  }
+  return changed;
+}

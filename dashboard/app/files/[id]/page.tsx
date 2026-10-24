@@ -5,6 +5,8 @@ import { isLate, stepper } from "@/lib/view";
 import { formatLong, formatShort, todayET } from "@/lib/dates";
 import { driveFileUrl, driveFolderUrl, gmailSearchUrl } from "@/lib/google";
 import { SetupNeeded, Stepper, Tag } from "@/components/bits";
+import { PEOPLE_FIELDS, type PeopleField } from "@/lib/people";
+import { EditPeople } from "./EditPeople";
 
 export default async function FileDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -100,8 +102,9 @@ export default async function FileDetail({ params }: { params: Promise<{ id: str
           </p>
         </section>
 
-        <section className="card">
-          <div className="card-head"><h3>People on the file</h3></div>
+        <section className="card stack-sm">
+          <div className="card-head" style={{ marginBottom: 0 }}><h3>People on the file</h3></div>
+          <EditPeople dealId={deal.deal_id} initial={Object.fromEntries(PEOPLE_FIELDS.map((f) => [f.key, deal[f.key] ?? ""])) as Record<PeopleField, string>} />
           <ul className="list">
             {people.map((p) => (
               <li key={p.role}>

@@ -45,6 +45,10 @@ The scopes are Sheets, Drive, Calendar events and Gmail compose (drafts only). T
 
 **Hosting (Vercel):** import the repo with Root Directory `dashboard`, and set the variables from `.env.example` in the project settings. Always set `DASHBOARD_PASSWORD` (basic auth) and `APP_URL`. Then create a **private Blob store** under Storage and connect it to the project. That adds `BLOB_STORE_ID` (or, on older stores, `BLOB_READ_WRITE_TOKEN`), so contracts upload straight to Blob storage, past Vercel's 4.5 MB request limit. Each contract is deleted from Blob storage once it's saved in Drive. `npm run build` copies `../transaction-coordinator.md` into `content/` for the Playbook page.
 
+**GoHighLevel (optional):** set `GHL_API_TOKEN`, a Private Integration token with only **View Contacts** (`contacts.readonly`), and `GHL_LOCATION_ID` (`gNdke52cCmciGCskwhzq`, Green Mom Consulting LLC). That adds **Find in GoHighLevel** next to each buyer on the review screen and in Edit people. It searches by first name, ranks contacts with a matching or partial last name and the "home buyer client" tag first, and fills email and phone only when Jaz clicks Use. It never writes to GoHighLevel.
+
+**Edit people:** each file page has an Edit people form that updates that file's Deals row (looked up by `deal_id`) and logs the change in Activity.
+
 **Without Google:** `TRACKER_FIXTURE=/path/to/rows.json npm run dev` reads `{ "Deals": [[header…], [row…]], … }` instead of the Sheet. `../seed/sheet-rows.json` works. New contract still needs Google.
 
 ## Checks
