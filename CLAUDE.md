@@ -172,7 +172,11 @@ Run these as Claude Code scheduled tasks (cloud). Each job reads `CLAUDE.md` and
 
 **Updates:** the dashboard re-reads the Sheet on load and every 5 minutes. When an agent emails, the inbound job updates the Sheet, and the dashboard shows the change on its next refresh. Show "Updated [time] ago" from the Activity tab.
 
-The dashboard is read-only in version 1. Edits happen in the Sheet or by asking Claude.
+The dashboard is read-only except for one page:
+
+7. **New contract** — Jaz uploads a signed Agreement of Sale. Claude extracts every date and contact, and Jaz reviews and corrects them on screen. Only after she confirms does the app create the Drive folder, the milestones, the calendar events and the day-one Gmail drafts (Workflow 1, steps 1–4). This replaces the intake job in section 7 when Jaz starts from the dashboard. All other edits happen in the Sheet or by asking Claude.
+
+The Sheet is `BuySmart TC Tracker` (id `1ZfCzjEUzYzWSyrKvm_Pti4rFywcJC8gBCZTcQL8agus`). The Drafts tab has one extra column, `gmail_message_id`, which the Open link uses. The app lives in `dashboard/`; see `dashboard/README.md`.
 
 ---
 

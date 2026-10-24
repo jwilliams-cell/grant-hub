@@ -1,0 +1,40 @@
+import "server-only";
+import { google } from "googleapis";
+
+// One OAuth client for Jaz's own Google account: Sheets, Drive, Calendar and Gmail drafts.
+export const GOOGLE_SCOPES = [
+  "https://www.googleapis.com/auth/spreadsheets",
+  "https://www.googleapis.com/auth/drive",
+  "https://www.googleapis.com/auth/calendar.events",
+  "https://www.googleapis.com/auth/gmail.compose",
+];
+
+function required(name: string): string {
+  const value = process.env[name];
+  if (!value) throw new Error(`${name} is not set. See dashboard/.env.example.`);
+  return value;
+}
+
+let auth: InstanceType<typeof google.auth.OAuth2> | null = null;
+
+function getAuth() {
+  if (!auth) {
+    auth = new google.auth.OAuth2(required("GOOGLE_CLIENT_ID"), required("GOOGLE_CLIENT_SECRET"));
+    auth.setCredentials({ refresh_token: required("GOOGLE_REFRESH_TOKEN") });
+  }
+  return auth;
+}
+
+export const sheetsApi = () => google.sheets({ version: "v4", auth: getAuth() });
+export const driveApi = () => google.drive({ version: "v3", auth: getAuth() });
+export const calendarApi = () => google.calendar({ version: "v3", auth: getAuth() });
+export const gmailApi = () => google.gmail({ version: "v1", auth: getAuth() });
+
+export const trackerSheetId = () => required("TRACKER_SHEET_ID");
+export const driveRootId = () => required("DRIVE_ROOT_ID");
+export const appUrl = () => process.env.APP_URL || "http://localhost:3000";
+
+export const driveFolderUrl = (id: string) => `https://drive.google.com/drive/folders/${id}`;
+export const driveFileUrl = (id: string) => `https://drive.google.com/file/d/${id}/view`;
+export const gmailDraftUrl = (messageId: string) => `https://mail.google.com/mail/u/0/#drafts?compose=${messageId}`;
+export const gmailSearchUrl = (query: string) => `https://mail.google.com/mail/u/0/#search/${encodeURIComponent(query)}`;

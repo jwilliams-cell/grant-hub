@@ -1,0 +1,20 @@
+[
+{"deal":"5722 Malcolm St","order":1,"step":"Under contract — lender, grant counselor and title notified","due":"2026-10-13","date_type":"Actual","status":"Done","owner":"Jaz","note":"\"Alexis McIntosh is Under Contract\" email to Crista and Affordable Housing Centers of PA"},
+{"deal":"5722 Malcolm St","order":2,"step":"Title ordered with Quick Abstract","due":"2026-10-13","date_type":"Actual","status":"Done","owner":"Jaz","note":"File QA2026-7481"},
+{"deal":"5722 Malcolm St","order":3,"step":"Home inspection (Eagle Inspections)","due":"2026-10-13","date_type":"Actual","status":"Done","owner":"Jaz","note":"Report received 10/13; second visit booked 10/15 through ShowingTime"},
+{"deal":"5722 Malcolm St","order":4,"step":"Grant documents sent in one email; approval letter back","due":"2026-10-14","date_type":"Actual","status":"Done","owner":"Jaz","note":"Grant needs its package 30 days before settlement"},
+{"deal":"5722 Malcolm St","order":5,"step":"Deposit received by title (escrow receipt)","due":"2026-10-16","date_type":"Actual","status":"Done","owner":"Safiya","note":"Escrow receipt sent 10/16"},
+{"deal":"5722 Malcolm St","order":6,"step":"Buyer's reply to inspection sent to listing agent","due":"2026-10-16","date_type":"Actual","status":"Done","owner":"Jaz","note":"Dave Goldsmith confirmed received"},
+{"deal":"5722 Malcolm St","order":7,"step":"Seller's signed response to inspection reply","due":"","date_type":"Unknown","status":"Waiting","owner":"Dave (listing agent)","note":"No signed response found in email yet — confirm with Dave"},
+{"deal":"5722 Malcolm St","order":8,"step":"Appraisal","due":"2026-10-19","date_type":"Actual","status":"Done","owner":"FCCB (Carol)","note":"Came in at the $210,000 sale price, no repairs"},
+{"deal":"5722 Malcolm St","order":9,"step":"Title commitment received; fees and commissions sent to title","due":"2026-10-21","date_type":"Actual","status":"Done","owner":"Jaz","note":"Safiya confirmed received 10/21"},
+{"deal":"5722 Malcolm St","order":10,"step":"Seller items to title: use and occupancy certificate, mortgage payoff, Still Properties LLC documents","due":"2026-11-06","date_type":"Target","status":"Waiting","owner":"Dave (listing agent)","note":"Requested by Madinah Hill 10/21. Payoff must be issued in the month of closing"},
+{"deal":"5722 Malcolm St","order":11,"step":"Homeowners insurance bound; binder to lender","due":"2026-11-06","date_type":"Target","status":"To do","owner":"Alexis","note":"Quote from Glenn Hamilton (Farmers) 10/14"},
+{"deal":"5722 Malcolm St","order":12,"step":"Mortgage commitment","due":"","date_type":"Unknown","status":"Waiting","owner":"FCCB (Carol / Tina)","note":"Check the Agreement of Sale for the commitment date"},
+{"deal":"5722 Malcolm St","order":13,"step":"Clear to close from lender","due":"2026-11-09","date_type":"Target","status":"To do","owner":"FCCB (Tina)","note":""},
+{"deal":"5722 Malcolm St","order":14,"step":"Closing disclosure signed (3 business days before settlement)","due":"2026-11-10","date_type":"Target","status":"To do","owner":"FCCB / Alexis","note":"Sarah always asked the lender to confirm this"},
+{"deal":"5722 Malcolm St","order":15,"step":"Buyer wires funds — verify wire instructions by phone","due":"2026-11-12","date_type":"Target","status":"To do","owner":"Alexis","note":"Quick Abstract takes no cashier's checks over $25,000"},
+{"deal":"5722 Malcolm St","order":16,"step":"Final walk-through","due":"2026-11-12","date_type":"Target","status":"To do","owner":"Jaz / Kenya","note":""},
+{"deal":"5722 Malcolm St","order":17,"step":"Settlement","due":"2026-11-13","date_type":"Scheduled","status":"Scheduled","owner":"Quick Abstract","note":"Moved to 11/13 for the grant timeline; confirm the time on the settlement notice"},
+{"deal":"5722 Malcolm St","order":18,"step":"Final signed documents and compliance file to brokerage","due":"2026-11-16","date_type":"Target","status":"To do","owner":"Jaz","note":"Signed settlement statement, buyer agency contract, consumer notice"}
+]
