@@ -6,7 +6,7 @@ import {
   clientName, clientPeople, dealSlug, lastName, DATE_LABELS, type Contract, type ContractDateValue, type DateKey,
 } from "./contract.ts";
 import {
-  agentTimeline, buyerCongrats, grantReminder, lenderIntro, llcDocuments, titleOrder, QUICK_ABSTRACT,
+  agentTimeline, buyerCongrats, grantReminder, lenderIntro, llcDocuments, titleOrder, JAZ_EMAIL, QUICK_ABSTRACT,
   type DayOneFacts, type EmailDraft,
 } from "./templates.ts";
 import type { Deal, Milestone } from "./types.ts";
@@ -26,6 +26,9 @@ export interface IntakePlan {
 }
 
 const BLOCKED_BY_TITLE = /@(gmail|yahoo|aol)\./i;
+/** SkySlope addresses can't be guessed; accept only what Jaz pasted, and only an @skyslope.com address. */
+export const validSkySlope = (email: string | null | undefined) => !!email && /^[^\s@]+@skyslope\.com$/i.test(email.trim());
+const notJaz = (emails: string[]) => [...new Set(emails.filter((e) => e && e.toLowerCase() !== JAZ_EMAIL))];
 
 function isCash(financing: string | null): boolean {
   return !!financing && /cash/i.test(financing);
@@ -43,6 +46,10 @@ export function buildPlan(c: Contract): IntakePlan {
 
   const isListing = c.side === "Listing";
   const otherAgent = isListing ? c.buyer_agent : c.listing_agent;
+  // On Jaz's buyer files a second buyer agent is her co-agent; on her listings it's the other side's.
+  const coAgent = !isListing ? c.buyer_agent_2 : null;
+  const otherSecondAgent = isListing ? c.buyer_agent_2 : null;
+  const sellerCoordinator = !isListing ? c.listing_coordinator : null;
   const titleCo = c.title?.company?.trim() || QUICK_ABSTRACT.name;
   const usesQuickAbstract = /quick abstract/i.test(titleCo);
 
@@ -65,8 +72,12 @@ export function buildPlan(c: Contract): IntakePlan {
     execution_date: execution ?? "",
     settlement_date: settlement ?? "",
     settlement_time: "",
-    skyslope_email: "Confirm",
+    skyslope_email: validSkySlope(c.skyslope_email) ? c.skyslope_email!.trim() : "Confirm",
     grant_program: c.grant_program ?? "",
+    buyer_agent_2: [c.buyer_agent_2?.name, c.buyer_agent_2?.brokerage].filter(Boolean).join(", "),
+    buyer_agent_2_email: c.buyer_agent_2?.email ?? "",
+    listing_tc: c.listing_coordinator?.name ?? "",
+    listing_tc_email: c.listing_coordinator?.email ?? "",
     notes: [c.seller_assist && `Seller assist: ${c.seller_assist}`, c.settlement_place && `Settlement at ${c.settlement_place}`]
       .filter(Boolean)
       .join(". "),
@@ -124,6 +135,9 @@ export function buildPlan(c: Contract): IntakePlan {
     sellerNames: c.seller_entity?.name || c.sellers.map((s) => s.name).filter(Boolean).join(" & "),
     coopAgentName: [otherAgent?.name, otherAgent?.brokerage].filter(Boolean).join(", "),
     coopAgentEmail: otherAgent?.email ?? "",
+    coAgentName: coAgent?.name ?? "",
+    coAgentEmail: coAgent?.email ?? "",
+    otherSideCc: [otherSecondAgent?.email, sellerCoordinator?.email].filter((e): e is string => !!e),
     lenderName: c.lender?.company ?? "",
     loanOfficerEmail: c.lender?.loan_officer?.email ?? "",
     processorEmail: c.lender?.processor?.email ?? "",
@@ -158,6 +172,11 @@ export function buildPlan(c: Contract): IntakePlan {
   }
   if (c.grant_program) drafts.push(grantReminder(facts, c.grant_program, settlement ? addDays(settlement, -30) : null));
 
+  if (c.skyslope_email?.trim() && !validSkySlope(c.skyslope_email)) {
+    warnings.push("The SkySlope email should end in @skyslope.com. Copy it from the EMAIL field on the SkySlope transaction page.");
+  } else if (!c.skyslope_email?.trim()) {
+    warnings.push("No SkySlope email yet. Copy it from the EMAIL field on the SkySlope transaction page, or add it to the tracker later.");
+  }
   if (usesQuickAbstract && facts.buyerEmails.some((e) => BLOCKED_BY_TITLE.test(e))) {
     warnings.push("The buyer uses a Gmail, Yahoo or AOL address. Quick Abstract's server blocks those, so forward title's emails to them.");
   }
@@ -177,7 +196,10 @@ export function buildPlan(c: Contract): IntakePlan {
     contractFilename: `${address} – Agreement of Sale – ${execution ?? "date to confirm"}.pdf`,
     deal,
     milestones,
-    drafts: drafts.filter((x) => x.to.length > 0),
+    // Jaz never needs a copy of her own email, e.g. as listing agent on a dual file. Her grant reminder is the exception.
+    drafts: drafts
+      .map((x) => (x.kind === "grant_reminder" ? x : { ...x, to: notJaz(x.to), cc: notJaz(x.cc).filter((e) => !x.to.includes(e)) }))
+      .filter((x) => x.to.length > 0),
     warnings: [...new Set(warnings)],
   };
 }

@@ -27,6 +27,7 @@ function sampleContract(overrides: Partial<Contract> = {}): Contract {
     seller_entity: { name: "Still Properties LLC", signer: null },
     listing_agent: { name: "Dave Goldsmith", brokerage: "KW Empower", email: "dave@example.com", phone: null },
     buyer_agent: { name: "Jasmine Williams", brokerage: "Realty ONE Group Focus", email: "jwilliams@gremom.com", phone: null },
+    buyer_agent_2: null,
     listing_coordinator: null,
     lender: {
       company: "First Citizens Community Bank",
@@ -179,4 +180,40 @@ test("today view and stepper on the Malcolm St seed", () => {
   assert.equal(s.Inspection, "current");
   assert.equal(s.Appraisal, "done");
   assert.equal(s.Commitment, "upcoming");
+});
+
+test("co-agent, seller side coordinator and SkySlope email reach the right drafts", () => {
+  const plan = buildPlan(resolveDates(sampleContract({
+    buyer_agent_2: { name: "Kenya Matthews", email: "k.matthews@kw.com", phone: null, brokerage: "Keller Williams" },
+    listing_coordinator: { name: "Tara Ruiz", email: "tara@listingtc.com", phone: null },
+    skyslope_email: " MalcolmSt5722@skyslope.com ",
+  })));
+  const by = (k: string) => plan.drafts.find((d) => d.kind === k)!;
+  for (const k of ["title_order", "lender_intro", "agent_timeline", "buyer_congrats"]) {
+    assert.ok(by(k).cc.includes("k.matthews@kw.com"), `${k} copies the co-agent`);
+  }
+  assert.ok(by("title_order").body.includes("Co-agent: Kenya Matthews — k.matthews@kw.com"));
+  assert.ok(by("agent_timeline").cc.includes("tara@listingtc.com"));
+  assert.ok(!by("buyer_congrats").cc.includes("tara@listingtc.com"));
+  assert.equal(plan.deal.buyer_agent_2, "Kenya Matthews, Keller Williams");
+  assert.equal(plan.deal.listing_tc_email, "tara@listingtc.com");
+  assert.equal(plan.deal.skyslope_email, "MalcolmSt5722@skyslope.com");
+  assert.ok(!plan.warnings.some((w) => w.includes("SkySlope")));
+});
+
+test("a SkySlope email that isn't @skyslope.com is never stored", () => {
+  const plan = buildPlan(resolveDates(sampleContract({ skyslope_email: "malcolm@gmail.com" })));
+  assert.equal(plan.deal.skyslope_email, "Confirm");
+  assert.ok(plan.warnings.some((w) => w.includes("@skyslope.com")));
+});
+
+test("dual file: Jaz isn't emailed as her own listing agent", () => {
+  const plan = buildPlan(resolveDates(sampleContract({
+    side: "Dual",
+    listing_agent: { name: "Jasmine Williams", email: "jwilliams@gremom.com", phone: null, brokerage: "Realty ONE Group Focus" },
+  })));
+  assert.ok(!plan.drafts.some((d) => d.kind === "agent_timeline"));
+  for (const d of plan.drafts.filter((d) => d.kind !== "grant_reminder")) {
+    assert.ok(![...d.to, ...d.cc].includes("jwilliams@gremom.com"), d.kind);
+  }
 });

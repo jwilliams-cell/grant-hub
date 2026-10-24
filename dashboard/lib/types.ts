@@ -4,7 +4,7 @@ export const DEAL_COLS = [
   "deal_id", "address", "client", "client_email", "side", "status", "price", "financing", "lender",
   "loan_officer_email", "processor_email", "title_co", "title_file_no", "other_agent", "other_agent_email",
   "execution_date", "settlement_date", "settlement_time", "drive_folder_id", "skyslope_email",
-  "grant_program", "notes",
+  "grant_program", "notes", "buyer_agent_2", "buyer_agent_2_email", "listing_tc", "listing_tc_email",
 ] as const;
 
 export const MILESTONE_COLS = [

@@ -129,6 +129,8 @@ export async function runIntake(plan: IntakePlan, pdf: Buffer): Promise<IntakeRe
   await appendRows("Drafts", DRAFT_COLS, draftRows);
   await appendRows("Activity", ACTIVITY_COLS, activity);
 
-  result.warnings.push("SkySlope: confirm this file's SkySlope email address, then the contract can be copied there.");
+  if (plan.deal.skyslope_email === "Confirm") {
+    result.warnings.push("SkySlope: add this file's SkySlope email to the tracker so documents can be copied there.");
+  }
   return result;
 }

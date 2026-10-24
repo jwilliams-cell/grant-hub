@@ -29,6 +29,11 @@ export interface DayOneFacts {
   sellerNames: string;
   coopAgentName: string;
   coopAgentEmail: string;
+  /** Jaz's co-agent on this file, copied on every day-one email. */
+  coAgentName: string;
+  coAgentEmail: string;
+  /** Extra people on the other side to copy on the key dates email: their second agent or their coordinator. */
+  otherSideCc: string[];
   lenderName: string;
   loanOfficerEmail: string;
   processorEmail: string;
@@ -47,9 +52,9 @@ export function titleOrder(f: DayOneFacts): EmailDraft {
   return {
     kind: "title_order",
     to: [QUICK_ABSTRACT.orders],
-    cc: [QUICK_ABSTRACT.closer],
+    cc: [QUICK_ABSTRACT.closer, f.coAgentEmail].filter(Boolean),
     subject: `${f.address} – Title Order`,
-    body: `Hello!\n\nAttached is the signed Agreement of Sale for a new title order for our buyer.\n\nAgent: Jasmine Williams — ${JAZ_EMAIL}\nBuyer: ${f.buyerNames} — ${f.buyerEmails.join(", ") || "email to follow"}\nCooperating agent: ${f.coopAgentName || "to follow"} — ${f.coopAgentEmail || "email to follow"}\nSeller: ${f.sellerNames || "to follow"}\nLender: ${f.lenderName || "to follow"} — ${f.loanOfficerEmail || "email to follow"}\n\nPlease cc me on all communication.${SIGN}`,
+    body: `Hello!\n\nAttached is the signed Agreement of Sale for a new title order for our buyer.\n\nAgent: Jasmine Williams — ${JAZ_EMAIL}${f.coAgentEmail ? `\nCo-agent: ${f.coAgentName || "to follow"} — ${f.coAgentEmail}` : ""}\nBuyer: ${f.buyerNames} — ${f.buyerEmails.join(", ") || "email to follow"}\nCooperating agent: ${f.coopAgentName || "to follow"} — ${f.coopAgentEmail || "email to follow"}\nSeller: ${f.sellerNames || "to follow"}\nLender: ${f.lenderName || "to follow"} — ${f.loanOfficerEmail || "email to follow"}\n\nPlease cc me on all communication.${SIGN}`,
     attachContract: true,
     reason: "Day one: order title",
   };
@@ -59,7 +64,7 @@ export function lenderIntro(f: DayOneFacts): EmailDraft {
   return {
     kind: "lender_intro",
     to: [f.loanOfficerEmail].filter(Boolean),
-    cc: [f.processorEmail].filter(Boolean),
+    cc: [f.processorEmail, f.coAgentEmail].filter(Boolean),
     subject: `${f.address} (${f.buyerNames}) is under contract`,
     body: `Hi!\n\n${f.buyerNames} is officially under contract on ${f.address}; the signed Agreement of Sale is attached.\n\n- Mortgage application: ${when(f.mortgageApplication)}\n- Commitment: ${when(f.commitment)}\n- Settlement: ${when(f.settlement)}\n\nTitle is with Quick Abstract. Please keep me copied and let me know once the application is complete and the appraisal is ordered.${SIGN}`,
     attachContract: true,
@@ -71,7 +76,7 @@ export function agentTimeline(f: DayOneFacts): EmailDraft {
   return {
     kind: "agent_timeline",
     to: [f.coopAgentEmail].filter(Boolean),
-    cc: [],
+    cc: [...f.otherSideCc, f.coAgentEmail].filter(Boolean),
     subject: `${f.address} – Key dates`,
     body: `Hi ${f.coopAgentName.split(/[ ,]/)[0] || "there"},\n\nLooking forward to a smooth one together. Here are the key dates. Please confirm or let me know of any discrepancies:\n\n${list(f.dates)}\n\nLender: ${f.lenderName || "to follow"}\nTitle: Quick Abstract — ${QUICK_ABSTRACT.orders}\n\nPlease copy me on all correspondence.${SIGN}`,
     attachContract: false,
@@ -83,7 +88,7 @@ export function buyerCongrats(f: DayOneFacts): EmailDraft {
   return {
     kind: "buyer_congrats",
     to: f.buyerEmails,
-    cc: [QUICK_ABSTRACT.closer],
+    cc: [QUICK_ABSTRACT.closer, f.coAgentEmail].filter(Boolean),
     subject: `${f.address} – You're under contract!`,
     body: `Congratulations!\n\nYour Agreement of Sale is attached. Here are the dates to keep in mind:\n\n${list(f.dates)}\n\nI've copied the title company so they can send wiring instructions for your deposit. ${WIRE_LINE}\n\nPlease reply all so everyone stays in the loop.\n\nSo happy for you!\nJasmine`,
     attachContract: true,

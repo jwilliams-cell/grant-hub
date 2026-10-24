@@ -41,7 +41,7 @@ Connected accounts available: Gmail, Google Calendar, Google Drive, Google Sheet
 Create the Google Sheet `BuySmart TC Tracker` in `02 — Clients / Transactions`. Jaz and Kenya can read and fix it by hand. The dashboard reads it, and the automation writes it.
 
 **Tab `Deals`** — one row per file
-`deal_id` (slug, e.g. `5722-malcolm`) · `address` · `client` · `client_email` · `side` (Buyer | Listing | Dual | Refinance | Hard money) · `status` (Active | Closed | Terminated) · `price` · `financing` · `lender` · `loan_officer_email` · `processor_email` · `title_co` · `title_file_no` · `other_agent` · `other_agent_email` · `execution_date` · `settlement_date` · `settlement_time` · `drive_folder_id` · `skyslope_email` · `grant_program` · `notes`
+`deal_id` (slug, e.g. `5722-malcolm`) · `address` · `client` · `client_email` · `side` (Buyer | Listing | Dual | Refinance | Hard money) · `status` (Active | Closed | Terminated) · `price` · `financing` · `lender` · `loan_officer_email` · `processor_email` · `title_co` · `title_file_no` · `other_agent` · `other_agent_email` · `execution_date` · `settlement_date` · `settlement_time` · `drive_folder_id` · `skyslope_email` · `grant_program` · `notes` · `buyer_agent_2` · `buyer_agent_2_email` · `listing_tc` · `listing_tc_email` (second buyer agent and the seller side transaction coordinator; on Jaz's buyer files the second buyer agent is her co-agent and is copied on the day-one emails, and the seller side coordinator is copied on the key dates email)
 
 **Tab `Milestones`** — one row per deadline or step
 `deal_id` · `seq` · `step` · `due` · `date_type` (Contract | Target | Actual | Unknown) · `status` (To do | Waiting | Done | Late | Flagged) · `owner` · `note` · `calendar_event_id` · `source_link`
@@ -177,7 +177,7 @@ The dashboard is read-only except for one page:
 
 7. **New contract** — Jaz uploads a signed Agreement of Sale. Claude extracts every date and contact, and Jaz reviews and corrects them on screen. Only after she confirms does the app create the Drive folder, the milestones, the calendar events and the day-one Gmail drafts (Workflow 1, steps 1–4). This replaces the intake job in section 7 when Jaz starts from the dashboard. All other edits happen in the Sheet or by asking Claude.
 
-The Sheet is `BuySmart TC Tracker` (id `1ZfCzjEUzYzWSyrKvm_Pti4rFywcJC8gBCZTcQL8agus`). The Drafts tab has one extra column, `gmail_message_id`, which the Open link uses. The app lives in `dashboard/`; see `dashboard/README.md`.
+The Sheet is `BuySmart TC Tracker` (id `1ZfCzjEUzYzWSyrKvm_Pti4rFywcJC8gBCZTcQL8agus`). The New contract page also takes the file's SkySlope email, copied from the EMAIL field on the SkySlope transaction page; only an `@skyslope.com` address is stored. The Drafts tab has one extra column, `gmail_message_id`, which the Open link uses. The app lives in `dashboard/`; see `dashboard/README.md`.
 
 ---
 

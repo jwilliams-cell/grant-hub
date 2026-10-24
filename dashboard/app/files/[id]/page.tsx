@@ -24,6 +24,8 @@ export default async function FileDetail({ params }: { params: Promise<{ id: str
   const people = [
     { role: "Client", name: deal.client, email: deal.client_email },
     { role: deal.side === "Listing" ? "Buyer's agent" : "Listing agent", name: deal.other_agent, email: deal.other_agent_email },
+    { role: "Seller side coordinator", name: deal.listing_tc, email: deal.listing_tc_email },
+    { role: deal.side === "Listing" ? "Second buyer's agent" : "Co-agent (buyer side)", name: deal.buyer_agent_2, email: deal.buyer_agent_2_email },
     { role: "Lender", name: deal.lender, email: deal.loan_officer_email },
     { role: "Processor", name: "", email: deal.processor_email },
     { role: "Title", name: [deal.title_co, deal.title_file_no].filter(Boolean).join(" · "), email: "" },

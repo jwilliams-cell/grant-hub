@@ -67,7 +67,8 @@ export const ContractSchema = z.object({
   seller_entity: Entity.nullable(),
   listing_agent: Agent.nullable(),
   buyer_agent: Agent.nullable(),
-  listing_coordinator: Person.nullable().describe("Listing side transaction coordinator, if named"),
+  buyer_agent_2: Agent.nullable().describe("A second agent on the buyer side, if the contract names one"),
+  listing_coordinator: Person.nullable().describe("Listing side (seller side) transaction coordinator, if named"),
   lender: z
     .object({ company: z.string().nullable(), loan_officer: Person.nullable(), processor: Person.nullable() })
     .nullable(),
@@ -79,6 +80,8 @@ export const ContractSchema = z.object({
     .array(ContractDate.extend({ label: z.string() }))
     .describe("Anything else time-bound in the addenda: leaseback, solar lease transfer, repairs to complete"),
   open_questions: z.array(z.string()).describe("Anything Jasmine needs to confirm, in plain words"),
+  // Not in the contract: Jaz pastes it from the SkySlope transaction page on the review screen.
+  skyslope_email: z.string().nullable().optional(),
 });
 
 export type Contract = z.infer<typeof ContractSchema>;
@@ -177,7 +180,8 @@ export const ContractWireSchema = z.object({
   seller_entity: WireEntity,
   listing_agent: WireAgent,
   buyer_agent: WireAgent,
-  listing_coordinator: WirePerson.describe("Listing side transaction coordinator; all fields empty if none"),
+  buyer_agent_2: WireAgent.describe("A second licensee on the buyer side (co-agent or team member); all fields empty if none"),
+  listing_coordinator: WirePerson.describe("Seller side transaction coordinator, if the contract or addenda name one; all fields empty if none"),
   lender: z.object({ company: z.string(), loan_officer: WirePerson, processor: WirePerson }),
   title: z.object({ company: z.string(), file_no: z.string() }),
   grant_counselor: WirePerson,
@@ -233,6 +237,7 @@ export function fromWire(w: ContractWire): Contract {
     seller_entity: entityOrNull(w.seller_entity),
     listing_agent: agentOrNull(w.listing_agent),
     buyer_agent: agentOrNull(w.buyer_agent),
+    buyer_agent_2: agentOrNull(w.buyer_agent_2),
     listing_coordinator: personOrNull(w.listing_coordinator),
     lender: lenderCompany || loanOfficer || processor ? { company: lenderCompany, loan_officer: loanOfficer, processor } : null,
     title: titleCompany || fileNo ? { company: titleCompany, file_no: fileNo } : null,

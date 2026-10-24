@@ -28,6 +28,8 @@ const emptyPerson: PersonValue = { name: null, email: null, phone: null };
 const SEEDS = {
   listing_agent: { ...emptyPerson, brokerage: null },
   buyer_agent: { ...emptyPerson, brokerage: null },
+  buyer_agent_2: { ...emptyPerson, brokerage: null },
+  listing_coordinator: { ...emptyPerson },
   lender: { company: null, loan_officer: null, processor: null },
   title: { company: null, file_no: null },
 };
@@ -231,6 +233,14 @@ export function IntakeFlow({ useBlob }: { useBlob: boolean }) {
       </section>
 
       <section className="card stack-sm">
+        <div className="card-head" style={{ marginBottom: 0 }}><h3>SkySlope</h3></div>
+        <div className="form-grid">
+          <Field label="SkySlope email" type="email" value={c.skyslope_email} onChange={(v) => set(["skyslope_email"], text(v))} />
+        </div>
+        <p className="helper">Open the transaction in SkySlope and copy the EMAIL field (it looks like ForrestAve7076@skyslope.com). Leave it blank if you haven't made the SkySlope file yet.</p>
+      </section>
+
+      <section className="card stack-sm">
         <div className="card-head" style={{ marginBottom: 0 }}><h3>People</h3></div>
         <PeopleEditor title="Buyers" people={c.buyers} onChange={(p) => set(["buyers"], p)} />
         {c.buyer_entity && <Field label="Buying entity" value={c.buyer_entity.name} onChange={(v) => set(["buyer_entity", "name"], v)} />}
@@ -239,6 +249,12 @@ export function IntakeFlow({ useBlob }: { useBlob: boolean }) {
           <Field label="Listing agent" value={c.listing_agent?.name} onChange={(v) => set(["listing_agent", "name"], text(v))} />
           <Field label="Listing agent email" type="email" value={c.listing_agent?.email} onChange={(v) => set(["listing_agent", "email"], text(v))} />
           <Field label="Listing brokerage" value={c.listing_agent?.brokerage} onChange={(v) => set(["listing_agent", "brokerage"], text(v))} />
+          <Field label="Seller side coordinator" value={c.listing_coordinator?.name} onChange={(v) => set(["listing_coordinator", "name"], text(v))} />
+          <Field label="Seller side coordinator email" type="email" value={c.listing_coordinator?.email} onChange={(v) => set(["listing_coordinator", "email"], text(v))} />
+          <Field label="Seller side coordinator phone" type="tel" value={c.listing_coordinator?.phone} onChange={(v) => set(["listing_coordinator", "phone"], text(v))} />
+          <Field label="Second buyer agent" value={c.buyer_agent_2?.name} onChange={(v) => set(["buyer_agent_2", "name"], text(v))} />
+          <Field label="Second buyer agent email" type="email" value={c.buyer_agent_2?.email} onChange={(v) => set(["buyer_agent_2", "email"], text(v))} />
+          <Field label="Second buyer agent brokerage" value={c.buyer_agent_2?.brokerage} onChange={(v) => set(["buyer_agent_2", "brokerage"], text(v))} />
           <Field label="Lender" value={c.lender?.company} onChange={(v) => set(["lender", "company"], text(v))} />
           <Field label="Loan officer email" type="email" value={c.lender?.loan_officer?.email} onChange={(v) => set(["lender", "loan_officer"], { ...(c.lender?.loan_officer ?? emptyPerson), email: text(v) })} />
           <Field label="Processor email" type="email" value={c.lender?.processor?.email} onChange={(v) => set(["lender", "processor"], { ...(c.lender?.processor ?? emptyPerson), email: text(v) })} />
