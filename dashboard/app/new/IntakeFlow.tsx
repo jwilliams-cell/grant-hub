@@ -144,6 +144,12 @@ export function IntakeFlow({ useBlob }: { useBlob: boolean }) {
             ))}
           </ul>
         </section>
+        {result.skyslope && (
+          <section className="card">
+            <div className="card-head"><h3>SkySlope</h3></div>
+            <p className="ui">{result.skyslope}</p>
+          </section>
+        )}
         <section className="card">
           <div className="card-head"><h3>On your calendar</h3><span className="label">{result.events.length}</span></div>
           <ul className="list">
@@ -266,6 +272,9 @@ export function IntakeFlow({ useBlob }: { useBlob: boolean }) {
         <ul className="list">
           <li><span>Drive folder <strong>{plan.folderName}</strong> with subfolders 1 to 6, and the contract saved as <em>{plan.contractFilename}</em></span></li>
           <li><span>{plan.milestones.length} milestones on the dashboard, {plan.milestones.filter((m) => m.calendar).length} of them as all-day events on your calendar (no invites)</span></li>
+          <li><span>{plan.deal.skyslope_email !== "Confirm"
+            ? <>The contract is copied to <strong>{plan.deal.skyslope_email}</strong> for compliance. It's sent automatically if that's turned on in the tracker's Settings tab, otherwise it waits in your drafts.</>
+            : "No SkySlope copy yet: add the SkySlope email above."}</span></li>
           {plan.drafts.map((d) => (
             <li key={d.kind}><span>Draft: {d.subject}<br /><span className="meta">To {[...d.to, ...d.cc].join(", ")}{d.attachContract ? " · contract attached" : ""}</span></span></li>
           ))}

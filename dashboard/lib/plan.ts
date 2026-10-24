@@ -9,6 +9,7 @@ import {
   agentTimeline, buyerCongrats, grantReminder, lenderIntro, llcDocuments, titleOrder, JAZ_EMAIL, QUICK_ABSTRACT,
   type DayOneFacts, type EmailDraft,
 } from "./templates.ts";
+import { isSkySlopeAddress } from "./skyslope.ts";
 import type { Deal, Milestone } from "./types.ts";
 
 export interface PlannedMilestone extends Omit<Milestone, "calendar_event_id" | "source_link"> {
@@ -27,7 +28,7 @@ export interface IntakePlan {
 
 const BLOCKED_BY_TITLE = /@(gmail|yahoo|aol)\./i;
 /** SkySlope addresses can't be guessed; accept only what Jaz pasted, and only an @skyslope.com address. */
-export const validSkySlope = (email: string | null | undefined) => !!email && /^[^\s@]+@skyslope\.com$/i.test(email.trim());
+const validSkySlope = isSkySlopeAddress;
 const notJaz = (emails: string[]) => [...new Set(emails.filter((e) => e && e.toLowerCase() !== JAZ_EMAIL))];
 
 function isCash(financing: string | null): boolean {

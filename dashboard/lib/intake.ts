@@ -5,6 +5,7 @@ import {
 } from "./google";
 import { appendRows, readTracker } from "./sheet";
 import { buildMime } from "./mime.ts";
+import { skySlopeCopy } from "./skyslope.ts";
 import { addDays, nowStampET } from "./dates.ts";
 import type { IntakePlan } from "./plan.ts";
 import {
@@ -18,6 +19,7 @@ export interface IntakeResult {
   contractUrl?: string;
   events: { step: string; due: string; id: string }[];
   drafts: { subject: string; to: string; url: string }[];
+  skyslope?: string;
   warnings: string[];
   errors: string[];
 }
@@ -34,8 +36,9 @@ async function createFolder(name: string, parent: string): Promise<string> {
 }
 
 /**
- * Creates the client file from a plan Jaz approved. Nothing here sends email or invites anyone:
- * events go on Jaz's own calendar with no attendees, and every email is a Gmail draft.
+ * Creates the client file from a plan Jaz approved. Events go on Jaz's own calendar with no
+ * attendees, and every email to a person is a Gmail draft. The one possible send is the contract
+ * copy to the file's own @skyslope.com address, and only with AUTO_SEND_SKYSLOPE on.
  */
 export async function runIntake(plan: IntakePlan, pdf: Buffer): Promise<IntakeResult> {
   const result: IntakeResult = { dealId: plan.dealId, events: [], drafts: [], warnings: [...plan.warnings], errors: [] };
@@ -112,19 +115,45 @@ export async function runIntake(plan: IntakePlan, pdf: Buffer): Promise<IntakeRe
     }
   }
 
-  // 4. The Sheet, last, so the dashboard only shows a file once its folder exists.
+  // 4. Copy the contract to the file's SkySlope address for compliance: sent if Jaz turned
+  //    AUTO_SEND_SKYSLOPE on, otherwise a draft for her to send. Never to a guessed address.
+  let skyslopeSentAt = "";
+  const copy = skySlopeCopy(plan.deal.skyslope_email, tracker.settings, { filename: plan.contractFilename, data: pdf });
+  const skyslopeActivity: Partial<Activity>[] = [];
+  try {
+    if (copy.mode === "send") {
+      await gmailApi().users.messages.send({ userId: "me", requestBody: { raw: copy.raw } });
+      skyslopeSentAt = at;
+      result.skyslope = `Sent to ${copy.to}`;
+      skyslopeActivity.push({ at, deal_id: plan.dealId, event: "Copied to SkySlope", detail: `${plan.contractFilename} sent to ${copy.to}`, source_link: result.contractUrl, by: "Claude" });
+    } else if (copy.mode === "draft") {
+      const res = await gmailApi().users.drafts.create({ userId: "me", requestBody: { message: { raw: copy.raw } } });
+      const messageId = res.data.message?.id ?? "";
+      result.drafts.push({ subject: plan.contractFilename, to: copy.to, url: gmailDraftUrl(messageId) });
+      result.skyslope = `Drafted to ${copy.to}. Automatic sending is off in the tracker's Settings tab.`;
+      draftRows.push({
+        deal_id: plan.dealId, to: copy.to, subject: plan.contractFilename, gmail_draft_id: res.data.id ?? "",
+        reason: "Copy to SkySlope for compliance", created_at: at, status: "Waiting for Jaz", gmail_message_id: messageId,
+      });
+    }
+  } catch (e) {
+    result.errors.push(`Copying the contract to SkySlope failed: ${(e as Error).message}`);
+  }
+
+  // 5. The Sheet, last, so the dashboard only shows a file once its folder exists.
   const activity: Partial<Activity>[] = [
     { at, deal_id: plan.dealId, event: "New contract", detail: `File created from the Agreement of Sale after Jaz confirmed the dates`, source_link: result.contractUrl, by: "Jaz" },
     { at, deal_id: plan.dealId, event: "Drive folder created", detail: plan.folderName, source_link: result.folderUrl, by: "Claude" },
     { at, deal_id: plan.dealId, event: "Calendar events added", detail: `${result.events.length} deadlines on Jaz's calendar`, source_link: "", by: "Claude" },
     { at, deal_id: plan.dealId, event: "Drafts created", detail: result.drafts.map((d) => d.subject).join("; ") || "None", source_link: "", by: "Claude" },
+    ...skyslopeActivity,
     ...result.errors.map((err) => ({ at, deal_id: plan.dealId, event: "Intake problem", detail: err, source_link: "", by: "Claude" })),
   ];
   await appendRows("Deals", DEAL_COLS, [{ ...plan.deal, drive_folder_id: folderId }]);
   await appendRows("Milestones", MILESTONE_COLS, milestoneRows);
   await appendRows("Documents", DOCUMENT_COLS, [{
     deal_id: plan.dealId, filename: plan.contractFilename, drive_file_id: contractId, drive_subfolder: SUBFOLDERS[0],
-    received_from: "Jaz (dashboard upload)", received_at: at, skyslope_sent_at: "", gmail_message_id: "",
+    received_from: "Jaz (dashboard upload)", received_at: at, skyslope_sent_at: skyslopeSentAt, gmail_message_id: "",
   }]);
   await appendRows("Drafts", DRAFT_COLS, draftRows);
   await appendRows("Activity", ACTIVITY_COLS, activity);

@@ -217,3 +217,18 @@ test("dual file: Jaz isn't emailed as her own listing agent", () => {
     assert.ok(![...d.to, ...d.cc].includes("jwilliams@gremom.com"), d.kind);
   }
 });
+
+test("SkySlope copy: draft by default, send only when on, never to a bad address", async () => {
+  const { skySlopeCopy } = await import("./skyslope.ts");
+  const doc = { filename: "5722 Malcolm St – Agreement of Sale – 2026-10-10.pdf", data: Buffer.from("%PDF-1.4") };
+  assert.equal(skySlopeCopy("MalcolmSt5722@skyslope.com", {}, doc).mode, "draft");
+  assert.equal(skySlopeCopy("MalcolmSt5722@skyslope.com", { AUTO_SEND_SKYSLOPE: "FALSE" }, doc).mode, "draft");
+  const sent = skySlopeCopy(" MalcolmSt5722@skyslope.com ", { AUTO_SEND_SKYSLOPE: "TRUE" }, doc);
+  assert.equal(sent.mode, "send");
+  const text = Buffer.from(sent.raw, "base64url").toString();
+  assert.match(text, /^To: MalcolmSt5722@skyslope.com\r\n/);
+  assert.ok(!/^(Cc|Bcc):/m.test(text));
+  for (const bad of ["Confirm", "", "malcolm@gmail.com", "x@skyslope.com.evil.com", "a@b@skyslope.com"]) {
+    assert.equal(skySlopeCopy(bad, { AUTO_SEND_SKYSLOPE: "TRUE" }, doc).mode, "none", bad);
+  }
+});
