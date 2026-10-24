@@ -27,7 +27,7 @@ export default async function FileDetail({ params }: { params: Promise<{ id: str
     { role: "Co-op transaction coordinator", name: deal.coop_tc, email: deal.coop_tc_email },
     { role: "Housing counselor", name: deal.housing_counselor, email: deal.housing_counselor_email },
     { role: deal.side === "Listing" ? "Second buyer's agent" : "Co-agent (buyer side)", name: deal.buyer_agent_2, email: deal.buyer_agent_2_email },
-    { role: "Lender", name: deal.lender, email: deal.loan_officer_email },
+    { role: deal.lender ? `Loan officer, ${deal.lender}` : "Loan officer", name: deal.loan_officer || deal.lender, email: deal.loan_officer_email },
     { role: "Processor", name: "", email: deal.processor_email },
     { role: "Title", name: [deal.title_co, deal.title_file_no].filter(Boolean).join(" · "), email: "" },
     { role: "Housing program", name: deal.grant_program, email: "" },

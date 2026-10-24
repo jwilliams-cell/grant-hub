@@ -36,6 +36,7 @@ export interface DayOneFacts {
   /** Extra people on the other side to copy on the key dates email: their second agent or their coordinator. */
   otherSideCc: string[];
   lenderName: string;
+  loanOfficerName: string;
   loanOfficerEmail: string;
   processorEmail: string;
   dates: { label: string; date: string | null }[];
@@ -67,7 +68,7 @@ export function lenderIntro(f: DayOneFacts): EmailDraft {
     to: [f.loanOfficerEmail].filter(Boolean),
     cc: [f.processorEmail, f.coAgentEmail].filter(Boolean),
     subject: `${f.address} (${f.buyerNames}) is under contract`,
-    body: `Hi!\n\n${f.buyerNames} is officially under contract on ${f.address}; the signed Agreement of Sale is attached.\n\n- Mortgage application: ${when(f.mortgageApplication)}\n- Commitment: ${when(f.commitment)}\n- Settlement: ${when(f.settlement)}\n\nTitle is with Quick Abstract. Please keep me copied and let me know once the application is complete and the appraisal is ordered.${SIGN}`,
+    body: `Hi ${f.loanOfficerName.trim().split(/\s+/)[0] || "there"},\n\n${f.buyerNames} is officially under contract on ${f.address}; the signed Agreement of Sale is attached.\n\n- Mortgage application: ${when(f.mortgageApplication)}\n- Commitment: ${when(f.commitment)}\n- Settlement: ${when(f.settlement)}\n\nTitle is with Quick Abstract. Please keep me copied and let me know once the application is complete and the appraisal is ordered.${SIGN}`,
     attachContract: true,
     reason: "Day one: introduce the file to the lender",
   };
@@ -94,8 +95,14 @@ export interface WelcomeFacts {
   depositDue: string | null;
   cash: boolean;
   financingType: string | null;
+  loanTermYears: number | null;
+  loanOfficerName: string;
+  sellerCredit: number | null;
   inspectionType: InspectionType;
   inspectionDue: string | null;
+  negotiationEnd: string | null;
+  inspectionsChosen: string[];
+  disclosureContingency: boolean;
   possession: string | null;
   titleCompany: string;
   quickAbstract: boolean;
@@ -103,89 +110,161 @@ export interface WelcomeFacts {
 
 const money = (n: number | null) => (n ? `$${n.toLocaleString("en-US")}` : "to be confirmed");
 const day = (iso: string | null) => (iso ? formatDayMonth(iso) : "To be confirmed");
+const monthDay = (iso: string | null) => (iso ? formatDayMonth(iso).replace(/^\w+, /, "") : "to be confirmed");
 
 export const INSPECTORS = [
   "Eagle Home Inspection — (267) 538-2292",
   "Corwin Jackson, Core Inspection Group — (215) 987-7547",
   "East Coast Inspection — (215) 275-9064",
 ];
+const DEFAULT_INSPECTIONS = ["Home inspection", "Termite (wood-destroying insect) inspection", "Sewer line inspection"];
+const INSURANCE_AGENTS = [
+  "Farmers Insurance — Glenn Hamilton\n2 Bala Plaza, Suite 300, Bala Cynwyd, PA 19004\n(484) 263-2424",
+  "Allstate — Jada Thompson\n(215) 730-5764 | jadathompson@allstate.com\nQuick-quote form: https://forms.gle/gL82X6pph2AahFTw7",
+];
+const DATES_MATTER = "Please keep in mind that all of the dates above are extremely important and are not flexible. Missing any of them could put you in violation of the Agreement of Sale, and you could lose your deposit.";
+const CLOSING = [
+  "I am here to help you every step of the way, so please do not hesitate to reach out. Thank you for choosing the Buy SMART Team for your real estate needs!",
+  "Warm regards,\nClient Care\nThe Buy SMART Team\nRealty ONE Group Focus",
+];
 
-/**
- * The Buy SMART Team's welcome email to a buyer, from Jaz's own template. Sections change with
- * the deal: cash or mortgage, inspection terms, company or person buying, possession, title company.
- * Title is copied so they send deposit instructions.
- */
-export function buyerCongrats(f: DayOneFacts, w: WelcomeFacts): EmailDraft {
+/** Loan types in plain words, with no acronyms in client email. */
+export function loanTypeWords(type: string | null): string {
+  const t = (type ?? "").trim();
+  const map: [RegExp, string][] = [
+    [/^fha\b|federal housing/i, "Federal Housing Administration"],
+    [/^va\b|veteran/i, "Veterans Affairs"],
+    [/^usda\b|rural/i, "Department of Agriculture rural housing"],
+    [/phfa|housing finance agency/i, "Pennsylvania Housing Finance Agency"],
+    [/^conv/i, "conventional"],
+  ];
+  return map.find(([re]) => re.test(t))?.[1] ?? t;
+}
+
+function inspectorsBlock(notifyWord: string): string[] {
+  return [
+    `If you have any specific concerns about the house, mention them to your inspector. Please send our office the date, time, and name of the inspection company you choose, and we will ${notifyWord}. We encourage you to attend the inspection, which usually takes 2 to 3 hours. Here are some inspectors our clients have worked with:\n\n${INSPECTORS.join("\n")}`,
+    "PLEASE NOTE: We have no affiliation with any of these companies. They are, however, strongly recommended and trusted.",
+    "If you would like help scheduling your inspections, send me your availability and I will set them up for you.",
+  ];
+}
+
+function settlementNotice(f: DayOneFacts, company: boolean): string {
+  return `About one week before settlement, you will receive a settlement notice from the title company. It will include a list of utility companies to call. Please ask each one to put the utilities in ${company ? "your company's" : "your"} name as of settlement day${f.settlement ? `, ${monthDay(f.settlement)}` : ""}. You do not need to ask the gas or water company to come out for a final reading. We will take the readings at the final walk-through and submit them to the title company at settlement.`;
+}
+
+/** Jaz's welcome for a buyer using a lender (her Malcolm St version). */
+function mortgageWelcome(f: DayOneFacts, w: WelcomeFacts): string[] {
   const lender = f.lenderName || "your lender";
+  const contingent = w.inspectionType === "contingency" && !!w.inspectionDue;
+  const keyDates = [
+    `• ${day(w.depositDue)} — Earnest money deposit due${w.deposit ? ` (${money(w.deposit)})` : ""}`,
+    `• ${day(f.mortgageApplication)} — Complete your mortgage application with your lender`,
+    ...(contingent ? [`• ${day(w.inspectionDue)} — Inspection period ends (all inspections must be completed)`] : w.inspectionType === "waived" ? [] : ["• As soon as possible — Schedule and complete your inspections"]),
+    ...(contingent && w.negotiationEnd ? [`• ${day(w.negotiationEnd)} — Last day to negotiate repairs or credits with the seller`] : []),
+    `• ${day(f.commitment)} — Mortgage commitment due to the seller`,
+    `• ${day(f.settlement)} — Settlement (closing day)`,
+  ];
+  const loan = [w.loanTermYears ? `${w.loanTermYears}-year` : "", loanTypeWords(w.financingType)].filter(Boolean).join(" ");
+  const officer = w.loanOfficerName ? ` with your loan officer, ${w.loanOfficerName}` : "";
+  const inspectionText = contingent
+    ? `Please schedule your inspections right away. Everything must be completed by ${day(w.inspectionDue)}.${w.negotiationEnd ? ` If you want to request repairs or credits based on the results, we will negotiate with the seller between ${monthDay(w.inspectionDue)} and ${monthDay(w.negotiationEnd)}.` : ""} Please keep in mind how time-sensitive these dates are.`
+    : w.inspectionType === "informational_only"
+      ? "Your agreement states that inspections will be conducted for informational purposes only. That means the inspections are for your knowledge and planning, not for negotiating repairs or credits with the seller. We still strongly recommend getting them done so you know exactly what you are buying. Please schedule them right away."
+      : w.inspectionType === "waived"
+        ? "Your agreement waives the inspection contingency. You can still have the house inspected for your own information, and we recommend it so you know exactly what you are buying."
+        : "Please schedule your inspections right away so you know exactly what you are buying.";
+  const chosen = w.inspectionsChosen.length ? w.inspectionsChosen : DEFAULT_INSPECTIONS;
+  const titleName = w.quickAbstract ? "our title company, Quick Abstract" : `the title company, ${w.titleCompany}`;
+  const depositBy = w.quickAbstract && (w.deposit ?? 0) > 25000 ? "wire" : "wire or cashier's check";
+
+  return [
+    `Hi ${w.greetingNames || "there"},`,
+    `CONGRATULATIONS! Your offer on ${f.address} was accepted, and a copy of your fully signed Agreement of Sale is attached. The Buy SMART Team will handle transaction coordination for your purchase, and your agent, Jasmine Williams, will be your main point of contact going forward. I will send documents for your review through Dotloop throughout the process, so please reach out anytime with questions.`,
+    "There are several deadlines to meet, inspections to schedule, and items to take care of between now and closing. Together, we will make sure everything is handled thoroughly and on time so your homebuying experience is a smooth one. Here is what to expect:",
+    `YOUR KEY DATES AT A GLANCE\n${keyDates.join("\n")}`,
+    `PURCHASE DETAILS\nPurchase price: ${money(w.price)}${w.sellerCredit ? `\nSeller credit toward your closing costs: ${money(w.sellerCredit)}` : ""}\nEarnest money deposit: ${money(w.deposit)}`,
+    `MORTGAGE\nYour loan is a ${loan ? `${loan} loan` : "mortgage"} through ${lender}${officer}. Please complete your full application, including paying for the appraisal and credit report, by ${day(f.mortgageApplication)}. Your mortgage commitment is due by ${day(f.commitment)}. If the seller does not receive it by then, they have the right to cancel the agreement, so please respond quickly to any document requests from the bank.`,
+    `INSPECTIONS\n${inspectionText}`,
+    `The inspections you chose in your agreement are:\n${chosen.map((x) => `• ${x}`).join("\n")}`,
+    `The seller is required to have the heat and all utilities on for your inspections. ${inspectorsBlock("notify the seller")[0]}`,
+    ...inspectorsBlock("notify the seller").slice(1),
+    ...(w.disclosureContingency
+      ? ["SELLER'S DISCLOSURE\nYour offer is contingent on receiving and approving the seller's disclosure statement. As soon as we receive it, I will send it to you through Dotloop for review. Please read it carefully and let Jasmine know if anything concerns you."]
+      : []),
+    ...(w.possession ? [`POSSESSION\n${w.possession.replace(/\.?$/, ".")} We will confirm this at the final walk-through.`] : []),
+    `EARNEST MONEY DEPOSIT\nYour deposit of ${money(w.deposit)} is due by ${day(w.depositDue)}. You will receive a separate email from ${titleName}, with instructions for submitting it by ${depositBy}. Please follow those instructions carefully and reach out if you have any questions. As a reminder, do not send money based on wiring instructions from any email you are not expecting. Always call to confirm first. ${WIRE_LINE}`,
+    DATES_MATTER,
+    "HOMEOWNERS INSURANCE\nPlease get a homeowners insurance quote right away, and ask about flood insurance as well. Many of our clients find great rates through the company that already handles their car or renters insurance. If you are asked questions about the house that you can't answer, contact me and I will help. We can also recommend an insurance agent:",
+    ...INSURANCE_AGENTS,
+    `TITLE COMPANY\n${w.quickAbstract ? "We will order your title search and title insurance through Quick Abstract on your behalf unless you tell us otherwise." : `Your title search and title insurance are with ${w.titleCompany}.`}`,
+    settlementNotice(f, false),
+    "IMPORTANT: Between now and closing, please do not open new credit cards, finance a car or furniture, change jobs, or make large deposits or purchases without talking to your lender first. Any change to your finances can affect your loan approval.",
+    ...CLOSING,
+  ];
+}
+
+/** Jaz's welcome for a cash buyer (her Forrest Ave version). */
+function cashWelcome(f: DayOneFacts, w: WelcomeFacts): string[] {
   // Quick Abstract takes no cashier's checks over $25,000.
   const balanceRule = w.quickAbstract
     ? "Your remaining balance must be paid by wire. The title company can't accept a personal check, or a cashier's check over $25,000."
     : "Your remaining balance must be paid by wire or cashier's check, not by personal check.";
   const depositBy = w.quickAbstract && (w.deposit ?? 0) > 25000 ? "wire" : "wire or cashier's check";
-
   const keyDates = [
     `• ${day(w.depositDue)} — Deposit due${w.deposit ? ` (${money(w.deposit)})` : ""}`,
-    ...(w.cash ? [] : [`• ${day(f.mortgageApplication)} — Mortgage application due`]),
     ...(w.inspectionType === "waived" ? [] : w.inspectionType === "contingency" && w.inspectionDue
-      ? [`• ${day(w.inspectionDue)} — Inspections done and your reply to the seller due`]
+      ? [`• ${day(w.inspectionDue)} — Inspection period ends (all inspections must be completed)`]
       : ["• As soon as possible — Schedule and complete your inspections"]),
-    ...(w.cash ? [] : [`• ${day(f.commitment)} — Mortgage commitment due`]),
+    ...(w.inspectionType === "contingency" && w.negotiationEnd ? [`• ${day(w.negotiationEnd)} — Last day to negotiate repairs or credits with the seller`] : []),
     `• ${day(f.settlement)} — Settlement (closing day)`,
   ];
-
-  const financing = w.cash
-    ? "Cash purchase (no mortgage)"
-    : `${w.financingType ? `${w.financingType} mortgage` : "Mortgage"}${f.lenderName ? ` with ${f.lenderName}` : ""}`;
-
-  const fundsSection = w.cash
-    ? `CASH PURCHASE\nBecause this is a cash purchase, your agreement is not contingent on a mortgage. Please make sure your funds are ready and available to wire well before settlement. The title company will confirm your exact amount due on your settlement statement before closing. ${balanceRule}`
-    : `YOUR MORTGAGE\nPlease complete your mortgage application with ${lender} by ${day(f.mortgageApplication)} and send them anything they ask for right away. Your mortgage commitment is due by ${day(f.commitment)}. Until settlement, please talk to your lender before opening new credit, changing jobs, or making large purchases or deposits. The title company will confirm your exact amount due on your settlement statement before closing. ${balanceRule}`;
-
   const inspectionIntro = {
     informational_only: "Your agreement states that inspections will be conducted for informational purposes only. That means the inspections are for your knowledge and planning, not for negotiating repairs or credits with the seller. We still strongly recommend getting them done so you know exactly what you are buying and can plan your renovation budget. Please schedule them right away.",
-    contingency: `Your agreement gives you until ${day(w.inspectionDue)} to complete your inspections and respond to the seller. Please schedule them right away so we have time to review the reports together before that deadline.`,
+    contingency: `Please schedule your inspections right away. Everything must be completed by ${day(w.inspectionDue)}.${w.negotiationEnd ? ` If you want to request repairs or credits based on the results, we will negotiate with the seller between ${monthDay(w.inspectionDue)} and ${monthDay(w.negotiationEnd)}.` : ""} Please keep in mind how time-sensitive these dates are.`,
     waived: "Your agreement waives the inspection contingency. You can still have the house inspected for your own information, and we recommend it so you know exactly what you are buying.",
     unknown: "Please schedule your inspections right away so you know exactly what you are buying.",
   }[w.inspectionType];
-
+  const chosen = w.inspectionsChosen.length ? w.inspectionsChosen : DEFAULT_INSPECTIONS;
   const insurance = w.entityName
     ? `Please get an insurance quote right away. Since this property is being purchased by your company, ask for a landlord or dwelling policy in the name of ${w.entityName}, and ask about flood insurance as well.`
     : "Please get a homeowners insurance quote right away, and ask about flood insurance as well.";
 
-  const title = w.quickAbstract
-    ? "We will order your title search and title insurance through Quick Abstract on your behalf unless you tell us otherwise."
-    : `Your title search and title insurance are with ${w.titleCompany}.`;
-
-  const body = [
+  return [
     `Hi ${w.greetingNames || "there"},`,
     `CONGRATULATIONS! Your offer on ${f.address} was accepted, and a copy of the fully signed Agreement of Sale${w.entityName ? ` for ${w.entityName}` : ""} is attached. The Buy SMART Team will handle transaction coordination for your purchase, and Jasmine Williams will be your main point of contact going forward. I will send documents for your review through Dotloop throughout the process, so please reach out anytime with questions.`,
     "There are a few deadlines to meet and items to take care of between now and closing. Together, we will make sure everything is handled thoroughly and on time so your purchase is a smooth one. Here is what to expect:",
     `YOUR KEY DATES AT A GLANCE\n${keyDates.join("\n")}`,
-    `PURCHASE DETAILS\nPurchase price: ${money(w.price)}\nDeposit: ${money(w.deposit)}\nFinancing: ${financing}\nSettlement date: ${f.settlement ? formatLong(f.settlement) : "to be confirmed"}`,
-    fundsSection,
+    `PURCHASE DETAILS\nPurchase price: ${money(w.price)}${w.sellerCredit ? `\nSeller credit toward your closing costs: ${money(w.sellerCredit)}` : ""}\nDeposit: ${money(w.deposit)}\nFinancing: Cash purchase (no mortgage)\nSettlement date: ${f.settlement ? formatLong(f.settlement) : "to be confirmed"}`,
+    `CASH PURCHASE\nBecause this is a cash purchase, your agreement is not contingent on a mortgage. Please make sure your funds are ready and available to wire well before settlement. The title company will confirm your exact amount due on your settlement statement before closing. ${balanceRule}`,
     `INSPECTIONS\n${inspectionIntro}`,
-    "We recommend:\n• Home inspection\n• Termite (wood-destroying insect) inspection\n• Sewer line inspection",
-    `If you have any specific concerns about the house, mention them to your inspector. Please send our office the date, time, and name of the inspection company you choose, and we will coordinate access with the seller. We encourage you to attend the inspection, which usually takes 2 to 3 hours. Here are some inspectors our clients have worked with:\n\n${INSPECTORS.join("\n")}`,
-    "PLEASE NOTE: We have no affiliation with any of these companies. They are, however, strongly recommended and trusted.",
-    "If you would like help scheduling your inspections, send me your availability and I will set them up for you.",
+    `We recommend:\n${chosen.map((x) => `• ${x}`).join("\n")}`,
+    ...inspectorsBlock("coordinate access with the seller"),
+    ...(w.disclosureContingency
+      ? ["SELLER'S DISCLOSURE\nYour offer is contingent on receiving and approving the seller's disclosure statement. As soon as we receive it, I will send it to you through Dotloop for review. Please read it carefully and let Jasmine know if anything concerns you."]
+      : []),
     ...(w.possession ? [`POSSESSION\n${w.possession.replace(/\.?$/, ".")} We will confirm this at the final walk-through.`] : []),
-    `DEPOSIT\nYour deposit of ${money(w.deposit)} is due by ${day(w.depositDue)}. You will receive separate instructions for submitting it by ${depositBy}. Please follow those instructions carefully and reach out if you have any questions. As a reminder, do not send money based on wiring instructions from any email you are not expecting. ${WIRE_LINE}`,
-    "Please keep in mind that all of the dates above are extremely important and are not flexible. Missing any of them could put you in violation of the Agreement of Sale, and you could lose your deposit.",
-    `PROPERTY INSURANCE\n${insurance} Your policy needs to be in place by settlement.${w.cash ? "" : " Your lender will need proof of the policy before closing."} If you are asked questions about the house that you can't answer, contact me and I will help. We can also recommend an insurance agent:`,
-    "Farmers Insurance — Glenn Hamilton\n2 Bala Plaza, Suite 300, Bala Cynwyd, PA 19004\n(484) 263-2424",
-    "Allstate — Jada Thompson\n(215) 730-5764 | jadathompson@allstate.com\nQuick-quote form: https://forms.gle/gL82X6pph2AahFTw7",
-    `TITLE COMPANY\n${title}${w.entityName ? ` The title company will also need your company documents (such as your Certificate of Organization and Operating Agreement) to close in the name of ${w.entityName}, so please have those ready to send.` : ""}`,
-    `About one week before settlement, you will receive a settlement notice from the title company. It will include a list of utility companies to call. Please ask each one to put the utilities in ${w.entityName ? "your company's" : "your"} name as of settlement day${f.settlement ? `, ${formatDayMonth(f.settlement).replace(/^\w+, /, "")}` : ""}. You do not need to ask the gas or water company to come out for a final reading. We will take the readings at the final walk-through and submit them to the title company at settlement.`,
-    "I am here to help you every step of the way, so please do not hesitate to reach out. Thank you for choosing the Buy SMART Team for your real estate needs!",
-    "Warm regards,\nClient Care\nThe Buy SMART Team\nRealty ONE Group Focus",
-  ].join("\n\n");
+    `DEPOSIT\nYour deposit of ${money(w.deposit)} is due by ${day(w.depositDue)}. You will receive separate instructions for submitting it by ${depositBy}. Please follow those instructions carefully and reach out if you have any questions. As a reminder, do not send money based on wiring instructions from any email you are not expecting. Always call to confirm first. ${WIRE_LINE}`,
+    DATES_MATTER,
+    `PROPERTY INSURANCE\n${insurance} Your policy needs to be in place by settlement. If you are asked questions about the house that you can't answer, contact me and I will help. We can also recommend an insurance agent:`,
+    ...INSURANCE_AGENTS,
+    `TITLE COMPANY\n${w.quickAbstract ? "We will order your title search and title insurance through Quick Abstract on your behalf unless you tell us otherwise." : `Your title search and title insurance are with ${w.titleCompany}.`}${w.entityName ? ` The title company will also need your company documents (such as your Certificate of Organization and Operating Agreement) to close in the name of ${w.entityName}, so please have those ready to send.` : ""}`,
+    settlementNotice(f, !!w.entityName),
+    ...CLOSING,
+  ];
+}
 
+/**
+ * The Buy SMART Team's welcome email to a buyer, from Jaz's own templates: one for buyers using a
+ * lender, one for cash. Title is copied so they send deposit instructions.
+ */
+export function buyerCongrats(f: DayOneFacts, w: WelcomeFacts): EmailDraft {
   return {
     kind: "buyer_congrats",
     to: f.buyerEmails,
     cc: [w.quickAbstract ? QUICK_ABSTRACT.closer : "", f.coAgentEmail].filter(Boolean),
     subject: `${f.address} – Your offer was accepted!`,
-    body,
+    body: (w.cash ? cashWelcome(f, w) : mortgageWelcome(f, w)).join("\n\n"),
     attachContract: true,
     reason: "Day one: welcome the buyer with key dates; title sends deposit instructions",
   };

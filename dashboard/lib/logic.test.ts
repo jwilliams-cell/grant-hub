@@ -49,6 +49,10 @@ function sampleContract(overrides: Partial<Contract> = {}): Contract {
     settlement_place: "Quick Abstract",
     inspection_type: "contingency",
     possession: null,
+    seller_credit: null,
+    loan_term_years: null,
+    inspections_chosen: [],
+    seller_disclosure_contingency: false,
     other_deadlines: [],
     open_questions: [],
     ...overrides,
@@ -292,18 +296,44 @@ test("buyer welcome email: cash LLC with informational inspections (Forrest Ave)
   assert.ok(!/be honest with me/i.test(b));
 });
 
-test("buyer welcome email: mortgage with an inspection deadline", () => {
-  const plan = buildPlan(resolveDates(sampleContract()));
-  const b = plan.drafts.find((x) => x.kind === "buyer_congrats")!.body;
-  assert.ok(b.includes("• Saturday, October 17 — Mortgage application due"));
-  assert.ok(b.includes("• Tuesday, October 20 — Inspections done and your reply to the seller due"));
-  assert.ok(b.includes("• Tuesday, November 3 — Mortgage commitment due"));
-  assert.ok(b.includes("Financing: FHA mortgage with First Citizens Community Bank"));
-  assert.ok(b.includes("YOUR MORTGAGE") && !b.includes("CASH PURCHASE"));
-  assert.ok(b.includes("gives you until Tuesday, October 20 to complete your inspections"));
-  assert.ok(!b.includes("POSSESSION"));
-  assert.ok(b.includes("homeowners insurance quote") && b.includes("Your lender will need proof of the policy"));
-  assert.ok(!b.includes("LLC"));
+test("buyer welcome email, mortgage: matches Jaz's Malcolm St text word for word", async () => {
+  const { readFileSync } = await import("node:fs");
+  const expected = readFileSync(new URL("./fixtures/malcolm-welcome.txt", import.meta.url), "utf8").trimEnd();
+  const d = (date: string) => ({ date, days_after_execution: null, source: null, confirm: false });
+  const plan = buildPlan(resolveDates(sampleContract({
+    property: { address: "5722 Malcolm Street", city: "Philadelphia", zip: "19143" },
+    price: 210000, deposit_amount: 1000, seller_credit: 10000, loan_term_years: 30, financing_type: "FHA",
+    lender: {
+      company: "First Citizens Community Bank",
+      loan_officer: { name: "Crista Lowrie", email: "clowrie@myfccb.com", phone: null },
+      processor: null,
+    },
+    inspection_type: "contingency",
+    inspections_chosen: ["Home inspection", "Termite (wood-destroying insect) inspection", "Sewer line inspection", "Homeowners and flood insurance review"],
+    seller_disclosure_contingency: true,
+    dates: {
+      execution: d("2026-10-09"),
+      deposit_due: d("2026-10-14"),
+      mortgage_application_due: d("2026-10-16"),
+      inspection_contingency_end: d("2026-10-19"),
+      seller_response_end: d("2026-10-24"),
+      appraisal_contingency_end: { date: null, days_after_execution: null, source: null, confirm: true },
+      mortgage_commitment: d("2026-10-26"),
+      settlement: d("2026-11-06"),
+    },
+  })));
+  const body = plan.drafts.find((x) => x.kind === "buyer_congrats")!.body;
+  assert.equal(body, expected);
+  // The lender introduction greets the loan officer by name, and the name is saved on the deal.
+  assert.ok(plan.drafts.find((x) => x.kind === "lender_intro")!.body.startsWith("Hi Crista,"));
+  assert.equal(plan.deal.loan_officer, "Crista Lowrie");
+});
+
+test("loan officer: an email with no name is flagged", () => {
+  const plan = buildPlan(resolveDates(sampleContract({
+    lender: { company: "Some Bank", loan_officer: { name: null, email: "lo@bank.com", phone: null }, processor: null },
+  })));
+  assert.ok(plan.warnings.some((w) => w.includes("loan officer's name")));
 });
 
 test("co-op coordinator is copied on key dates on listings too, and unnamed people are flagged", () => {

@@ -68,6 +68,7 @@ export function buildPlan(c: Contract): IntakePlan {
     financing: c.financing_type ?? "",
     lender: c.lender?.company ?? "",
     loan_officer_email: c.lender?.loan_officer?.email ?? "",
+    loan_officer: c.lender?.loan_officer?.name ?? "",
     processor_email: c.lender?.processor?.email ?? "",
     title_co: titleCo,
     title_file_no: c.title?.file_no ?? "",
@@ -145,6 +146,7 @@ export function buildPlan(c: Contract): IntakePlan {
     coAgentEmail: coAgent?.email ?? "",
     otherSideCc: [otherSecondAgent?.email, coopCoordinator?.email].filter((e): e is string => !!e),
     lenderName: c.lender?.company ?? "",
+    loanOfficerName: c.lender?.loan_officer?.name ?? "",
     loanOfficerEmail: c.lender?.loan_officer?.email ?? "",
     processorEmail: c.lender?.processor?.email ?? "",
     dates: (["execution", "deposit_due", "mortgage_application_due", "inspection_contingency_end", "mortgage_commitment", "settlement"] as DateKey[])
@@ -180,6 +182,12 @@ export function buildPlan(c: Contract): IntakePlan {
         depositDue: date("deposit_due"),
         cash,
         financingType: c.financing_type,
+        loanTermYears: c.loan_term_years,
+        loanOfficerName: c.lender?.loan_officer?.name ?? "",
+        sellerCredit: c.seller_credit,
+        negotiationEnd: date("seller_response_end"),
+        inspectionsChosen: c.inspections_chosen,
+        disclosureContingency: c.seller_disclosure_contingency,
         inspectionType: c.inspection_type,
         inspectionDue: date("inspection_contingency_end"),
         possession: c.possession,
@@ -200,7 +208,7 @@ export function buildPlan(c: Contract): IntakePlan {
 
   // Every person on the file needs a name: emails greet them by it, and the dashboard lists them.
   const unnamed: [string, PersonValueLike | null | undefined][] = [
-    ["housing counselor", c.grant_counselor], ["co-op transaction coordinator", c.coop_coordinator], ["second buyer agent", c.buyer_agent_2],
+    ["housing counselor", c.grant_counselor], ["co-op transaction coordinator", c.coop_coordinator], ["loan officer", c.lender?.loan_officer], ["second buyer agent", c.buyer_agent_2],
   ];
   for (const [label, p] of unnamed) {
     if (p?.email && !p.name?.trim()) warnings.push(`Add the ${label}'s name. There's an email for them but no name.`);

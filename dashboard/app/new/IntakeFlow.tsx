@@ -192,7 +192,9 @@ export function IntakeFlow({ useBlob }: { useBlob: boolean }) {
           <Field label="Price" type="number" value={c.price} onChange={(v) => set(["price"], v ? Number(v) : null)} />
           <Field label="Deposit" type="number" value={c.deposit_amount} onChange={(v) => set(["deposit_amount"], v ? Number(v) : null)} />
           <Field label="Financing" value={c.financing_type} onChange={(v) => set(["financing_type"], text(v))} />
-          <Field label="Seller assist" value={c.seller_assist} onChange={(v) => set(["seller_assist"], text(v))} />
+          <Field label="Seller credit toward closing costs" type="number" value={c.seller_credit} onChange={(v) => set(["seller_credit"], v ? Number(v) : null)} />
+          <Field label="Seller assist (other terms)" value={c.seller_assist} onChange={(v) => set(["seller_assist"], text(v))} />
+          <Field label="Loan term (years)" type="number" value={c.loan_term_years} onChange={(v) => set(["loan_term_years"], v ? Number(v) : null)} />
           <Field label="Grant program" value={c.grant_program} onChange={(v) => set(["grant_program"], text(v))} />
           <Field label="Title company" value={c.title?.company} onChange={(v) => set(["title", "company"], text(v))} />
           <div className="field">
@@ -205,6 +207,14 @@ export function IntakeFlow({ useBlob }: { useBlob: boolean }) {
             </select>
           </div>
           <Field label="Possession at settlement" value={c.possession} onChange={(v) => set(["possession"], text(v))} />
+          <Field label="Inspections the buyer chose (comma separated)" value={c.inspections_chosen.join(", ")} onChange={(v) => set(["inspections_chosen"], v.split(",").map((x) => x.trim()).filter(Boolean))} />
+          <div className="field">
+            <label htmlFor="disclosure">Seller's disclosure contingency</label>
+            <select id="disclosure" className="input" value={c.seller_disclosure_contingency ? "yes" : "no"} onChange={(e) => set(["seller_disclosure_contingency"], e.target.value === "yes")}>
+              <option value="yes">Yes, the offer depends on approving it</option>
+              <option value="no">No</option>
+            </select>
+          </div>
         </div>
       </section>
 
@@ -276,6 +286,7 @@ export function IntakeFlow({ useBlob }: { useBlob: boolean }) {
           <Field label="Second buyer agent email" type="email" value={c.buyer_agent_2?.email} onChange={(v) => set(["buyer_agent_2", "email"], text(v))} />
           <Field label="Second buyer agent brokerage" value={c.buyer_agent_2?.brokerage} onChange={(v) => set(["buyer_agent_2", "brokerage"], text(v))} />
           <Field label="Lender" value={c.lender?.company} onChange={(v) => set(["lender", "company"], text(v))} />
+          <Field label="Loan officer" value={c.lender?.loan_officer?.name} onChange={(v) => set(["lender", "loan_officer"], { ...(c.lender?.loan_officer ?? emptyPerson), name: text(v) })} />
           <Field label="Loan officer email" type="email" value={c.lender?.loan_officer?.email} onChange={(v) => set(["lender", "loan_officer"], { ...(c.lender?.loan_officer ?? emptyPerson), email: text(v) })} />
           <Field label="Processor email" type="email" value={c.lender?.processor?.email} onChange={(v) => set(["lender", "processor"], { ...(c.lender?.processor ?? emptyPerson), email: text(v) })} />
         </div>

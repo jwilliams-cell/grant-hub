@@ -11,6 +11,7 @@ const SAMPLE: DayOneFacts = {
   sellerNames: "[Seller]",
   coopAgentName: "[Agent name, brokerage]",
   coopAgentEmail: "[agent email]",
+  loanOfficerName: "[Loan officer]",
   coAgentName: "",
   coAgentEmail: "",
   otherSideCc: ["[seller side coordinator email]"],
@@ -27,11 +28,15 @@ const SAMPLE: DayOneFacts = {
 // The buyer welcome email changes with the deal; show the two most common versions.
 const WELCOME_CASH_LLC: WelcomeFacts = {
   greetingNames: "[Buyer first name]", entityName: "[Company name]", price: null, deposit: null, depositDue: null, cash: true,
-  financingType: null, inspectionType: "informational_only", inspectionDue: null, possession: "[How the property is delivered]",
+  financingType: null, loanTermYears: null, loanOfficerName: "", sellerCredit: null,
+  inspectionType: "informational_only", inspectionDue: null, negotiationEnd: null, inspectionsChosen: [],
+  disclosureContingency: false, possession: "[How the property is delivered]",
   titleCompany: "Quick Abstract", quickAbstract: true,
 };
 const WELCOME_MORTGAGE: WelcomeFacts = {
-  ...WELCOME_CASH_LLC, entityName: null, cash: false, financingType: "[Loan type]", inspectionType: "contingency", possession: null,
+  ...WELCOME_CASH_LLC, entityName: null, cash: false, financingType: "FHA", loanTermYears: 30, loanOfficerName: "[Loan officer]",
+  inspectionType: "contingency", inspectionDue: "[inspection end date]", negotiationEnd: "[negotiation end date]",
+  disclosureContingency: true, possession: null,
 };
 
 export default function TemplatesPage() {

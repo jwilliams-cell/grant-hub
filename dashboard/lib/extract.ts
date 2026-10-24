@@ -13,6 +13,7 @@ Dates:
 - The execution date is the date of the last signature or initial.
 - When the contract gives a deadline as a number of days after execution, put that number in days_after_execution and count the calendar date out from the execution date.
 - For each date, quote or cite the paragraph it came from in source.
+- seller_response_end is the last day to negotiate repairs or credits with the seller after inspections (the end of the negotiation period).
 - Set confirm to true for any date you could not confirm from the documents, and leave date empty rather than guessing.
 
 Leave any field the contract doesn't give empty ("" for text, 0 for amounts). Don't fill it in from general knowledge.
