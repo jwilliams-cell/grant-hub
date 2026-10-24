@@ -43,7 +43,7 @@ export function SetupNeeded({ error }: { error: string }) {
   return (
     <div className="card stack-sm">
       <h2>The tracker Sheet isn't connected yet</h2>
-      <p className="muted">The dashboard reads the BuySmart TC Tracker Sheet. Fill in the Google settings in <code>dashboard/.env</code> (see <code>.env.example</code> and the README), then reload.</p>
+      <p className="muted">The dashboard reads the BuySmart TC Tracker Sheet. On Vercel, add the settings below under Settings → Environments → Production → Environment Variables, then redeploy. (Running locally, they go in <code>dashboard/.env</code>.) Names must match exactly.</p>
       <p className="error-text">{error}</p>
     </div>
   );
