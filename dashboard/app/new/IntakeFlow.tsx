@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useRef, useState, useTransition } from "react";
+import { upload } from "@vercel/blob/client";
 import { createFile, readContract } from "./actions";
 import { DATE_KEYS, DATE_LABELS, resolveDates, type Contract, type PersonValue } from "@/lib/contract";
 import { buildPlan } from "@/lib/plan";
@@ -31,9 +32,10 @@ const SEEDS = {
   title: { company: null, file_no: null },
 };
 
-export function IntakeFlow() {
+export function IntakeFlow({ useBlob }: { useBlob: boolean }) {
   const [step, setStep] = useState<Step>("upload");
   const [file, setFile] = useState<File | null>(null);
+  const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [contract, setContract] = useState<Contract | null>(null);
   const [result, setResult] = useState<IntakeResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -56,9 +58,20 @@ export function IntakeFlow() {
     if (!f) return;
     setError(null);
     setFile(f);
-    const fd = new FormData();
-    fd.set("pdf", f);
     start(async () => {
+      const fd = new FormData();
+      if (useBlob) {
+        // Hosted: send the PDF straight to private storage, past the 4.5 MB request limit.
+        try {
+          const blob = await upload(`contracts/${f.name}`, f, { access: "private", handleUploadUrl: "/api/upload", contentType: "application/pdf" });
+          setBlobUrl(blob.url);
+          fd.set("blobUrl", blob.url);
+          fd.set("filename", f.name);
+        } catch (e) {
+          setError(`The upload didn't go through: ${(e as Error).message}`);
+          return;
+        }
+      } else fd.set("pdf", f);
       const res = await readContract(fd);
       if (res.ok) {
         setContract(res.contract);
@@ -71,7 +84,8 @@ export function IntakeFlow() {
     if (!file || !contract) return;
     setError(null);
     const fd = new FormData();
-    fd.set("pdf", file);
+    if (blobUrl) fd.set("blobUrl", blobUrl);
+    else fd.set("pdf", file);
     fd.set("contract", JSON.stringify(contract));
     start(async () => {
       const res = await createFile(fd);
@@ -251,7 +265,7 @@ export function IntakeFlow() {
           <button className="btn btn-primary" disabled={pending || !c.property.address} onClick={create}>
             {pending ? "Setting up the file…" : "Confirm and create the file"}
           </button>
-          <button className="btn btn-ghost" disabled={pending} onClick={() => { setStep("upload"); setContract(null); setFile(null); }}>
+          <button className="btn btn-ghost" disabled={pending} onClick={() => { setStep("upload"); setContract(null); setFile(null); setBlobUrl(null); }}>
             Start over
           </button>
         </div>

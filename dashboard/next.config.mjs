@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // The playbook markdown lives one level up, in the repo root.
-  outputFileTracingIncludes: { "/playbook": ["../transaction-coordinator.md"] },
+  // prebuild copies the playbook from the repo root into content/.
+  outputFileTracingIncludes: { "/playbook": ["./content/transaction-coordinator.md"] },
   serverExternalPackages: ["googleapis"],
   experimental: { serverActions: { bodySizeLimit: "35mb" } },
 };

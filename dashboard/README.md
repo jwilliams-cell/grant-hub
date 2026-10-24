@@ -39,7 +39,7 @@ npm run dev             # http://localhost:3000
 
 The scopes are Sheets, Drive, Calendar events and Gmail compose (drafts only). The app can't read Jaz's inbox.
 
-**Hosting:** set `DASHBOARD_PASSWORD` (basic auth) and `APP_URL` before putting it anywhere other than localhost.
+**Hosting (Vercel):** import the repo with Root Directory `dashboard`, and set the variables from `.env.example` in the project settings. Always set `DASHBOARD_PASSWORD` (basic auth) and `APP_URL`. Then create a **private Blob store** under Storage and connect it to the project. That adds `BLOB_READ_WRITE_TOKEN`, so contracts upload straight to Blob storage, past Vercel's 4.5 MB request limit. Each contract is deleted from Blob storage once it's saved in Drive. `npm run build` copies `../transaction-coordinator.md` into `content/` for the Playbook page.
 
 **Without Google:** `TRACKER_FIXTURE=/path/to/rows.json npm run dev` reads `{ "Deals": [[header…], [row…]], … }` instead of the Sheet. `../seed/sheet-rows.json` works. New contract still needs Google.
 
