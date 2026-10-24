@@ -6,7 +6,7 @@ import {
   clientName, clientPeople, dealSlug, lastName, DATE_LABELS, type Contract, type ContractDateValue, type DateKey,
 } from "./contract.ts";
 import {
-  agentTimeline, buyerCongrats, grantReminder, lenderIntro, llcDocuments, titleOrder, JAZ_EMAIL, QUICK_ABSTRACT,
+  agentTimeline, buyerCongrats, grantReminder, housingAgency, lenderIntro, llcDocuments, titleOrder, JAZ_EMAIL, QUICK_ABSTRACT,
   type DayOneFacts, type EmailDraft,
 } from "./templates.ts";
 import { isSkySlopeAddress } from "./skyslope.ts";
@@ -165,11 +165,31 @@ export function buildPlan(c: Contract): IntakePlan {
     if (facts.coopAgentEmail) drafts.push(agentTimeline(facts));
     else warnings.push("No listing agent email in the contract, so the key dates email wasn't drafted.");
     if (facts.buyerEmails.length) {
-      const congrats = buyerCongrats(facts);
-      if (!usesQuickAbstract) congrats.cc = [];
-      drafts.push(congrats);
+      const entity = c.buyer_entity?.name ?? null;
+      const firstNames = c.buyers.map((b) => b.name?.trim().split(/\s+/)[0]).filter(Boolean) as string[];
+      drafts.push(buyerCongrats(facts, {
+        greetingNames: firstNames.join(" and ") || c.buyer_entity?.signer?.split(/\s+/)[0] || "",
+        entityName: entity,
+        price: c.price,
+        deposit: c.deposit_amount,
+        depositDue: date("deposit_due"),
+        cash,
+        financingType: c.financing_type,
+        inspectionType: c.inspection_type,
+        inspectionDue: date("inspection_contingency_end"),
+        possession: c.possession,
+        titleCompany: titleCo,
+        quickAbstract: usesQuickAbstract,
+      }));
     } else warnings.push("No buyer email in the contract, so the congratulations email wasn't drafted.");
     if (c.buyer_entity?.name && facts.buyerEmails.length) drafts.push(llcDocuments(facts, c.buyer_entity.name));
+    // Housing agency: counselors change by program, so Jaz enters one per file. Drafted only once there's an email.
+    if (c.grant_counselor?.email) {
+      const people = c.buyers.map((b) => b.name).filter((n): n is string => !!n);
+      drafts.push(housingAgency(facts, people, { name: c.grant_counselor.name ?? "", email: c.grant_counselor.email }));
+    } else if (c.grant_program) {
+      warnings.push(`This file has a housing program (${c.grant_program}). Add the housing counselor's name and email on this page to draft the housing agency email.`);
+    }
   }
   if (c.grant_program) drafts.push(grantReminder(facts, c.grant_program, settlement ? addDays(settlement, -30) : null));
 

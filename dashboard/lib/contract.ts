@@ -24,6 +24,10 @@ const ContractDate = z.object({
   confirm: z.boolean().describe("True when the date could not be confirmed from the documents"),
 });
 
+/** How the Agreement of Sale treats inspections. */
+export const INSPECTION_TYPES = ["contingency", "informational_only", "waived", "unknown"] as const;
+export type InspectionType = (typeof INSPECTION_TYPES)[number];
+
 export const DATE_KEYS = [
   "execution",
   "deposit_due",
@@ -76,6 +80,8 @@ export const ContractSchema = z.object({
   grant_counselor: Person.nullable(),
   dates: z.object(Object.fromEntries(DATE_KEYS.map((k) => [k, ContractDate])) as Record<DateKey, typeof ContractDate>),
   settlement_place: z.string().nullable(),
+  inspection_type: z.enum(INSPECTION_TYPES),
+  possession: z.string().nullable().describe("How the property is delivered at settlement, e.g. vacant and broom-clean, tenant-occupied"),
   other_deadlines: z
     .array(ContractDate.extend({ label: z.string() }))
     .describe("Anything else time-bound in the addenda: leaseback, solar lease transfer, repairs to complete"),
@@ -187,6 +193,10 @@ export const ContractWireSchema = z.object({
   grant_counselor: WirePerson,
   dates: z.object(Object.fromEntries(DATE_KEYS.map((k) => [k, WireDate])) as Record<DateKey, typeof WireDate>),
   settlement_place: z.string().describe('Settlement place, or ""'),
+  inspection_type: z
+    .enum(INSPECTION_TYPES)
+    .describe("contingency: buyer can negotiate or terminate after inspections; informational_only: inspections for the buyer's information only; waived: buyer waived inspections; unknown if unclear"),
+  possession: z.string().describe('How the property is delivered at settlement (vacant, broom-clean, tenants, items excluded), in plain words; "" if not stated'),
   other_deadlines: z
     .array(WireDate.extend({ label: z.string() }))
     .describe("Anything else time-bound in the addenda: leaseback, solar lease transfer, repairs to complete"),
@@ -244,6 +254,8 @@ export function fromWire(w: ContractWire): Contract {
     grant_counselor: personOrNull(w.grant_counselor),
     dates: Object.fromEntries(DATE_KEYS.map((k) => [k, date(w.dates[k])])) as Contract["dates"],
     settlement_place: str(w.settlement_place),
+    inspection_type: w.inspection_type,
+    possession: str(w.possession),
     other_deadlines: w.other_deadlines.map((d) => ({ ...date(d), label: d.label })),
     open_questions: w.open_questions,
   };

@@ -1,5 +1,5 @@
 import { CopyButton } from "@/components/CopyButton";
-import { agentTimeline, buyerCongrats, FOLLOW_UPS, lenderIntro, llcDocuments, titleOrder, type DayOneFacts } from "@/lib/templates";
+import { agentTimeline, buyerCongrats, FOLLOW_UPS, housingAgency, lenderIntro, llcDocuments, titleOrder, type DayOneFacts, type WelcomeFacts } from "@/lib/templates";
 
 export const metadata = { title: "Templates · BuySmart Transaction Desk" };
 
@@ -24,8 +24,22 @@ const SAMPLE: DayOneFacts = {
   settlement: null,
 };
 
+// The buyer welcome email changes with the deal; show the two most common versions.
+const WELCOME_CASH_LLC: WelcomeFacts = {
+  greetingNames: "[Buyer first name]", entityName: "[Company name]", price: null, deposit: null, depositDue: null, cash: true,
+  financingType: null, inspectionType: "informational_only", inspectionDue: null, possession: "[How the property is delivered]",
+  titleCompany: "Quick Abstract", quickAbstract: true,
+};
+const WELCOME_MORTGAGE: WelcomeFacts = {
+  ...WELCOME_CASH_LLC, entityName: null, cash: false, financingType: "[Loan type]", inspectionType: "contingency", possession: null,
+};
+
 export default function TemplatesPage() {
-  const dayOne = [titleOrder(SAMPLE), lenderIntro(SAMPLE), agentTimeline(SAMPLE), buyerCongrats(SAMPLE), llcDocuments(SAMPLE, "[LLC name]")];
+  const dayOne = [
+    titleOrder(SAMPLE), lenderIntro(SAMPLE), agentTimeline(SAMPLE),
+    buyerCongrats(SAMPLE, WELCOME_CASH_LLC), buyerCongrats(SAMPLE, WELCOME_MORTGAGE),
+    llcDocuments(SAMPLE, "[LLC name]"), housingAgency(SAMPLE, ["[Buyer]"], { name: "[Counselor]", email: "[counselor email]" }),
+  ];
   return (
     <div className="stack">
       <div className="section">
@@ -38,7 +52,7 @@ export default function TemplatesPage() {
           {dayOne.map((t) => {
             const full = `Subject: ${t.subject}\n\n${t.body}`;
             return (
-              <div key={t.kind} className="card stack-sm">
+              <div key={t.kind + t.body.length} className="card stack-sm">
                 <div className="card-head" style={{ marginBottom: 0 }}>
                   <h3>{t.subject}</h3>
                   <CopyButton text={full} />

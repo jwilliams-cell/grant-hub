@@ -60,6 +60,8 @@ test("fromWire turns empty values back into blanks the review form understands",
       settlement: { date: "2026-11-13", days_after_execution: -1, source: "Paragraph 5", confirm: false },
     },
     settlement_place: "",
+    inspection_type: "informational_only",
+    possession: "Vacant and broom-clean; tenants' belongings excluded",
     other_deadlines: [],
     open_questions: [],
   };

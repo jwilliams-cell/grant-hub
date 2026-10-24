@@ -46,6 +46,11 @@ export function formatLong(iso: string): string {
   return toUTC(iso).toLocaleDateString("en-US", { timeZone: "UTC", weekday: "long", month: "long", day: "numeric", year: "numeric" });
 }
 
+export function formatDayMonth(iso: string): string {
+  if (!isISODate(iso)) return iso;
+  return toUTC(iso).toLocaleDateString("en-US", { timeZone: "UTC", weekday: "long", month: "long", day: "numeric" });
+}
+
 export function formatShort(iso: string): string {
   if (!isISODate(iso)) return iso || "—";
   return toUTC(iso).toLocaleDateString("en-US", { timeZone: "UTC", month: "short", day: "numeric" });

@@ -30,6 +30,7 @@ const SEEDS = {
   buyer_agent: { ...emptyPerson, brokerage: null },
   buyer_agent_2: { ...emptyPerson, brokerage: null },
   listing_coordinator: { ...emptyPerson },
+  grant_counselor: { ...emptyPerson },
   lender: { company: null, loan_officer: null, processor: null },
   title: { company: null, file_no: null },
 };
@@ -194,6 +195,16 @@ export function IntakeFlow({ useBlob }: { useBlob: boolean }) {
           <Field label="Seller assist" value={c.seller_assist} onChange={(v) => set(["seller_assist"], text(v))} />
           <Field label="Grant program" value={c.grant_program} onChange={(v) => set(["grant_program"], text(v))} />
           <Field label="Title company" value={c.title?.company} onChange={(v) => set(["title", "company"], text(v))} />
+          <div className="field">
+            <label htmlFor="inspections">Inspections</label>
+            <select id="inspections" className="input" value={c.inspection_type} onChange={(e) => set(["inspection_type"], e.target.value)}>
+              <option value="contingency">Contingency (can negotiate or end the deal)</option>
+              <option value="informational_only">Informational only</option>
+              <option value="waived">Waived</option>
+              <option value="unknown">Not sure</option>
+            </select>
+          </div>
+          <Field label="Possession at settlement" value={c.possession} onChange={(v) => set(["possession"], text(v))} />
         </div>
       </section>
 
@@ -258,6 +269,8 @@ export function IntakeFlow({ useBlob }: { useBlob: boolean }) {
           <Field label="Seller side coordinator" value={c.listing_coordinator?.name} onChange={(v) => set(["listing_coordinator", "name"], text(v))} />
           <Field label="Seller side coordinator email" type="email" value={c.listing_coordinator?.email} onChange={(v) => set(["listing_coordinator", "email"], text(v))} />
           <Field label="Seller side coordinator phone" type="tel" value={c.listing_coordinator?.phone} onChange={(v) => set(["listing_coordinator", "phone"], text(v))} />
+          <Field label="Housing counselor" value={c.grant_counselor?.name} onChange={(v) => set(["grant_counselor", "name"], text(v))} />
+          <Field label="Housing counselor email" type="email" value={c.grant_counselor?.email} onChange={(v) => set(["grant_counselor", "email"], text(v))} />
           <Field label="Second buyer agent" value={c.buyer_agent_2?.name} onChange={(v) => set(["buyer_agent_2", "name"], text(v))} />
           <Field label="Second buyer agent email" type="email" value={c.buyer_agent_2?.email} onChange={(v) => set(["buyer_agent_2", "email"], text(v))} />
           <Field label="Second buyer agent brokerage" value={c.buyer_agent_2?.brokerage} onChange={(v) => set(["buyer_agent_2", "brokerage"], text(v))} />

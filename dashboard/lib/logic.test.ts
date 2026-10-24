@@ -47,6 +47,8 @@ function sampleContract(overrides: Partial<Contract> = {}): Contract {
       settlement: { date: "2026-11-13", days_after_execution: null, source: "Paragraph 5", confirm: false },
     },
     settlement_place: "Quick Abstract",
+    inspection_type: "contingency",
+    possession: null,
     other_deadlines: [],
     open_questions: [],
     ...overrides,
@@ -98,7 +100,9 @@ test("buyer plan: four day-one drafts plus grant reminder, wire line, no sends",
   assert.deepEqual(congrats.cc, ["smartin@quickabstract.com"]);
   for (const d of plan.drafts) {
     assert.ok(!/be honest with me/i.test(d.body));
-    assert.ok(d.body.trimEnd().endsWith("Jasmine") || d.kind === "grant_reminder");
+    // Jaz's own welcome template signs off as Client Care; every other email is signed "Jasmine".
+    if (d.kind === "buyer_congrats") assert.ok(d.body.endsWith("Realty ONE Group Focus"));
+    else assert.ok(d.body.trimEnd().endsWith("Jasmine") || d.kind === "grant_reminder");
   }
   assert.equal(plan.deal.other_agent, "Dave Goldsmith, KW Empower");
   assert.equal(plan.deal.skyslope_email, "Confirm");
@@ -231,4 +235,72 @@ test("SkySlope copy: draft by default, send only when on, never to a bad address
   for (const bad of ["Confirm", "", "malcolm@gmail.com", "x@skyslope.com.evil.com", "a@b@skyslope.com"]) {
     assert.equal(skySlopeCopy(bad, { AUTO_SEND_SKYSLOPE: "TRUE" }, doc).mode, "none", bad);
   }
+});
+
+test("housing agency email: drafted only for a counselor Jaz enters, in her wording", () => {
+  const noCounselor = buildPlan(resolveDates(sampleContract()));
+  assert.ok(!noCounselor.drafts.some((x) => x.kind === "housing_agency"));
+  assert.ok(noCounselor.warnings.some((w) => w.includes("Add the housing counselor")));
+
+  const one = buildPlan(resolveDates(sampleContract({ grant_counselor: { name: "Jasmaine Williams", email: "jwilliams@ahcopa.org", phone: null } })));
+  const d = one.drafts.find((x) => x.kind === "housing_agency")!;
+  assert.deepEqual(d.to, ["jwilliams@ahcopa.org"]);
+  assert.equal(d.subject, "5722 Malcolm St – Alexis McIntosh is under contract");
+  assert.ok(d.body.startsWith("Hi Jasmaine,\n\nI hope you're doing well! Our mutual client, Alexis McIntosh, is now under contract on 5722 Malcolm St, and I wanted to check in on what's needed to get Alexis's file submitted."));
+  assert.ok(d.body.endsWith("Talk soon,\nJasmine"));
+  assert.ok(!one.warnings.some((w) => w.includes("Add the housing counselor")));
+
+  const two = buildPlan(resolveDates(sampleContract({
+    grant_counselor: { name: "Pat Green", email: "pgreen@housing.org", phone: null },
+    buyers: [{ name: "Ana Ruiz", email: "ana@example.com", phone: null }, { name: "Ben Ruiz", email: null, phone: null }],
+  })));
+  const t = two.drafts.find((x) => x.kind === "housing_agency")!;
+  assert.ok(t.body.startsWith("Hi Pat,"));
+  assert.ok(t.body.includes("Our mutual clients, Ana Ruiz and Ben Ruiz, are now under contract"));
+  assert.ok(t.body.includes("to get Ana and Ben's file submitted"));
+
+  const listing = buildPlan(resolveDates(sampleContract({ side: "Listing", grant_counselor: { name: "Pat", email: "p@h.org", phone: null } })));
+  assert.ok(!listing.drafts.some((x) => x.kind === "housing_agency"));
+});
+
+test("buyer welcome email: cash LLC with informational inspections (Forrest Ave)", () => {
+  const plan = buildPlan(resolveDates(sampleContract({
+    property: { address: "7076 Forrest Ave", city: "Philadelphia", zip: "19138" },
+    price: 260000, deposit_amount: 5000, financing_type: "Cash", lender: null, grant_program: null,
+    buyers: [{ name: "Buliani Smith", email: "bulisani@gmail.com", phone: null }],
+    buyer_entity: { name: "DBBB LLC", signer: "Buliani Smith" },
+    inspection_type: "informational_only",
+    possession: "Vacant and broom-clean at settlement; the tenants' belongings are excluded",
+  })));
+  const b = plan.drafts.find((x) => x.kind === "buyer_congrats")!.body;
+  assert.ok(b.startsWith("Hi Buliani,\n\nCONGRATULATIONS! Your offer on 7076 Forrest Ave was accepted, and a copy of the fully signed Agreement of Sale for DBBB LLC is attached."));
+  assert.ok(b.includes("• Thursday, October 15 — Deposit due ($5,000)"));
+  assert.ok(b.includes("• As soon as possible — Schedule and complete your inspections"));
+  assert.ok(b.includes("• Friday, November 13 — Settlement (closing day)"));
+  assert.ok(!b.includes("Mortgage application due"));
+  assert.ok(b.includes("Financing: Cash purchase (no mortgage)"));
+  assert.ok(b.includes("CASH PURCHASE"));
+  assert.ok(b.includes("cashier's check over $25,000"));
+  assert.ok(b.includes("for informational purposes only"));
+  assert.ok(b.includes("POSSESSION\nVacant and broom-clean at settlement; the tenants' belongings are excluded. We will confirm this at the final walk-through."));
+  assert.ok(b.includes(WIRE_LINE));
+  assert.ok(b.includes("landlord or dwelling policy in the name of DBBB LLC"));
+  assert.ok(b.includes("to close in the name of DBBB LLC"));
+  assert.ok(b.includes("put the utilities in your company's name as of settlement day, November 13."));
+  assert.ok(b.endsWith("Client Care\nThe Buy SMART Team\nRealty ONE Group Focus"));
+  assert.ok(!/be honest with me/i.test(b));
+});
+
+test("buyer welcome email: mortgage with an inspection deadline", () => {
+  const plan = buildPlan(resolveDates(sampleContract()));
+  const b = plan.drafts.find((x) => x.kind === "buyer_congrats")!.body;
+  assert.ok(b.includes("• Saturday, October 17 — Mortgage application due"));
+  assert.ok(b.includes("• Tuesday, October 20 — Inspections done and your reply to the seller due"));
+  assert.ok(b.includes("• Tuesday, November 3 — Mortgage commitment due"));
+  assert.ok(b.includes("Financing: FHA mortgage with First Citizens Community Bank"));
+  assert.ok(b.includes("YOUR MORTGAGE") && !b.includes("CASH PURCHASE"));
+  assert.ok(b.includes("gives you until Tuesday, October 20 to complete your inspections"));
+  assert.ok(!b.includes("POSSESSION"));
+  assert.ok(b.includes("homeowners insurance quote") && b.includes("Your lender will need proof of the policy"));
+  assert.ok(!b.includes("LLC"));
 });
