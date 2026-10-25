@@ -14,6 +14,8 @@ export const PEOPLE_FIELDS = [
   { key: "processor_email", label: "Processor email", email: true },
   { key: "housing_counselor", label: "Housing counselor", email: false },
   { key: "housing_counselor_email", label: "Housing counselor email", email: true },
+  { key: "savings_counselor", label: "Savings counselor", email: false },
+  { key: "savings_counselor_email", label: "Savings counselor email", email: true },
   { key: "title_co", label: "Title company", email: false },
   { key: "title_file_no", label: "Title file number", email: false },
   { key: "skyslope_email", label: "SkySlope email", email: true },

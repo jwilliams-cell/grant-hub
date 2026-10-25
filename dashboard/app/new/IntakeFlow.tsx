@@ -34,6 +34,7 @@ const SEEDS = {
   buyer_agent_2: { ...emptyPerson, brokerage: null },
   coop_coordinator: { ...emptyPerson },
   grant_counselor: { ...emptyPerson },
+  savings_counselor: { ...emptyPerson },
   lender: { company: null, loan_officer: null, processor: null },
   title: { company: null, file_no: null },
 };
@@ -197,7 +198,6 @@ export function IntakeFlow({ useBlob, team }: { useBlob: boolean; team: TeamMemb
           <Field label="Seller credit toward closing costs" type="number" value={c.seller_credit} onChange={(v) => set(["seller_credit"], v ? Number(v) : null)} />
           <Field label="Seller assist (other terms)" value={c.seller_assist} onChange={(v) => set(["seller_assist"], text(v))} />
           <Field label="Loan term (years)" type="number" value={c.loan_term_years} onChange={(v) => set(["loan_term_years"], v ? Number(v) : null)} />
-          <Field label="Grant program" value={c.grant_program} onChange={(v) => set(["grant_program"], text(v))} />
           <Field label="Title company" value={c.title?.company} onChange={(v) => set(["title", "company"], text(v))} />
           <div className="field">
             <label htmlFor="inspections">Inspections</label>
@@ -250,6 +250,35 @@ export function IntakeFlow({ useBlob, team }: { useBlob: boolean; team: TeamMemb
           </div>
         )}
         <p className="helper">Cash files get the cash welcome email and skip the mortgage deadlines and lender emails.</p>
+      </section>
+
+      <section className="card stack-sm">
+        <div className="card-head" style={{ marginBottom: 0 }}><h3>Down payment assistance?</h3></div>
+        <div className="row" role="radiogroup" aria-label="Down payment assistance">
+          {(["Yes", "No"] as const).map((opt) => {
+            const dpa = c.uses_dpa ?? !!c.grant_program;
+            const selected = opt === "Yes" ? dpa : !dpa;
+            return (
+              <button key={opt} type="button" role="radio" aria-checked={selected}
+                className={`btn btn-small ${selected ? "btn-primary" : "btn-secondary"}`}
+                onClick={() => set(["uses_dpa"], opt === "Yes")}>
+                {opt}
+              </button>
+            );
+          })}
+        </div>
+        {(c.uses_dpa ?? !!c.grant_program) && (
+          <div className="form-grid">
+            <Field label="Program" value={c.grant_program} onChange={(v) => set(["grant_program"], text(v))} />
+            <Field label="Housing counselor" value={c.grant_counselor?.name} onChange={(v) => set(["grant_counselor", "name"], text(v))} />
+            <Field label="Housing counselor email" type="email" value={c.grant_counselor?.email} onChange={(v) => set(["grant_counselor", "email"], text(v))} />
+            <Field label="Housing counselor phone" type="tel" value={c.grant_counselor?.phone} onChange={(v) => set(["grant_counselor", "phone"], text(v))} />
+            <Field label="Savings counselor" value={c.savings_counselor?.name} onChange={(v) => set(["savings_counselor", "name"], text(v))} />
+            <Field label="Savings counselor email" type="email" value={c.savings_counselor?.email} onChange={(v) => set(["savings_counselor", "email"], text(v))} />
+            <Field label="Savings counselor phone" type="tel" value={c.savings_counselor?.phone} onChange={(v) => set(["savings_counselor", "phone"], text(v))} />
+          </div>
+        )}
+        <p className="helper">With assistance on, the housing counselor gets the housing agency email, and you get a reminder that the grant package is due 30 days before settlement.</p>
       </section>
 
       {team.length > 0 && (
@@ -331,9 +360,6 @@ export function IntakeFlow({ useBlob, team }: { useBlob: boolean; team: TeamMemb
           <Field label="Co-op transaction coordinator" value={c.coop_coordinator?.name} onChange={(v) => set(["coop_coordinator", "name"], text(v))} />
           <Field label="Co-op coordinator email" type="email" value={c.coop_coordinator?.email} onChange={(v) => set(["coop_coordinator", "email"], text(v))} />
           <Field label="Co-op coordinator phone" type="tel" value={c.coop_coordinator?.phone} onChange={(v) => set(["coop_coordinator", "phone"], text(v))} />
-          <Field label="Housing counselor" value={c.grant_counselor?.name} onChange={(v) => set(["grant_counselor", "name"], text(v))} />
-          <Field label="Housing counselor email" type="email" value={c.grant_counselor?.email} onChange={(v) => set(["grant_counselor", "email"], text(v))} />
-          <Field label="Housing counselor phone" type="tel" value={c.grant_counselor?.phone} onChange={(v) => set(["grant_counselor", "phone"], text(v))} />
           <Field label="Second buyer agent" value={c.buyer_agent_2?.name} onChange={(v) => set(["buyer_agent_2", "name"], text(v))} />
           <Field label="Second buyer agent email" type="email" value={c.buyer_agent_2?.email} onChange={(v) => set(["buyer_agent_2", "email"], text(v))} />
           <Field label="Second buyer agent brokerage" value={c.buyer_agent_2?.brokerage} onChange={(v) => set(["buyer_agent_2", "brokerage"], text(v))} />

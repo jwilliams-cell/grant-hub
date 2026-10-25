@@ -59,6 +59,9 @@ export function buildPlan(c: Contract): IntakePlan {
   const otherSecondAgent = isListing ? c.buyer_agent_2 : null;
   const coopCoordinator = c.coop_coordinator;
   const team = (c.team_on_file ?? []).filter((t) => t.email.trim());
+  // Down payment assistance: Jaz's switch decides; otherwise a named program in the contract means yes.
+  const dpa = c.uses_dpa ?? !!c.grant_program;
+  const program = dpa ? c.grant_program?.trim() || "down payment assistance program" : null;
   const titleCo = c.title?.company?.trim() || QUICK_ABSTRACT.name;
   const usesQuickAbstract = /quick abstract/i.test(titleCo);
 
@@ -84,13 +87,15 @@ export function buildPlan(c: Contract): IntakePlan {
     settlement_date: settlement ?? "",
     settlement_time: "",
     skyslope_email: validSkySlope(c.skyslope_email) ? c.skyslope_email!.trim() : "Confirm",
-    grant_program: c.grant_program ?? "",
+    grant_program: program ?? "",
     buyer_agent_2: [c.buyer_agent_2?.name, c.buyer_agent_2?.brokerage].filter(Boolean).join(", "),
     buyer_agent_2_email: c.buyer_agent_2?.email ?? "",
     coop_tc: c.coop_coordinator?.name ?? "",
     coop_tc_email: c.coop_coordinator?.email ?? "",
     housing_counselor: c.grant_counselor?.name ?? "",
     housing_counselor_email: c.grant_counselor?.email ?? "",
+    savings_counselor: dpa ? c.savings_counselor?.name ?? "" : "",
+    savings_counselor_email: dpa ? c.savings_counselor?.email ?? "" : "",
     notes: [c.seller_assist && `Seller assist: ${c.seller_assist}`, c.settlement_place && `Settlement at ${c.settlement_place}`]
       .filter(Boolean)
       .join(". "),
@@ -128,8 +133,8 @@ export function buildPlan(c: Contract): IntakePlan {
   for (const other of c.other_deadlines) {
     add(other.label, isISODate(other.date) ? other.date : null, "Contract", "To do", "Jaz", other.source ? `Contract: ${other.source}` : "");
   }
-  if (c.grant_program) {
-    add(`Grant package to counselor (${c.grant_program}) — every document in one email`, settlement ? addDays(settlement, -30) : null, "Target", "To do", "Jaz");
+  if (program) {
+    add(`Grant package to counselor (${program}) — every document in one email`, settlement ? addDays(settlement, -30) : null, "Target", "To do", "Jaz");
   }
   if (!cash) {
     add("Homeowners insurance bound; binder to lender", settlement ? addDays(settlement, -7) : null, "Target", "To do", buyerLabel);
@@ -204,18 +209,18 @@ export function buildPlan(c: Contract): IntakePlan {
     } else warnings.push("No buyer email in the contract, so the congratulations email wasn't drafted.");
     if (c.buyer_entity?.name && facts.buyerEmails.length) drafts.push(llcDocuments(facts, c.buyer_entity.name));
     // Housing agency: counselors change by program, so Jaz enters one per file. Drafted only once there's an email.
-    if (c.grant_counselor?.email) {
+    if (dpa && c.grant_counselor?.email) {
       const people = c.buyers.map((b) => b.name).filter((n): n is string => !!n);
       drafts.push(housingAgency(facts, people, { name: c.grant_counselor.name ?? "", email: c.grant_counselor.email }));
-    } else if (c.grant_program) {
-      warnings.push(`This file has a housing program (${c.grant_program}). Add the housing counselor's name and email on this page to draft the housing agency email.`);
+    } else if (program) {
+      warnings.push(`This file has a housing program (${program}). Add the housing counselor's name and email on this page to draft the housing agency email.`);
     }
   }
-  if (c.grant_program) drafts.push(grantReminder(facts, c.grant_program, settlement ? addDays(settlement, -30) : null));
+  if (program) drafts.push(grantReminder(facts, program, settlement ? addDays(settlement, -30) : null));
 
   // Every person on the file needs a name: emails greet them by it, and the dashboard lists them.
   const unnamed: [string, PersonValueLike | null | undefined][] = [
-    ["housing counselor", c.grant_counselor], ["co-op transaction coordinator", c.coop_coordinator], ["loan officer", c.lender?.loan_officer], ["second buyer agent", c.buyer_agent_2],
+    ["housing counselor", dpa ? c.grant_counselor : null], ["savings counselor", dpa ? c.savings_counselor : null], ["co-op transaction coordinator", c.coop_coordinator], ["loan officer", c.lender?.loan_officer], ["second buyer agent", c.buyer_agent_2],
   ];
   for (const [label, p] of unnamed) {
     if (p?.email && !p.name?.trim()) warnings.push(`Add the ${label}'s name. There's an email for them but no name.`);
@@ -242,7 +247,10 @@ export function buildPlan(c: Contract): IntakePlan {
     if (!p?.email?.trim() || p.email.toLowerCase() === JAZ_EMAIL || contacts.some((x) => x.email.toLowerCase() === p.email!.toLowerCase())) return;
     contacts.push({ name: p.name?.trim() || "Name to confirm", role, company, email: p.email.trim(), phone: p.phone ?? "", notes: `Added from ${address}` });
   };
-  addContact(c.grant_counselor, `Housing counselor${c.grant_program ? ` (${c.grant_program})` : ""}`);
+  if (dpa) {
+    addContact(c.grant_counselor, `Housing counselor${program ? ` (${program})` : ""}`);
+    addContact(c.savings_counselor, `Savings counselor${program ? ` (${program})` : ""}`);
+  }
   addContact(c.coop_coordinator, "Co-op transaction coordinator", otherAgent?.brokerage ?? "");
   addContact(coAgent, "Co-agent (buyer side)", coAgent?.brokerage ?? "");
   addContact(otherAgent, isListing ? "Buyer's agent" : "Listing agent", otherAgent?.brokerage ?? "");

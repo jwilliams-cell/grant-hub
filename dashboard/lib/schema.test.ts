@@ -29,6 +29,7 @@ function forrestWire(): ContractWire {
     lender: { company: "", loan_officer: empty, processor: empty },
     title: { company: "Quick Abstract", file_no: "QA2026-7521" },
     grant_counselor: empty,
+    savings_counselor: empty,
     dates: {
       execution: { date: "2026-10-22", days_after_execution: -1, source: "Last signature", confirm: false },
       deposit_due: { date: "", days_after_execution: 5, source: "Paragraph 2", confirm: false },

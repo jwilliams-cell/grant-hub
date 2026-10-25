@@ -36,6 +36,7 @@ function sampleContract(overrides: Partial<Contract> = {}): Contract {
     },
     title: { company: "Quick Abstract", file_no: null },
     grant_counselor: null,
+    savings_counselor: null,
     dates: {
       execution: { date: "2026-10-10", days_after_execution: null, source: "Last signature 10/10/2026", confirm: false },
       deposit_due: { date: null, days_after_execution: 5, source: "Paragraph 2", confirm: false },
@@ -414,4 +415,26 @@ test("Cash switch: cash welcome, no mortgage deadlines or lender email", () => {
   const financed = buildPlan(resolveDates(sampleContract({ financing_type: "Conventional" })));
   assert.ok(financed.drafts.some((d) => d.kind === "lender_intro"));
   assert.ok(financed.drafts.find((d) => d.kind === "buyer_congrats")!.body.includes("MORTGAGE\n"));
+});
+
+test("down payment assistance switch: on adds the grant steps and counselors, off skips them", () => {
+  const counselors = {
+    grant_counselor: { name: "Jasmaine Williams", email: "jwilliams@ahcopa.org", phone: null },
+    savings_counselor: { name: "Sam Saver", email: "sam@savings.org", phone: null },
+  };
+  const on = buildPlan(resolveDates(sampleContract(counselors)));
+  assert.ok(on.drafts.some((d) => d.kind === "housing_agency"));
+  assert.ok(on.drafts.some((d) => d.kind === "grant_reminder"));
+  assert.ok(on.milestones.some((m) => m.step.startsWith("Grant package")));
+  assert.equal(on.deal.savings_counselor, "Sam Saver");
+  assert.ok(on.contacts.some((x) => x.email === "sam@savings.org" && x.role.startsWith("Savings counselor")));
+
+  const off = buildPlan(resolveDates(sampleContract({ ...counselors, uses_dpa: false })));
+  assert.ok(!off.drafts.some((d) => d.kind === "housing_agency" || d.kind === "grant_reminder"));
+  assert.ok(!off.milestones.some((m) => m.step.startsWith("Grant package")));
+  assert.equal(off.deal.grant_program, "");
+
+  const switchedOn = buildPlan(resolveDates(sampleContract({ grant_program: null, uses_dpa: true })));
+  assert.ok(switchedOn.drafts.some((d) => d.kind === "grant_reminder"));
+  assert.ok(switchedOn.warnings.some((w) => w.includes("Add the housing counselor")));
 });

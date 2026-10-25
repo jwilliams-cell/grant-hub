@@ -82,6 +82,7 @@ export const ContractSchema = z.object({
     .nullable(),
   title: z.object({ company: z.string().nullable(), file_no: z.string().nullable() }).nullable(),
   grant_counselor: Person.nullable(),
+  savings_counselor: Person.nullable(),
   dates: z.object(Object.fromEntries(DATE_KEYS.map((k) => [k, ContractDate])) as Record<DateKey, typeof ContractDate>),
   settlement_place: z.string().nullable(),
   inspection_type: z.enum(INSPECTION_TYPES),
@@ -94,6 +95,8 @@ export const ContractSchema = z.object({
   skyslope_email: z.string().nullable().optional(),
   // Not in the contract: team members Jaz switches on for this file (copied on emails, invited to deadlines).
   team_on_file: z.array(z.object({ name: z.string(), email: z.string() })).optional(),
+  // Jaz's answer to "Down payment assistance?"; when unset, a named grant program means yes.
+  uses_dpa: z.boolean().optional(),
 });
 
 export type Contract = z.infer<typeof ContractSchema>;
@@ -202,7 +205,8 @@ export const ContractWireSchema = z.object({
   coop_coordinator: WirePerson.describe("Transaction coordinator for the side Jasmine does not represent (the co-op side), if the contract or addenda name one; all fields empty if none"),
   lender: z.object({ company: z.string(), loan_officer: WirePerson, processor: WirePerson }),
   title: z.object({ company: z.string(), file_no: z.string() }),
-  grant_counselor: WirePerson.describe("Housing counselor for a grant or housing program, if named; all fields empty if none"),
+  grant_counselor: WirePerson.describe("Housing counselor for a grant or down payment assistance program, if named; all fields empty if none"),
+  savings_counselor: WirePerson.describe("Savings counselor (for example for a matched savings program), if named; all fields empty if none"),
   dates: z.object(Object.fromEntries(DATE_KEYS.map((k) => [k, WireDate])) as Record<DateKey, typeof WireDate>),
   settlement_place: z.string().describe('Settlement place, or ""'),
   inspection_type: z
@@ -268,6 +272,7 @@ export function fromWire(w: ContractWire): Contract {
     lender: lenderCompany || loanOfficer || processor ? { company: lenderCompany, loan_officer: loanOfficer, processor } : null,
     title: titleCompany || fileNo ? { company: titleCompany, file_no: fileNo } : null,
     grant_counselor: personOrNull(w.grant_counselor),
+    savings_counselor: personOrNull(w.savings_counselor),
     dates: Object.fromEntries(DATE_KEYS.map((k) => [k, date(w.dates[k])])) as Contract["dates"],
     settlement_place: str(w.settlement_place),
     inspection_type: w.inspection_type,
