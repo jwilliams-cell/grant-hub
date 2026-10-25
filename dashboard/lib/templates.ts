@@ -33,6 +33,8 @@ export interface DayOneFacts {
   /** Jaz's co-agent on this file, copied on every day-one email. */
   coAgentName: string;
   coAgentEmail: string;
+  /** Jaz's side, copied on every day-one email: her co-agent plus team members switched on for this file. */
+  teamCc: string[];
   /** Extra people on the other side to copy on the key dates email: their second agent or their coordinator. */
   otherSideCc: string[];
   lenderName: string;
@@ -54,7 +56,7 @@ export function titleOrder(f: DayOneFacts): EmailDraft {
   return {
     kind: "title_order",
     to: [QUICK_ABSTRACT.orders],
-    cc: [QUICK_ABSTRACT.closer, f.coAgentEmail].filter(Boolean),
+    cc: [QUICK_ABSTRACT.closer, ...f.teamCc].filter(Boolean),
     subject: `${f.address} – Title Order`,
     body: `Hello!\n\nAttached is the signed Agreement of Sale for a new title order for our buyer.\n\nAgent: Jasmine Williams — ${JAZ_EMAIL}${f.coAgentEmail ? `\nCo-agent: ${f.coAgentName || "to follow"} — ${f.coAgentEmail}` : ""}\nBuyer: ${f.buyerNames} — ${f.buyerEmails.join(", ") || "email to follow"}\nCooperating agent: ${f.coopAgentName || "to follow"} — ${f.coopAgentEmail || "email to follow"}\nSeller: ${f.sellerNames || "to follow"}\nLender: ${f.lenderName || "to follow"} — ${f.loanOfficerEmail || "email to follow"}\n\nPlease cc me on all communication.${SIGN}`,
     attachContract: true,
@@ -66,7 +68,7 @@ export function lenderIntro(f: DayOneFacts): EmailDraft {
   return {
     kind: "lender_intro",
     to: [f.loanOfficerEmail].filter(Boolean),
-    cc: [f.processorEmail, f.coAgentEmail].filter(Boolean),
+    cc: [f.processorEmail, ...f.teamCc].filter(Boolean),
     subject: `${f.address} (${f.buyerNames}) is under contract`,
     body: `Hi ${f.loanOfficerName.trim().split(/\s+/)[0] || "there"},\n\n${f.buyerNames} is officially under contract on ${f.address}; the signed Agreement of Sale is attached.\n\n- Mortgage application: ${when(f.mortgageApplication)}\n- Commitment: ${when(f.commitment)}\n- Settlement: ${when(f.settlement)}\n\nTitle is with Quick Abstract. Please keep me copied and let me know once the application is complete and the appraisal is ordered.${SIGN}`,
     attachContract: true,
@@ -78,7 +80,7 @@ export function agentTimeline(f: DayOneFacts): EmailDraft {
   return {
     kind: "agent_timeline",
     to: [f.coopAgentEmail].filter(Boolean),
-    cc: [...f.otherSideCc, f.coAgentEmail].filter(Boolean),
+    cc: [...f.otherSideCc, ...f.teamCc].filter(Boolean),
     subject: `${f.address} – Key dates`,
     body: `Hi ${f.coopAgentName.split(/[ ,]/)[0] || "there"},\n\nLooking forward to a smooth one together. Here are the key dates. Please confirm or let me know of any discrepancies:\n\n${list(f.dates)}\n\nLender: ${f.lenderName || "to follow"}\nTitle: Quick Abstract — ${QUICK_ABSTRACT.orders}\n\nPlease copy me on all correspondence.${SIGN}`,
     attachContract: false,
@@ -262,7 +264,7 @@ export function buyerCongrats(f: DayOneFacts, w: WelcomeFacts): EmailDraft {
   return {
     kind: "buyer_congrats",
     to: f.buyerEmails,
-    cc: [w.quickAbstract ? QUICK_ABSTRACT.closer : "", f.coAgentEmail].filter(Boolean),
+    cc: [w.quickAbstract ? QUICK_ABSTRACT.closer : "", ...f.teamCc].filter(Boolean),
     subject: `${f.address} – Your offer was accepted!`,
     body: (w.cash ? cashWelcome(f, w) : mortgageWelcome(f, w)).join("\n\n"),
     attachContract: true,
@@ -304,7 +306,7 @@ export function housingAgency(f: DayOneFacts, clients: string[], counselor: { na
   return {
     kind: "housing_agency",
     to: [counselor.email],
-    cc: f.coAgentEmail ? [f.coAgentEmail] : [],
+    cc: [...f.teamCc],
     subject: `${f.address} – ${who} ${many ? "are" : "is"} under contract`,
     body: `Hi ${first(counselor.name) || "there"},\n\nI hope you're doing well! Our mutual client${many ? "s" : ""}, ${who}, ${many ? "are" : "is"} now under contract on ${f.address}, and I wanted to check in on what's needed to get ${possessive} file submitted. Please let me know at your earliest convenience.\n\nTalk soon,\nJasmine`,
     attachContract: false,

@@ -92,6 +92,8 @@ export const ContractSchema = z.object({
   open_questions: z.array(z.string()).describe("Anything Jasmine needs to confirm, in plain words"),
   // Not in the contract: Jaz pastes it from the SkySlope transaction page on the review screen.
   skyslope_email: z.string().nullable().optional(),
+  // Not in the contract: team members Jaz switches on for this file (copied on emails, invited to deadlines).
+  team_on_file: z.array(z.object({ name: z.string(), email: z.string() })).optional(),
 });
 
 export type Contract = z.infer<typeof ContractSchema>;

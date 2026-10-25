@@ -384,3 +384,34 @@ test("document names: address, client last name, document, date", async () => {
   const plan = buildPlan(resolveDates(sampleContract({ buyer_entity: { name: "Lee Homes LLC", signer: "Pat Lee" } })));
   assert.equal(plan.contractFilename, "5722 Malcolm St – Lee Homes LLC – Agreement of Sale – 2026-10-10.pdf");
 });
+
+test("team members from Settings, switched on per file: copied on day-one emails and invited to deadlines", async () => {
+  const { parseTeam } = await import("./team.ts");
+  const team = parseTeam({ team_member_2: "Gladden Smith <gladden@gremom.com>", team_member_1: "Kenya Matthews <kmatthews@gremom.com>", AUTO_SEND_SKYSLOPE: "FALSE", team_member_3: "not an email" });
+  assert.deepEqual(team.map((t) => t.name), ["Kenya Matthews", "Gladden Smith"]);
+
+  const off = buildPlan(resolveDates(sampleContract()));
+  assert.equal(off.calendarGuests.length, 0);
+  assert.ok(!off.drafts.some((d) => d.cc.includes("kmatthews@gremom.com")));
+
+  const on = buildPlan(resolveDates(sampleContract({
+    team_on_file: [team[0]],
+    grant_counselor: { name: "Pat Green", email: "pgreen@housing.org", phone: null },
+  })));
+  assert.deepEqual(on.calendarGuests, [team[0]]);
+  assert.equal(on.deal.team_on_file, "Kenya Matthews <kmatthews@gremom.com>");
+  for (const k of ["title_order", "lender_intro", "agent_timeline", "buyer_congrats", "housing_agency"]) {
+    assert.ok(on.drafts.find((d) => d.kind === k)!.cc.includes("kmatthews@gremom.com"), k);
+  }
+  assert.ok(!on.drafts.find((d) => d.kind === "grant_reminder")!.cc.includes("kmatthews@gremom.com"));
+});
+
+test("Cash switch: cash welcome, no mortgage deadlines or lender email", () => {
+  const cash = buildPlan(resolveDates(sampleContract({ financing_type: "Cash" })));
+  assert.ok(!cash.drafts.some((d) => d.kind === "lender_intro"));
+  assert.ok(cash.drafts.find((d) => d.kind === "buyer_congrats")!.body.includes("CASH PURCHASE"));
+  assert.ok(!cash.milestones.some((m) => /mortgage|apprais/i.test(m.step)));
+  const financed = buildPlan(resolveDates(sampleContract({ financing_type: "Conventional" })));
+  assert.ok(financed.drafts.some((d) => d.kind === "lender_intro"));
+  assert.ok(financed.drafts.find((d) => d.kind === "buyer_congrats")!.body.includes("MORTGAGE\n"));
+});

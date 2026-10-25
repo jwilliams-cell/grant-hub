@@ -8,6 +8,7 @@ import { DATE_KEYS, DATE_LABELS, resolveDates, type Contract, type PersonValue }
 import { buildPlan } from "@/lib/plan";
 import { formatShort } from "@/lib/dates";
 import { GhlPicker } from "@/components/GhlPicker";
+import type { TeamMember } from "@/lib/team";
 import type { IntakeResult } from "@/lib/intake";
 
 type Step = "upload" | "review" | "done";
@@ -25,6 +26,7 @@ function setIn<T>(obj: T, path: (string | number)[], value: unknown): T {
 }
 
 const emptyPerson: PersonValue = { name: null, email: null, phone: null };
+const LOAN_TYPES = ["Conventional", "FHA", "VA", "USDA", "PHFA", "Hard money"];
 
 const SEEDS = {
   listing_agent: { ...emptyPerson, brokerage: null },
@@ -36,7 +38,7 @@ const SEEDS = {
   title: { company: null, file_no: null },
 };
 
-export function IntakeFlow({ useBlob }: { useBlob: boolean }) {
+export function IntakeFlow({ useBlob, team }: { useBlob: boolean; team: TeamMember[] }) {
   const [step, setStep] = useState<Step>("upload");
   const [file, setFile] = useState<File | null>(null);
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
@@ -192,7 +194,6 @@ export function IntakeFlow({ useBlob }: { useBlob: boolean }) {
           </div>
           <Field label="Price" type="number" value={c.price} onChange={(v) => set(["price"], v ? Number(v) : null)} />
           <Field label="Deposit" type="number" value={c.deposit_amount} onChange={(v) => set(["deposit_amount"], v ? Number(v) : null)} />
-          <Field label="Financing" value={c.financing_type} onChange={(v) => set(["financing_type"], text(v))} />
           <Field label="Seller credit toward closing costs" type="number" value={c.seller_credit} onChange={(v) => set(["seller_credit"], v ? Number(v) : null)} />
           <Field label="Seller assist (other terms)" value={c.seller_assist} onChange={(v) => set(["seller_assist"], text(v))} />
           <Field label="Loan term (years)" type="number" value={c.loan_term_years} onChange={(v) => set(["loan_term_years"], v ? Number(v) : null)} />
@@ -218,6 +219,56 @@ export function IntakeFlow({ useBlob }: { useBlob: boolean }) {
           </div>
         </div>
       </section>
+
+      <section className="card stack-sm">
+        <div className="card-head" style={{ marginBottom: 0 }}><h3>How is the client paying?</h3></div>
+        <div className="row" role="radiogroup" aria-label="Cash or financing">
+          {(["Cash", "Financing"] as const).map((opt) => {
+            const isCash = /cash/i.test(c.financing_type ?? "");
+            const selected = opt === "Cash" ? isCash : !isCash;
+            return (
+              <button key={opt} type="button" role="radio" aria-checked={selected}
+                className={`btn btn-small ${selected ? "btn-primary" : "btn-secondary"}`}
+                onClick={() => set(["financing_type"], opt === "Cash" ? "Cash" : (isCash ? null : c.financing_type))}>
+                {opt}
+              </button>
+            );
+          })}
+        </div>
+        {!/cash/i.test(c.financing_type ?? "") && (
+          <div className="form-grid">
+            <div className="field">
+              <label htmlFor="loan-type">Loan type</label>
+              <select id="loan-type" className="input" value={LOAN_TYPES.includes(c.financing_type ?? "") ? c.financing_type! : c.financing_type ? "Other" : ""}
+                onChange={(e) => set(["financing_type"], e.target.value === "Other" ? (c.financing_type || "Other") : e.target.value || null)}>
+                <option value="">Choose…</option>
+                {LOAN_TYPES.map((t) => <option key={t}>{t}</option>)}
+                <option>Other</option>
+              </select>
+              {c.financing_type && !LOAN_TYPES.includes(c.financing_type) && <span className="helper">From the contract: {c.financing_type}</span>}
+            </div>
+          </div>
+        )}
+        <p className="helper">Cash files get the cash welcome email and skip the mortgage deadlines and lender emails.</p>
+      </section>
+
+      {team.length > 0 && (
+        <section className="card stack-sm">
+          <div className="card-head" style={{ marginBottom: 0 }}><h3>Team on this file</h3></div>
+          {team.map((t) => {
+            const on = (c.team_on_file ?? []).some((x) => x.email === t.email);
+            return (
+              <label key={t.email} className="row ui" style={{ minHeight: 44 }}>
+                <input type="checkbox" checked={on} style={{ width: 20, height: 20 }}
+                  onChange={(e) => set(["team_on_file"], e.target.checked
+                    ? [...(c.team_on_file ?? []), t]
+                    : (c.team_on_file ?? []).filter((x) => x.email !== t.email))} />
+                Include {t.name} ({t.email}): copied on the day-one emails and invited to the calendar deadlines
+              </label>
+            );
+          })}
+        </section>
+      )}
 
       <section className="card">
         <div className="card-head"><h3>Dates</h3><span className="ui subtle">Amber means Claude couldn't confirm it</span></div>
@@ -297,7 +348,7 @@ export function IntakeFlow({ useBlob }: { useBlob: boolean }) {
         <div className="card-head" style={{ marginBottom: 0 }}><h3>What happens when you confirm</h3></div>
         <ul className="list">
           <li><span>Drive folder <strong>{plan.folderName}</strong> with subfolders 1 to 6, and the contract saved as <em>{plan.contractFilename}</em></span></li>
-          <li><span>{plan.milestones.length} milestones on the dashboard, {plan.milestones.filter((m) => m.calendar).length} of them as all-day events on your calendar (no invites)</span></li>
+          <li><span>{plan.milestones.length} milestones on the dashboard, {plan.milestones.filter((m) => m.calendar).length} of them as all-day events on your calendar{plan.calendarGuests.length ? `, with ${plan.calendarGuests.map((g) => g.name).join(" and ")} invited` : " (no invites)"}</span></li>
           <li><span>{plan.deal.skyslope_email !== "Confirm"
             ? <>The contract is copied to <strong>{plan.deal.skyslope_email}</strong> for compliance. It's sent automatically if that's turned on in the tracker's Settings tab, otherwise it waits in your drafts.</>
             : "No SkySlope copy yet: add the SkySlope email above."}</span></li>

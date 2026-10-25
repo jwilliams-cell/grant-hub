@@ -1,11 +1,15 @@
 import { IntakeFlow } from "./IntakeFlow";
+import { loadTracker } from "@/lib/load";
+import { parseTeam } from "@/lib/team";
 
 export const metadata = { title: "New contract · BuySmart Transaction Desk" };
 
 // Reading a contract takes about a minute; give the server actions room on Vercel.
 export const maxDuration = 300;
 
-export default function NewContractPage() {
+export default async function NewContractPage() {
+  const loaded = await loadTracker();
+  const team = loaded.ok ? parseTeam(loaded.tracker.settings) : [];
   return (
     <div className="stack">
       <div className="section">
@@ -16,7 +20,7 @@ export default function NewContractPage() {
           and the file shows on the dashboard. No email is sent: everything waits in your Gmail drafts.
         </p>
       </div>
-      <IntakeFlow useBlob={!!(process.env.BLOB_STORE_ID || process.env.BLOB_READ_WRITE_TOKEN)} />
+      <IntakeFlow useBlob={!!(process.env.BLOB_STORE_ID || process.env.BLOB_READ_WRITE_TOKEN)} team={team} />
     </div>
   );
 }

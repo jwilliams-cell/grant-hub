@@ -14,6 +14,7 @@ const SAMPLE: DayOneFacts = {
   loanOfficerName: "[Loan officer]",
   coAgentName: "",
   coAgentEmail: "",
+  teamCc: [],
   otherSideCc: ["[seller side coordinator email]"],
   lenderName: "[Lender]",
   loanOfficerEmail: "[loan officer email]",

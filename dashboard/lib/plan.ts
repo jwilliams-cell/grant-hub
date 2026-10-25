@@ -11,6 +11,7 @@ import {
 } from "./templates.ts";
 import { isSkySlopeAddress } from "./skyslope.ts";
 import { documentFilename } from "./naming.ts";
+import { formatTeam, type TeamMember } from "./team.ts";
 import type { Contact, Deal, Milestone } from "./types.ts";
 
 export interface PlannedMilestone extends Omit<Milestone, "calendar_event_id" | "source_link"> {
@@ -24,6 +25,8 @@ export interface IntakePlan {
   deal: Omit<Deal, "drive_folder_id">;
   milestones: PlannedMilestone[];
   drafts: EmailDraft[];
+  /** Team members Jaz switched on: invited to the calendar deadlines (her switch is the approval). */
+  calendarGuests: TeamMember[];
   /** People on this file to add to the Contacts tab (the intake skips any email already there). */
   contacts: Contact[];
   warnings: string[];
@@ -55,6 +58,7 @@ export function buildPlan(c: Contract): IntakePlan {
   const coAgent = !isListing ? c.buyer_agent_2 : null;
   const otherSecondAgent = isListing ? c.buyer_agent_2 : null;
   const coopCoordinator = c.coop_coordinator;
+  const team = (c.team_on_file ?? []).filter((t) => t.email.trim());
   const titleCo = c.title?.company?.trim() || QUICK_ABSTRACT.name;
   const usesQuickAbstract = /quick abstract/i.test(titleCo);
 
@@ -70,6 +74,7 @@ export function buildPlan(c: Contract): IntakePlan {
     lender: c.lender?.company ?? "",
     loan_officer_email: c.lender?.loan_officer?.email ?? "",
     loan_officer: c.lender?.loan_officer?.name ?? "",
+    team_on_file: formatTeam(team),
     processor_email: c.lender?.processor?.email ?? "",
     title_co: titleCo,
     title_file_no: c.title?.file_no ?? "",
@@ -145,6 +150,7 @@ export function buildPlan(c: Contract): IntakePlan {
     coopAgentEmail: otherAgent?.email ?? "",
     coAgentName: coAgent?.name ?? "",
     coAgentEmail: coAgent?.email ?? "",
+    teamCc: [coAgent?.email ?? "", ...team.map((t) => t.email)].filter(Boolean),
     otherSideCc: [otherSecondAgent?.email, coopCoordinator?.email].filter((e): e is string => !!e),
     lenderName: c.lender?.company ?? "",
     loanOfficerName: c.lender?.loan_officer?.name ?? "",
@@ -251,6 +257,7 @@ export function buildPlan(c: Contract): IntakePlan {
     contractFilename: documentFilename({ address, clientLastName: lastName(c), document: "Agreement of Sale", date: execution }),
     deal,
     milestones,
+    calendarGuests: team,
     contacts,
     // Jaz never needs a copy of her own email, e.g. as listing agent on a dual file. Her grant reminder is the exception.
     drafts: drafts

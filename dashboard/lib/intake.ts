@@ -6,6 +6,7 @@ import {
 import { appendRows, readTracker } from "./sheet";
 import { buildMime } from "./mime.ts";
 import { skySlopeCopy } from "./skyslope.ts";
+import { JAZ_EMAIL } from "./templates.ts";
 import { addDays, nowStampET } from "./dates.ts";
 import type { IntakePlan } from "./plan.ts";
 import {
@@ -36,8 +37,8 @@ async function createFolder(name: string, parent: string): Promise<string> {
 }
 
 /**
- * Creates the client file from a plan Jaz approved. Events go on Jaz's own calendar with no
- * attendees, and every email to a person is a Gmail draft. The one possible send is the contract
+ * Creates the client file from a plan Jaz approved. Events go on Jaz's own calendar, inviting only
+ * the team members she switched on for this file, and every email to a person is a Gmail draft. The one possible send is the contract
  * copy to the file's own @skyslope.com address, and only with AUTO_SEND_SKYSLOPE on.
  */
 export async function runIntake(plan: IntakePlan, pdf: Buffer): Promise<IntakeResult> {
@@ -72,13 +73,17 @@ export async function runIntake(plan: IntakePlan, pdf: Buffer): Promise<IntakeRe
       try {
         const ev = await calendarApi().events.insert({
           calendarId: "primary",
-          sendUpdates: "none",
+          // Invites go only to team members Jaz switched on for this file.
+          sendUpdates: plan.calendarGuests.length ? "all" : "none",
           requestBody: {
             summary: `${plan.deal.address} – ${m.step}`,
             description: `Client: ${plan.deal.client}\nDrive folder: ${result.folderUrl}\nDashboard: ${dealLink}${m.note ? `\n\n${m.note}` : ""}`,
             start: { date: m.due },
             end: { date: addDays(m.due, 1) },
             transparency: "transparent",
+            attendees: plan.calendarGuests.length
+              ? [{ email: JAZ_EMAIL, responseStatus: "accepted" }, ...plan.calendarGuests.map((g) => ({ email: g.email, displayName: g.name }))]
+              : undefined,
             // All-day reminders count back from midnight: 2,340 minutes is 9am two days before,
             // and 900 minutes is 9am the day before (Google can't remind after an all-day event starts).
             reminders: { useDefault: false, overrides: [{ method: "popup", minutes: 2340 }, { method: "popup", minutes: 900 }] },
@@ -144,7 +149,7 @@ export async function runIntake(plan: IntakePlan, pdf: Buffer): Promise<IntakeRe
   const activity: Partial<Activity>[] = [
     { at, deal_id: plan.dealId, event: "New contract", detail: `File created from the Agreement of Sale after Jaz confirmed the dates`, source_link: result.contractUrl, by: "Jaz" },
     { at, deal_id: plan.dealId, event: "Drive folder created", detail: plan.folderName, source_link: result.folderUrl, by: "Claude" },
-    { at, deal_id: plan.dealId, event: "Calendar events added", detail: `${result.events.length} deadlines on Jaz's calendar`, source_link: "", by: "Claude" },
+    { at, deal_id: plan.dealId, event: "Calendar events added", detail: `${result.events.length} deadlines on Jaz's calendar${plan.calendarGuests.length ? `; invited ${plan.calendarGuests.map((g) => g.name).join(", ")} with Jaz's approval` : ""}`, source_link: "", by: "Claude" },
     { at, deal_id: plan.dealId, event: "Drafts created", detail: result.drafts.map((d) => d.subject).join("; ") || "None", source_link: "", by: "Claude" },
     ...skyslopeActivity,
     ...result.errors.map((err) => ({ at, deal_id: plan.dealId, event: "Intake problem", detail: err, source_link: "", by: "Claude" })),
