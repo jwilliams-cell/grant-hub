@@ -54,6 +54,8 @@ function cell(value: string | number | boolean | null | undefined): string | num
   if (value === null || value === undefined) return "";
   if (typeof value !== "string") return value;
   if (/^[0-9][0-9A-Za-z_-]{15,}$/.test(value) || /^[=+]/.test(value)) return `'${value}`;
+  // Timestamps stay as text ("2026-10-25 09:00"), so they read the same whatever the column's format.
+  if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(value)) return `'${value}`;
   return value;
 }
 
