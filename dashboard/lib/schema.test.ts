@@ -1,34 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { betaZodOutputFormat } from "@anthropic-ai/sdk/helpers/beta/zod";
-import { ContractWireSchema, fromWire, resolveDates, type ContractWire } from "./contract.ts";
+import { fromWire, resolveDates, type ContractWire } from "./contract.ts";
+import { CONTRACT_JSON_SCHEMA, extractJsonObject, parseContractReply } from "./contract-json.ts";
 import { buildPlan } from "./plan.ts";
-
-// Structured outputs reject schemas with more than 16 nullable or union-typed fields.
-function countUnions(schema: unknown): number {
-  let n = 0;
-  const walk = (o: unknown): void => {
-    if (!o || typeof o !== "object") return;
-    if (Array.isArray(o)) return o.forEach(walk);
-    const rec = o as Record<string, unknown>;
-    if (rec.anyOf || rec.oneOf || Array.isArray(rec.type)) n++;
-    Object.values(rec).forEach(walk);
-  };
-  walk(schema);
-  return n;
-}
-
-test("the schema sent to Claude stays under the union limit", () => {
-  const format = betaZodOutputFormat(ContractWireSchema) as unknown as { schema: unknown };
-  assert.ok(format.schema, "SDK format exposes its JSON schema");
-  assert.ok(countUnions(format.schema) <= 16, `unions: ${countUnions(format.schema)}`);
-});
 
 const empty = { name: "", email: "", phone: "" };
 const noDate = { date: "", days_after_execution: -1, source: "", confirm: true };
 
-test("fromWire turns empty values back into blanks the review form understands", () => {
-  const wire: ContractWire = {
+function forrestWire(): ContractWire {
+  return {
     property: { address: " 7076 Forrest Ave ", city: "Philadelphia", zip: "" },
     side: "Dual",
     price: 260000,
@@ -69,7 +49,10 @@ test("fromWire turns empty values back into blanks the review form understands",
     other_deadlines: [],
     open_questions: [],
   };
-  const c = resolveDates(fromWire(wire));
+}
+
+test("fromWire turns empty values back into blanks the review form understands", () => {
+  const c = resolveDates(fromWire(forrestWire()));
   assert.equal(c.property.address, "7076 Forrest Ave");
   assert.equal(c.property.zip, null);
   assert.equal(c.price, 260000);
@@ -88,4 +71,37 @@ test("fromWire turns empty values back into blanks the review form understands",
   const plan = buildPlan(c);
   assert.equal(plan.dealId, "7076-forrest");
   assert.ok(!plan.drafts.some((d) => d.kind === "lender_intro"));
+});
+
+test("Claude's JSON reply is found whether bare, fenced or wrapped in a sentence", () => {
+  const json = JSON.stringify(forrestWire());
+  for (const reply of [json, "```json\n" + json + "\n```", `Here is the contract:\n${json}\nLet me know.`]) {
+    const parsed = parseContractReply(reply);
+    assert.ok(parsed.ok, reply.slice(0, 20));
+    if (parsed.ok) assert.equal(parsed.value.property.address, " 7076 Forrest Ave ");
+  }
+  assert.equal(extractJsonObject("no json here"), null);
+});
+
+test("a reply that doesn't match the form says exactly what's wrong", () => {
+  const broken = forrestWire() as unknown as Record<string, unknown>;
+  delete broken.inspection_type;
+  broken.price = "260000";
+  const parsed = parseContractReply(JSON.stringify(broken));
+  assert.equal(parsed.ok, false);
+  if (!parsed.ok) {
+    assert.match(parsed.problems, /inspection_type/);
+    assert.match(parsed.problems, /price/);
+  }
+  const bad = parseContractReply("{ not json }");
+  assert.equal(bad.ok, false);
+  if (!bad.ok) assert.match(bad.problems, /didn't parse/);
+});
+
+test("the schema in the prompt lists every field with its rules", () => {
+  const schema = JSON.parse(CONTRACT_JSON_SCHEMA);
+  for (const key of ["property", "dates", "inspection_type", "inspections_chosen", "seller_credit", "coop_coordinator", "grant_counselor"]) {
+    assert.ok(schema.properties[key], key);
+  }
+  assert.match(CONTRACT_JSON_SCHEMA, /0 if not stated/);
 });
