@@ -10,6 +10,7 @@ import {
   type DayOneFacts, type EmailDraft,
 } from "./templates.ts";
 import { isSkySlopeAddress } from "./skyslope.ts";
+import { documentFilename } from "./naming.ts";
 import type { Contact, Deal, Milestone } from "./types.ts";
 
 export interface PlannedMilestone extends Omit<Milestone, "calendar_event_id" | "source_link"> {
@@ -247,7 +248,7 @@ export function buildPlan(c: Contract): IntakePlan {
   return {
     dealId,
     folderName,
-    contractFilename: `${address} – Agreement of Sale – ${execution ?? "date to confirm"}.pdf`,
+    contractFilename: documentFilename({ address, clientLastName: lastName(c), document: "Agreement of Sale", date: execution }),
     deal,
     milestones,
     contacts,

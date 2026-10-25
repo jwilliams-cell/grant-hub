@@ -74,7 +74,7 @@ Folder per file: `02 — Clients / Transactions / [Address] – [Client last nam
 6 Compliance
 ```
 
-**File naming:** `[Address] – [Document] – [YYYY-MM-DD].pdf`, for example `5722 Malcolm St – Title Commitment – 2026-10-21.pdf`.
+**File naming:** `[Address] – [Client last name] – [Document] – [YYYY-MM-DD].pdf`, for example `5722 Malcolm St – McIntosh – Title Commitment – 2026-10-21.pdf`. For a company buyer or seller, use the company name in place of the last name. The date is the document's own date (the execution date for the Agreement of Sale). Every filed document uses this name, in Drive, in the Documents tab and as the SkySlope email subject. The dashboard builds it with `documentFilename` in `dashboard/lib/naming.ts`; jobs that file documents must use the same rule.
 
 **Where documents go**
 

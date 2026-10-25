@@ -75,7 +75,7 @@ Show it in chat before you do anything else: a short table of dates and contacts
 
 1. **Drive folder:** create `Transactions / [Year] / [Address] – [Client last name]`, with these subfolders:
    `1 Contract & Addenda` · `2 Inspections` · `3 Lender` · `4 Title` · `5 Closing` · `6 Compliance`
-   Save the ratified contract into `1 Contract & Addenda` as `[Address] – Agreement of Sale – [execution date].pdf`.
+   Save the ratified contract into `1 Contract & Addenda` as `[Address] – [Client last name] – Agreement of Sale – [execution date].pdf`. Every document filed later follows the same pattern: `[Address] – [Client last name] – [Document] – [YYYY-MM-DD].pdf`.
 2. **Calendar:** add one event per deadline on Jaz's calendar. Title each one `[Address] – [Deadline]`, for example "5722 Malcolm – Reply to inspection due". Make it all-day, with reminders 2 days before and the morning of. Put the client, the deal and the Drive folder link in the description.
 3. **Dashboard:** add the deal to the deals list and its milestones to the milestone list (see "Updating the dashboard").
 

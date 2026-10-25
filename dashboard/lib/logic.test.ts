@@ -97,7 +97,7 @@ test("buyer plan: four day-one drafts plus grant reminder, wire line, no sends",
   const plan = buildPlan(resolveDates(sampleContract()));
   assert.equal(plan.dealId, "5722-malcolm");
   assert.equal(plan.folderName, "5722 Malcolm St – McIntosh");
-  assert.equal(plan.contractFilename, "5722 Malcolm St – Agreement of Sale – 2026-10-10.pdf");
+  assert.equal(plan.contractFilename, "5722 Malcolm St – McIntosh – Agreement of Sale – 2026-10-10.pdf");
   assert.deepEqual(plan.drafts.map((d) => d.kind), ["title_order", "lender_intro", "agent_timeline", "buyer_congrats", "grant_reminder"]);
   const congrats = plan.drafts.find((d) => d.kind === "buyer_congrats")!;
   assert.ok(congrats.body.includes(WIRE_LINE));
@@ -369,4 +369,18 @@ test("people on the file are offered to Contacts, with names, once each", () => 
   assert.equal(byEmail["dave@example.com"].role, "Listing agent");
   assert.ok(!plan.contacts.some((x) => x.email === "jwilliams@gremom.com"));
   assert.equal(new Set(plan.contacts.map((x) => x.email)).size, plan.contacts.length);
+});
+
+test("document names: address, client last name, document, date", async () => {
+  const { documentFilename } = await import("./naming.ts");
+  assert.equal(
+    documentFilename({ address: "532 Waterside Cir L-0133", clientLastName: "Martin", document: "Title Commitment", date: "2026-10-21" }),
+    "532 Waterside Cir L-0133 – Martin – Title Commitment – 2026-10-21.pdf",
+  );
+  assert.equal(
+    documentFilename({ address: "7076 Forrest Ave", clientLastName: "DBBB LLC", document: "Inspection Report / Sewer", date: null }),
+    "7076 Forrest Ave – DBBB LLC – Inspection Report Sewer – date to confirm.pdf",
+  );
+  const plan = buildPlan(resolveDates(sampleContract({ buyer_entity: { name: "Lee Homes LLC", signer: "Pat Lee" } })));
+  assert.equal(plan.contractFilename, "5722 Malcolm St – Lee Homes LLC – Agreement of Sale – 2026-10-10.pdf");
 });
