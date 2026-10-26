@@ -102,7 +102,7 @@ test("buyer plan: four day-one drafts plus grant reminder, wire line, no sends",
   assert.deepEqual(plan.drafts.map((d) => d.kind), ["title_order", "deposit_instructions", "lender_intro", "agent_timeline", "buyer_congrats", "grant_reminder"]);
   const congrats = plan.drafts.find((d) => d.kind === "buyer_congrats")!;
   assert.ok(congrats.body.includes(WIRE_LINE));
-  assert.deepEqual(congrats.cc, []);
+  assert.deepEqual(congrats.cc, ["smartin@quickabstract.com"]);
   for (const d of plan.drafts) {
     assert.ok(!/be honest with me/i.test(d.body));
     // Jaz's own welcome template signs off as Client Care; every other email is signed "Jasmine".

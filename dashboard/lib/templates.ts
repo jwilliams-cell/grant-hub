@@ -260,13 +260,13 @@ function cashWelcome(f: DayOneFacts, w: WelcomeFacts): string[] {
 
 /**
  * The Buy SMART Team's welcome email to a buyer, from Jaz's own templates: one for buyers using a
- * lender, one for cash. Title gets its own deposit request (depositInstructions), so it isn't copied here.
+ * lender, one for cash. Safiya is still copied; she answers whichever deposit request reaches her second.
  */
 export function buyerCongrats(f: DayOneFacts, w: WelcomeFacts): EmailDraft {
   return {
     kind: "buyer_congrats",
     to: f.buyerEmails,
-    cc: f.teamCc,
+    cc: [w.quickAbstract ? QUICK_ABSTRACT.closer : "", ...f.teamCc].filter(Boolean),
     subject: `${f.address} – Your offer was accepted!`,
     body: (w.cash ? cashWelcome(f, w) : mortgageWelcome(f, w)).join("\n\n"),
     attachContract: true,

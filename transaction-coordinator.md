@@ -101,7 +101,7 @@ Subject: `[Address] ([Buyer]) is under contract`
 Subject: `[Address] – Key dates`
 > Looking forward to a smooth one together. Here are the key dates. Please confirm or let me know of any discrepancies: [execution, deposit, mortgage application, reply to inspection, commitment, settlement]. Lender: [ ]. Title: Quick Abstract — titleorders@quickabstract.com. Please copy me on all correspondence.
 
-**D. Buyer congratulations** → buyer (title is no longer copied; it gets its own deposit request, A2)
+**D. Buyer congratulations** → buyer, cc smartin@quickabstract.com (Safiya stays copied as well as getting A2)
 Subject: `[Address] – You're under contract!`
 > Congratulations! Your Agreement of Sale is attached. Here are the dates to keep in mind: [deposit, mortgage application, reply to inspection, commitment, settlement]. I've copied the title company so they can send wiring instructions for your deposit. [Wire fraud line.] Please reply all so everyone stays in the loop.
 
