@@ -134,7 +134,7 @@ This keeps the dashboard current when an agent, title or lender emails.
 | "Application complete" or "appraisal ordered or scheduled" | Update the milestone and note the appraisal date |
 | Appraisal value | Appraisal → Done; note the value. **Below the price, or repairs required → flag at the top for Jaz** |
 | Title commitment | Title commitment → Done. List every requirement title names as its own milestone, with who owes it. Draft the fees-and-commissions email to title for Jaz |
-| Mortgage commitment letter | Commitment → Done; save to `3 Lender`. Conditions listed → add each as a milestone |
+| Mortgage commitment letter | Commitment → Done; save to `3 Lender`. Conditions listed → add each as a milestone. **On every buyer file, draft the commitment to the listing agent** (cc their coordinator and Jaz's team on the file), attaching only the commitment letter, never the lender's email or the underwriter's conditions, which carry the buyer's personal finances. Template: "Mortgage Commitment" on the Templates page (`commitmentToListingAgent`) |
 | Clear to close | Clear to close → Done; draft the schedule-settlement email to Safiya (Jaz prefers 2pm) |
 | Settlement notice | Update the settlement date and time on the dashboard and calendar; draft the settlement notice email to the buyer |
 | Extension, change to agreement, new date | **Ask Jaz before changing dates.** Once she confirms: update the dashboard and move the calendar events |

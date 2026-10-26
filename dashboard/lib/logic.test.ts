@@ -461,3 +461,13 @@ test("Gmail folder per file: named by address under Transactions", async () => {
   assert.equal(gmailLabelName("5722 Malcolm St", true), "Transactions/Closed/5722 Malcolm St");
   assert.equal(gmailLabelUrl("Transactions/5722 Malcolm St"), "https://mail.google.com/mail/u/0/#label/Transactions%2F5722+Malcolm+St");
 });
+
+test("mortgage commitment goes to the listing agent, signed Jasmine, no conditions", async () => {
+  const { commitmentToListingAgent } = await import("./templates.ts");
+  const d = commitmentToListingAgent({ address: "5722 Malcolm St", buyerNames: "Alexis McIntosh", agentName: "Dave Goldsmith, KW Empower", agentEmail: "soldbygold24@gmail.com", cc: [], settlement: "2026-11-13" });
+  assert.deepEqual(d.to, ["soldbygold24@gmail.com"]);
+  assert.ok(d.body.startsWith("Hi Dave,"));
+  assert.ok(d.body.includes("Friday, November 13, 2026"));
+  assert.ok(d.body.trimEnd().endsWith("Jasmine"));
+  assert.ok(!/condition/i.test(d.body));
+});

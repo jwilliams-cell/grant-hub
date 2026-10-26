@@ -213,6 +213,8 @@ The Sheet is `BuySmart TC Tracker` (id `1ZfCzjEUzYzWSyrKvm_Pti4rFywcJC8gBCZTcQL8
 
 ## 11. Gotchas learned from Sarah's files
 
+- Large attachments (the Malcolm commitment PDF is 1 MB) can't pass through the Gmail and Drive connectors as base64. The jobs need a server path for attachments; the dashboard's Google token would need Gmail read access for that. Until then, drafts that should carry a lender or title PDF say so in the Drafts tab reason, and Jaz attaches it.
+
 - Quick Abstract takes no cashier's checks over $25,000. Buyers wire.
 - Never put "wire instructions" in an email subject to title (Safiya's request; it helps scammers).
 - Quick Abstract's server blocks Gmail, Yahoo and AOL addresses. Clients on those may not get title's emails, so forward them.

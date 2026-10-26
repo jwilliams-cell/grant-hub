@@ -357,6 +357,25 @@ export function housingAgency(f: DayOneFacts, clients: string[], counselor: { na
 }
 
 /** Follow-ups from Workflow 3, word for word. Shown on the Templates page. */
+/**
+ * Rule on every buyer file: when the lender sends the mortgage commitment, Jaz sends it to the listing agent,
+ * because the seller must receive it by the contract deadline. Attach only the commitment letter, never the
+ * lender's email with the underwriter's conditions (it carries the buyer's personal finances).
+ */
+export function commitmentToListingAgent(f: {
+  address: string; buyerNames: string; agentName: string; agentEmail: string; cc: string[]; settlement: string | null;
+}): EmailDraft {
+  return {
+    kind: "commitment_to_listing_agent",
+    to: [f.agentEmail],
+    cc: f.cc,
+    subject: `${f.address} – Mortgage Commitment`,
+    body: `Hi ${f.agentName.split(/[ ,]/)[0] || "there"},\n\nGood news! Attached is ${f.buyerNames}'s mortgage commitment for ${f.address}. We're on track for settlement on ${when(f.settlement)}. Please let me know if your seller needs anything else from our side.${SIGN}`,
+    attachContract: false,
+    reason: "Mortgage commitment received: deliver it to the listing agent for the seller",
+  };
+}
+
 export const FOLLOW_UPS: { title: string; to: string; text: string }[] = [
   { title: "Lender, early", to: "Loan officer", text: "Has the application been completed, and has the appraisal been ordered? If the appraisal is scheduled, please let me know the date." },
   { title: "Title, deposit", to: "Title", text: "Please let us know when the deposit is received." },

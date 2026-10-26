@@ -1,5 +1,5 @@
 import { CopyButton } from "@/components/CopyButton";
-import { agentTimeline, buyerCongrats, depositInstructions, FOLLOW_UPS, housingAgency, lenderIntro, llcDocuments, titleOrder, type DayOneFacts, type WelcomeFacts } from "@/lib/templates";
+import { agentTimeline, buyerCongrats, commitmentToListingAgent, depositInstructions, FOLLOW_UPS, housingAgency, lenderIntro, llcDocuments, titleOrder, type DayOneFacts, type EmailDraft, type WelcomeFacts } from "@/lib/templates";
 
 export const metadata = { title: "Templates · BuySmart Transaction Desk" };
 
@@ -40,6 +40,20 @@ const WELCOME_MORTGAGE: WelcomeFacts = {
   disclosureContingency: true, possession: null,
 };
 
+function templateCard(t: EmailDraft) {
+  const full = `Subject: ${t.subject}\n\n${t.body}`;
+  return (
+    <div key={t.kind + t.body.length} className="card stack-sm">
+      <div className="card-head" style={{ marginBottom: 0 }}>
+        <h3>{t.subject}</h3>
+        <CopyButton text={full} />
+      </div>
+      <div className="ui subtle">To {[...t.to, ...t.cc].join(", ")}{t.attachContract ? " · attach the Agreement of Sale" : ""}{t.kind === "commitment_to_listing_agent" ? " · attach the commitment letter only" : ""}</div>
+      <pre className="template">{t.body}</pre>
+    </div>
+  );
+}
+
 export default function TemplatesPage() {
   const dayOne = [
     titleOrder(SAMPLE),
@@ -48,28 +62,25 @@ export default function TemplatesPage() {
     buyerCongrats(SAMPLE, WELCOME_CASH_LLC), buyerCongrats(SAMPLE, WELCOME_MORTGAGE),
     llcDocuments(SAMPLE, "[LLC name]"), housingAgency(SAMPLE, ["[Buyer]"], { name: "[Counselor]", email: "[counselor email]" }),
   ];
+  const inFile = [
+    commitmentToListingAgent({ address: "[Address]", buyerNames: "[Buyer]", agentName: "[Listing agent]", agentEmail: "[agent email]", cc: ["[seller side coordinator email]"], settlement: null }),
+  ];
   return (
     <div className="stack">
       <div className="section">
         <h1>Templates</h1>
-        <p className="muted prose">The day-one emails go out as drafts automatically when you add a contract. The follow-ups are Sarah's exact words.</p>
+        <p className="muted prose">The day-one emails go out as drafts automatically when you add a contract. The others are drafted when the matching document arrives. The follow-ups are Sarah's exact words.</p>
       </div>
       <section className="section">
         <h2>Day one</h2>
         <div className="grid-wide">
-          {dayOne.map((t) => {
-            const full = `Subject: ${t.subject}\n\n${t.body}`;
-            return (
-              <div key={t.kind + t.body.length} className="card stack-sm">
-                <div className="card-head" style={{ marginBottom: 0 }}>
-                  <h3>{t.subject}</h3>
-                  <CopyButton text={full} />
-                </div>
-                <div className="ui subtle">To {[...t.to, ...t.cc].join(", ")}{t.attachContract ? " · attach the Agreement of Sale" : ""}</div>
-                <pre className="template">{t.body}</pre>
-              </div>
-            );
-          })}
+          {dayOne.map(templateCard)}
+        </div>
+      </section>
+      <section className="section">
+        <h2>When documents come in</h2>
+        <div className="grid-wide">
+          {inFile.map(templateCard)}
         </div>
       </section>
       <section className="section">
