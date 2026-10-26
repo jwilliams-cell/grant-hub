@@ -1,12 +1,14 @@
 import "server-only";
 import { google } from "googleapis";
 
-// One OAuth client for Jaz's own Google account: Sheets, Drive, Calendar and Gmail drafts.
+// One OAuth client for Jaz's own Google account: Sheets, Drive, Calendar, Gmail drafts, and Gmail read
+// (read only, so the server can copy lender and title PDFs into drafts, Drive and SkySlope at any size).
 export const GOOGLE_SCOPES = [
   "https://www.googleapis.com/auth/spreadsheets",
   "https://www.googleapis.com/auth/drive",
   "https://www.googleapis.com/auth/calendar.events",
   "https://www.googleapis.com/auth/gmail.compose",
+  "https://www.googleapis.com/auth/gmail.readonly",
 ];
 
 function required(name: string): string {

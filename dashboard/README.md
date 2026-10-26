@@ -34,14 +34,24 @@ npm run dev             # http://localhost:3000
 **Google:** sign in as jwilliams@gremom.com. The live setup uses the Google Cloud project `BuySmart Desk`.
 1. In Google Cloud Console, enable the Sheets, Drive, Calendar and Gmail APIs. On the consent screen, choose Internal if offered. Otherwise choose External and **publish** the app, or the refresh token expires after 7 days.
 2. Create an OAuth client of type *Web application* with redirect URI `https://developers.google.com/oauthplayground`.
-3. In the OAuth Playground, open the gear icon and tick **Use your own OAuth credentials** with that client's ID and secret. Authorize the four scopes below, then exchange the code for a refresh token. Without the tick, the token belongs to the Playground's own client and Google returns `unauthorized_client`.
+3. In the OAuth Playground, open the gear icon and tick **Use your own OAuth credentials** with that client's ID and secret. Authorize the five scopes below, then exchange the code for a refresh token. Without the tick, the token belongs to the Playground's own client and Google returns `unauthorized_client`.
 4. Set `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` and `GOOGLE_REFRESH_TOKEN`.
 
 (Alternative for a local setup: a *Desktop app* client plus `npm run google-auth`.)
 
 Error guide: `invalid_client` means the ID and secret don't match. `unauthorized_client` means the refresh token came from a different client. `invalid_grant` means the refresh token expired or was revoked, so get a new one.
 
-The scopes are Sheets, Drive, Calendar events and Gmail compose (drafts only). The app can't read Jaz's inbox.
+The scopes are:
+
+```
+https://www.googleapis.com/auth/spreadsheets
+https://www.googleapis.com/auth/drive
+https://www.googleapis.com/auth/calendar.events
+https://www.googleapis.com/auth/gmail.compose
+https://www.googleapis.com/auth/gmail.readonly
+```
+
+Gmail compose makes drafts. Gmail read only lets the server read a lender or title email and copy its PDF into a draft, Drive or SkySlope, since large PDFs can't pass through the Claude connectors. It can't delete, archive or change any email.
 
 **Hosting (Vercel):** import the repo with Root Directory `dashboard`, and set the variables from `.env.example` in the project settings. Always set `DASHBOARD_PASSWORD` (basic auth) and `APP_URL`. Then create a **private Blob store** under Storage and connect it to the project. That adds `BLOB_STORE_ID` (or, on older stores, `BLOB_READ_WRITE_TOKEN`), so contracts upload straight to Blob storage, past Vercel's 4.5 MB request limit. Each contract is deleted from Blob storage once it's saved in Drive. `npm run build` copies `../transaction-coordinator.md` into `content/` for the Playbook page.
 
