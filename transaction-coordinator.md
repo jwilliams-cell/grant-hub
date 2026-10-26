@@ -91,7 +91,7 @@ Subject: `[Address] – Title Order`
 
 **A2. Deposit instructions request** → smartin@quickabstract.com (Safiya, the title clerk) and the buyer, cc Jaz's team
 Subject: `[Address] ([Client last name])`. Never put "wire instructions" in the subject: Safiya asked, because it helps scammers spot the email.
-> Hi Safiya, I hope you're doing well! I've placed the title order for my buyer, [Buyer] (cc'd here), and wanted to ask for instructions for the deposit. [Property, buyer, seller, price, initial deposit held by Quick Abstract, lender and loan type or cash, settlement date.] Please send the instructions to [Buyer first name] directly... [Buyer first name], when the instructions arrive, please keep this in mind: [wire-fraud line]. Thank you! Jasmine
+> Hi Safiya, I hope you're doing well! I've placed the title order for my buyer, [Buyer] (cc'd here), and wanted to ask for instructions for the deposit. [Property, buyer, seller, price, initial deposit held by Quick Abstract, lender and loan type or cash, settlement date.] Please send the instructions to [Buyer first name] directly... [Buyer first name], when the instructions arrive, please call Quick Abstract at 215-232-3683 to confirm them before you send any money. This is a standard step to protect you from wire fraud. Thank you! Jasmine
 
  → loan officer, cc processor
 Subject: `[Address] ([Buyer]) is under contract`

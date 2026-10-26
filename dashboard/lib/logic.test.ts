@@ -439,7 +439,7 @@ test("down payment assistance switch: on adds the grant steps and counselors, of
   assert.ok(switchedOn.warnings.some((w) => w.includes("Add the housing counselor")));
 });
 
-test("deposit instructions request: to Safiya and the buyer, safe subject, wire line", () => {
+test("deposit instructions request: to Safiya and the buyer, safe subject, title phone number", () => {
   const plan = buildPlan(resolveDates(sampleContract()));
   const d = plan.drafts.find((x) => x.kind === "deposit_instructions")!;
   assert.deepEqual(d.to.slice(0, 1), ["smartin@quickabstract.com"]);
@@ -448,7 +448,7 @@ test("deposit instructions request: to Safiya and the buyer, safe subject, wire 
   assert.ok(!/wir/i.test(d.subject));
   assert.equal(d.subject, "5722 Malcolm St (McIntosh)");
   assert.ok(d.body.startsWith("Hi Safiya,"));
-  assert.ok(d.body.includes(WIRE_LINE));
+  assert.ok(d.body.includes("please call Quick Abstract at 215-232-3683 to confirm them before you send any money"));
   assert.ok(d.body.trimEnd().endsWith("Jasmine"));
   assert.ok(!/\b(FHA|VA|PHFA|TC)\b/.test(d.body));
   const other = buildPlan(resolveDates(sampleContract({ title: { company: "Other Title Co", file_no: null } })));

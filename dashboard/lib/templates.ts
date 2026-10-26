@@ -11,6 +11,8 @@ export const QUICK_ABSTRACT = {
   name: "Quick Abstract",
   orders: "titleorders@quickabstract.com",
   closer: "smartin@quickabstract.com",
+  /** Main office, from Safiya's signature. Jaz gives it to buyers so they confirm instructions by phone. */
+  phone: "215-232-3683",
 };
 
 export interface EmailDraft {
@@ -285,6 +287,7 @@ export interface DepositFacts {
  * Jaz's request to the title clerk (Safiya at Quick Abstract) for deposit instructions, copied to the buyer.
  * Based on her Oct 13 Malcolm St email. Safiya asked that the subject never say "wire instructions",
  * because that helps scammers spot the email, so the subject is just the address and last name.
+ * Jaz chose to give the buyer title's phone number here, in her own email, in place of WIRE_LINE.
  */
 export function depositInstructions(f: DayOneFacts, d: DepositFacts): EmailDraft {
   const lender = d.cash
@@ -305,7 +308,7 @@ export function depositInstructions(f: DayOneFacts, d: DepositFacts): EmailDraft
     to: [QUICK_ABSTRACT.closer, ...f.buyerEmails],
     cc: f.teamCc,
     subject: `${f.address} (${d.clientLastName})`,
-    body: `Hi Safiya,\n\nI hope you're doing well! I've placed the title order for my buyer, ${f.buyerNames}${f.buyerEmails.length ? " (cc'd here)" : ""}, and wanted to ask for instructions for the deposit.\n\nHere are the deal details for reference:\n\n${details.map((l) => `- ${l}`).join("\n")}\n\nPlease send the instructions to ${greet} directly at your earliest convenience, and let me know if you need anything else from me to keep the file moving.\n\n${d.greetingNames ? `${d.greetingNames}, when` : "When"} the instructions arrive, please keep this in mind: ${WIRE_LINE} This is a standard step to protect you from wire fraud.${SIGN}`,
+    body: `Hi Safiya,\n\nI hope you're doing well! I've placed the title order for my buyer, ${f.buyerNames}${f.buyerEmails.length ? " (cc'd here)" : ""}, and wanted to ask for instructions for the deposit.\n\nHere are the deal details for reference:\n\n${details.map((l) => `- ${l}`).join("\n")}\n\nPlease send the instructions to ${greet} directly at your earliest convenience, and let me know if you need anything else from me to keep the file moving.\n\n${d.greetingNames ? `${d.greetingNames}, when` : "When"} the instructions arrive, please call ${QUICK_ABSTRACT.name} at ${QUICK_ABSTRACT.phone} to confirm them before you send any money. This is a standard step to protect you from wire fraud.${SIGN}`,
     attachContract: false,
     reason: "Day one: ask the title clerk for deposit instructions",
   };
