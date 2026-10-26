@@ -1,5 +1,5 @@
 import { CopyButton } from "@/components/CopyButton";
-import { agentTimeline, buyerCongrats, FOLLOW_UPS, housingAgency, lenderIntro, llcDocuments, titleOrder, type DayOneFacts, type WelcomeFacts } from "@/lib/templates";
+import { agentTimeline, buyerCongrats, depositInstructions, FOLLOW_UPS, housingAgency, lenderIntro, llcDocuments, titleOrder, type DayOneFacts, type WelcomeFacts } from "@/lib/templates";
 
 export const metadata = { title: "Templates · BuySmart Transaction Desk" };
 
@@ -42,7 +42,9 @@ const WELCOME_MORTGAGE: WelcomeFacts = {
 
 export default function TemplatesPage() {
   const dayOne = [
-    titleOrder(SAMPLE), lenderIntro(SAMPLE), agentTimeline(SAMPLE),
+    titleOrder(SAMPLE),
+    depositInstructions(SAMPLE, { clientLastName: "[Client last name]", greetingNames: "[Buyer first name]", price: null, deposit: null, cash: false, financingType: "FHA" }),
+    lenderIntro(SAMPLE), agentTimeline(SAMPLE),
     buyerCongrats(SAMPLE, WELCOME_CASH_LLC), buyerCongrats(SAMPLE, WELCOME_MORTGAGE),
     llcDocuments(SAMPLE, "[LLC name]"), housingAgency(SAMPLE, ["[Buyer]"], { name: "[Counselor]", email: "[counselor email]" }),
   ];

@@ -120,7 +120,7 @@ SkySlope gives every property file its own email address. Anything emailed to th
 
 | Job | When | What |
 |---|---|---|
-| **Intake** | When Jaz drops a contract, or an "under contract" or "fully executed" email arrives for a new address | Workflow 1 in `transaction-coordinator.md`: extract dates and contacts; create the deal, milestones, Drive folder, calendar events and the four day-one drafts |
+| **Intake** | When Jaz drops a contract, or an "under contract" or "fully executed" email arrives for a new address | Workflow 1 in `transaction-coordinator.md`: extract dates and contacts; create the deal, milestones, Drive folder, calendar events and the day-one drafts (including the deposit instructions request to the title clerk) |
 | **Inbound email** | Weekdays 6:45am, 12pm and 4pm Eastern | Workflow 2: match emails to deals by address, title file number, client name or party email; update the Sheet; file attachments; copy to SkySlope; draft replies |
 | **Deadline sweep** | Weekdays 6:45am | Workflow 3: follow-up drafts for anything due in 2 days, late flags, closing disclosure reminder 3 business days before settlement |
 | **Morning summary** | Weekdays, done by 7:30am | One summary to Jaz, by push notification and email to herself only: late items, what's due today and tomorrow, drafts waiting (recipient and subject), decisions only she can make. Under 250 words |
@@ -213,6 +213,7 @@ The Sheet is `BuySmart TC Tracker` (id `1ZfCzjEUzYzWSyrKvm_Pti4rFywcJC8gBCZTcQL8
 ## 11. Gotchas learned from Sarah's files
 
 - Quick Abstract takes no cashier's checks over $25,000. Buyers wire.
+- Never put "wire instructions" in an email subject to title (Safiya's request; it helps scammers).
 - Quick Abstract's server blocks Gmail, Yahoo and AOL addresses. Clients on those may not get title's emails, so forward them.
 - Carol at First Citizens Community Bank sends encrypted emails. If one can't be read, ask her to resend.
 - Grant files need every document in one email, 30 days before settlement.

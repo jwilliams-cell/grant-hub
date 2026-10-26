@@ -99,10 +99,10 @@ test("buyer plan: four day-one drafts plus grant reminder, wire line, no sends",
   assert.equal(plan.dealId, "5722-malcolm");
   assert.equal(plan.folderName, "5722 Malcolm St – McIntosh");
   assert.equal(plan.contractFilename, "5722 Malcolm St – McIntosh – Agreement of Sale – 2026-10-10.pdf");
-  assert.deepEqual(plan.drafts.map((d) => d.kind), ["title_order", "lender_intro", "agent_timeline", "buyer_congrats", "grant_reminder"]);
+  assert.deepEqual(plan.drafts.map((d) => d.kind), ["title_order", "deposit_instructions", "lender_intro", "agent_timeline", "buyer_congrats", "grant_reminder"]);
   const congrats = plan.drafts.find((d) => d.kind === "buyer_congrats")!;
   assert.ok(congrats.body.includes(WIRE_LINE));
-  assert.deepEqual(congrats.cc, ["smartin@quickabstract.com"]);
+  assert.deepEqual(congrats.cc, []);
   for (const d of plan.drafts) {
     assert.ok(!/be honest with me/i.test(d.body));
     // Jaz's own welcome template signs off as Client Care; every other email is signed "Jasmine".
@@ -137,7 +137,7 @@ test("cash LLC buyer on Gmail: no lender drafts, LLC request, Gmail warning", ()
     buyers: [{ name: "Pat Lee", email: "patlee@gmail.com", phone: null }],
     buyer_entity: { name: "Lee Homes LLC", signer: "Pat Lee" },
   })));
-  assert.deepEqual(plan.drafts.map((d) => d.kind), ["title_order", "agent_timeline", "buyer_congrats", "llc_documents"]);
+  assert.deepEqual(plan.drafts.map((d) => d.kind), ["title_order", "deposit_instructions", "agent_timeline", "buyer_congrats", "llc_documents"]);
   assert.ok(!plan.milestones.some((m) => /mortgage|apprais|closing disclosure/i.test(m.step)));
   assert.ok(plan.milestones.some((m) => m.step.startsWith("LLC documents") && m.due === "2026-10-17"));
   assert.ok(plan.warnings.some((w) => w.includes("Gmail, Yahoo or AOL")));
@@ -401,7 +401,7 @@ test("team members from Settings, switched on per file: copied on day-one emails
   })));
   assert.deepEqual(on.calendarGuests, [team[0]]);
   assert.equal(on.deal.team_on_file, "Kenya Matthews <kmatthews@gremom.com>");
-  for (const k of ["title_order", "lender_intro", "agent_timeline", "buyer_congrats", "housing_agency"]) {
+  for (const k of ["title_order", "deposit_instructions", "lender_intro", "agent_timeline", "buyer_congrats", "housing_agency"]) {
     assert.ok(on.drafts.find((d) => d.kind === k)!.cc.includes("kmatthews@gremom.com"), k);
   }
   assert.ok(!on.drafts.find((d) => d.kind === "grant_reminder")!.cc.includes("kmatthews@gremom.com"));
@@ -437,4 +437,20 @@ test("down payment assistance switch: on adds the grant steps and counselors, of
   const switchedOn = buildPlan(resolveDates(sampleContract({ grant_program: null, uses_dpa: true })));
   assert.ok(switchedOn.drafts.some((d) => d.kind === "grant_reminder"));
   assert.ok(switchedOn.warnings.some((w) => w.includes("Add the housing counselor")));
+});
+
+test("deposit instructions request: to Safiya and the buyer, safe subject, wire line", () => {
+  const plan = buildPlan(resolveDates(sampleContract()));
+  const d = plan.drafts.find((x) => x.kind === "deposit_instructions")!;
+  assert.deepEqual(d.to.slice(0, 1), ["smartin@quickabstract.com"]);
+  assert.ok(d.to.length > 1);
+  // Safiya asked that the subject never mention wire instructions.
+  assert.ok(!/wir/i.test(d.subject));
+  assert.equal(d.subject, "5722 Malcolm St (McIntosh)");
+  assert.ok(d.body.startsWith("Hi Safiya,"));
+  assert.ok(d.body.includes(WIRE_LINE));
+  assert.ok(d.body.trimEnd().endsWith("Jasmine"));
+  assert.ok(!/\b(FHA|VA|PHFA|TC)\b/.test(d.body));
+  const other = buildPlan(resolveDates(sampleContract({ title: { company: "Other Title Co", file_no: null } })));
+  assert.ok(!other.drafts.some((x) => x.kind === "deposit_instructions"));
 });

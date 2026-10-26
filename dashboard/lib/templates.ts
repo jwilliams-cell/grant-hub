@@ -258,17 +258,56 @@ function cashWelcome(f: DayOneFacts, w: WelcomeFacts): string[] {
 
 /**
  * The Buy SMART Team's welcome email to a buyer, from Jaz's own templates: one for buyers using a
- * lender, one for cash. Title is copied so they send deposit instructions.
+ * lender, one for cash. Title gets its own deposit request (depositInstructions), so it isn't copied here.
  */
 export function buyerCongrats(f: DayOneFacts, w: WelcomeFacts): EmailDraft {
   return {
     kind: "buyer_congrats",
     to: f.buyerEmails,
-    cc: [w.quickAbstract ? QUICK_ABSTRACT.closer : "", ...f.teamCc].filter(Boolean),
+    cc: f.teamCc,
     subject: `${f.address} – Your offer was accepted!`,
     body: (w.cash ? cashWelcome(f, w) : mortgageWelcome(f, w)).join("\n\n"),
     attachContract: true,
-    reason: "Day one: welcome the buyer with key dates; title sends deposit instructions",
+    reason: "Day one: welcome the buyer with key dates",
+  };
+}
+
+export interface DepositFacts {
+  clientLastName: string;
+  greetingNames: string;
+  price: number | null;
+  deposit: number | null;
+  cash: boolean;
+  financingType: string | null;
+}
+
+/**
+ * Jaz's request to the title clerk (Safiya at Quick Abstract) for deposit instructions, copied to the buyer.
+ * Based on her Oct 13 Malcolm St email. Safiya asked that the subject never say "wire instructions",
+ * because that helps scammers spot the email, so the subject is just the address and last name.
+ */
+export function depositInstructions(f: DayOneFacts, d: DepositFacts): EmailDraft {
+  const lender = d.cash
+    ? "Cash purchase (no mortgage)"
+    : [f.lenderName || "to follow", loanTypeWords(d.financingType)].filter(Boolean).join(" — ");
+  const details = [
+    `Property: ${f.address}`,
+    `Buyer: ${f.buyerNames}`,
+    `Seller: ${f.sellerNames || "to follow"}`,
+    `Purchase price: ${money(d.price)}`,
+    `Initial deposit: ${money(d.deposit)} (held by ${QUICK_ABSTRACT.name})`,
+    `Lender: ${lender}`,
+    `Settlement date: ${when(f.settlement)}`,
+  ];
+  const greet = d.greetingNames || "the buyer";
+  return {
+    kind: "deposit_instructions",
+    to: [QUICK_ABSTRACT.closer, ...f.buyerEmails],
+    cc: f.teamCc,
+    subject: `${f.address} (${d.clientLastName})`,
+    body: `Hi Safiya,\n\nI hope you're doing well! I've placed the title order for my buyer, ${f.buyerNames}${f.buyerEmails.length ? " (cc'd here)" : ""}, and wanted to ask for instructions for the deposit.\n\nHere are the deal details for reference:\n\n${details.map((l) => `- ${l}`).join("\n")}\n\nPlease send the instructions to ${greet} directly at your earliest convenience, and let me know if you need anything else from me to keep the file moving.\n\n${d.greetingNames ? `${d.greetingNames}, when` : "When"} the instructions arrive, please keep this in mind: ${WIRE_LINE} This is a standard step to protect you from wire fraud.${SIGN}`,
+    attachContract: false,
+    reason: "Day one: ask the title clerk for deposit instructions",
   };
 }
 

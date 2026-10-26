@@ -6,7 +6,7 @@ import {
   clientName, clientPeople, dealSlug, lastName, DATE_LABELS, type Contract, type ContractDateValue, type DateKey,
 } from "./contract.ts";
 import {
-  agentTimeline, buyerCongrats, grantReminder, housingAgency, lenderIntro, llcDocuments, titleOrder, JAZ_EMAIL, QUICK_ABSTRACT,
+  agentTimeline, buyerCongrats, depositInstructions, grantReminder, housingAgency, lenderIntro, llcDocuments, titleOrder, JAZ_EMAIL, QUICK_ABSTRACT,
   type DayOneFacts, type EmailDraft,
 } from "./templates.ts";
 import { isSkySlopeAddress } from "./skyslope.ts";
@@ -175,8 +175,14 @@ export function buildPlan(c: Contract): IntakePlan {
     drafts.push(agentTimeline(facts));
     warnings.push("Listing side: the seller-side conveyancing email to the buyer's title company still needs to be written by hand.");
   } else {
-    if (usesQuickAbstract) drafts.push(titleOrder(facts));
-    else warnings.push(`Title is with ${titleCo}, not Quick Abstract. No title order draft was made.`);
+    const firstNames = c.buyers.map((b) => b.name?.trim().split(/\s+/)[0]).filter(Boolean) as string[];
+    const greetingNames = firstNames.join(" and ") || c.buyer_entity?.signer?.split(/\s+/)[0] || "";
+    if (usesQuickAbstract) {
+      drafts.push(titleOrder(facts));
+      drafts.push(depositInstructions(facts, {
+        clientLastName: lastName(c), greetingNames, price: c.price, deposit: c.deposit_amount, cash, financingType: c.financing_type,
+      }));
+    } else warnings.push(`Title is with ${titleCo}, not Quick Abstract. No title order or deposit instructions request was drafted; ask that title company for deposit instructions by hand.`);
     if (!cash) {
       if (facts.loanOfficerEmail) drafts.push(lenderIntro(facts));
       else warnings.push("No loan officer email in the contract, so the lender introduction wasn't drafted.");
@@ -185,9 +191,8 @@ export function buildPlan(c: Contract): IntakePlan {
     else warnings.push("No listing agent email in the contract, so the key dates email wasn't drafted.");
     if (facts.buyerEmails.length) {
       const entity = c.buyer_entity?.name ?? null;
-      const firstNames = c.buyers.map((b) => b.name?.trim().split(/\s+/)[0]).filter(Boolean) as string[];
       drafts.push(buyerCongrats(facts, {
-        greetingNames: firstNames.join(" and ") || c.buyer_entity?.signer?.split(/\s+/)[0] || "",
+        greetingNames,
         entityName: entity,
         price: c.price,
         deposit: c.deposit_amount,
