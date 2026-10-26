@@ -109,6 +109,29 @@ async function runFile(row: QueueRow, at: string, tracker: Tracker): Promise<str
   return `Filed ${driveFileUrl(fileId)}; SkySlope ${skyslopeNote}`;
 }
 
+/** Copies a document that's already filed to the deal's SkySlope address (once an address is confirmed). */
+async function runSkySlope(row: QueueRow, at: string, tracker: Tracker): Promise<string> {
+  const deal = tracker.deals.find((d) => d.deal_id === row.deal_id);
+  if (!deal) throw new Error(`${row.deal_id} isn't in the tracker`);
+  const pdf = await fetchAttachment(row.gmail_message_id, row.attachment);
+  const copy = skySlopeCopy(deal.skyslope_email, tracker.settings, { filename: row.filename, data: pdf.data });
+  if (copy.mode === "none") throw new Error("No confirmed @skyslope.com address on this deal");
+  if (copy.mode === "send") {
+    await gmailApi().users.messages.send({ userId: "me", requestBody: { raw: copy.raw } });
+  } else {
+    const res = await gmailApi().users.drafts.create({ userId: "me", requestBody: { message: { raw: copy.raw } } });
+    await appendRows("Drafts", DRAFT_COLS, [{
+      deal_id: row.deal_id, to: copy.to, subject: row.filename, gmail_draft_id: res.data.id ?? "", reason: "Copy to SkySlope for compliance",
+      created_at: at, status: "Waiting for Jaz", gmail_message_id: res.data.message?.id ?? "",
+    }]);
+  }
+  const note = copy.mode === "send" ? `sent to ${copy.to}` : `drafted to ${copy.to}`;
+  await appendRows("Activity", ACTIVITY_COLS, [{
+    at, deal_id: row.deal_id, event: "Copied to SkySlope", detail: `${row.filename} ${note}`, source_link: gmailLink(row.gmail_message_id), by: "Claude",
+  }]);
+  return `SkySlope ${note}`;
+}
+
 /** Runs up to MAX_PER_RUN pending rows. Each row's outcome is written back to the Queue tab. */
 export async function processQueue(): Promise<{ done: number; errors: number; pending: number }> {
   const queue = await readQueue();
@@ -121,7 +144,9 @@ export async function processQueue(): Promise<{ done: number; errors: number; pe
     try {
       const problem = validateQueueRow(row);
       if (problem) throw new Error(problem);
-      const result = row.action === "draft" ? await runDraft(row, at) : await runFile(row, at, tracker);
+      const result = row.action === "draft" ? await runDraft(row, at)
+        : row.action === "skyslope" ? await runSkySlope(row, at, tracker)
+        : await runFile(row, at, tracker);
       await finish(sheetRow, "Done", result);
       done++;
     } catch (e) {

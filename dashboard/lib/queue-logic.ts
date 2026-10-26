@@ -49,10 +49,14 @@ export function validateQueueRow(row: QueueRow): string {
     if (!row.subject.trim()) return "draft needs a subject";
     return "";
   }
+  if (row.action === "skyslope") {
+    if (!/\.pdf$/.test(row.filename)) return "skyslope needs the filed document's filename";
+    return "";
+  }
   if (row.action === "file") {
     if (!(SUBFOLDERS as readonly string[]).includes(row.drive_subfolder)) return `drive_subfolder must be one of: ${SUBFOLDERS.join(", ")}`;
     if (!/ – .+ – .+ – (\d{4}-\d{2}-\d{2}|date to confirm)\.pdf$/.test(row.filename)) return "filename must follow [Address] – [Client last name] – [Document] – [YYYY-MM-DD].pdf";
     return "";
   }
-  return `unknown action "${row.action}" (use draft or file)`;
+  return `unknown action "${row.action}" (use draft, file or skyslope)`;
 }

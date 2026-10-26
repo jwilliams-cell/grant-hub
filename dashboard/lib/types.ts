@@ -58,6 +58,7 @@ export const SUBFOLDERS = [
  * Work only the server can do: moving PDFs of any size out of Gmail. Claude's jobs add a row; the dashboard's
  * cron (every 5 minutes) does it and writes back status and result. draft: a Gmail draft with the PDF attached
  * (never sent). file: the PDF saved to the deal's Drive subfolder, listed in Documents and copied to SkySlope.
+ * skyslope: a SkySlope copy of a document filed before the deal's SkySlope address was confirmed.
  */
 export const QUEUE_COLS = [
   "id", "created_at", "deal_id", "action", "gmail_message_id", "attachment", "to", "cc", "subject", "body",

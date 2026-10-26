@@ -32,5 +32,6 @@ test("queue rows are checked before anything runs", () => {
   assert.equal(validateQueueRow(row({ action: "file", drive_subfolder: "3 Lender", filename: "5722 Malcolm St – McIntosh – Mortgage Commitment – 2026-10-26.pdf" })), "");
   assert.match(validateQueueRow(row({ action: "file", drive_subfolder: "Lender", filename: "x.pdf" })), /drive_subfolder/);
   assert.match(validateQueueRow(row({ action: "file", drive_subfolder: "3 Lender", filename: "commitment.pdf" })), /filename must follow/);
+  assert.equal(validateQueueRow(row({ action: "skyslope", filename: "5722 Malcolm St – McIntosh – Mortgage Commitment – 2026-10-26.pdf" })), "");
   assert.match(validateQueueRow(row({ action: "send" })), /unknown action/);
 });

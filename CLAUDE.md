@@ -213,7 +213,7 @@ The Sheet is `BuySmart TC Tracker` (id `1ZfCzjEUzYzWSyrKvm_Pti4rFywcJC8gBCZTcQL8
 
 ## 11. Gotchas learned from Sarah's files
 
-- Large attachments (the Malcolm commitment PDF is 1 MB) can't pass through the Gmail and Drive connectors as base64. Jobs never try: they add a row to the tracker's `Queue` tab instead (`QUEUE_COLS` in `dashboard/lib/types.ts`). The dashboard's cron (`/api/cron/queue`, every 5 minutes) reads the email with its own Gmail read-only token and either drafts it with the PDF attached (`action` draft, never sent) or files it to Drive, lists it in Documents and copies it to SkySlope (`action` file). It writes Done or Error and the result back on the row.
+- Large attachments (the Malcolm commitment PDF is 1 MB) can't pass through the Gmail and Drive connectors as base64. Jobs never try: they add a row to the tracker's `Queue` tab instead (`QUEUE_COLS` in `dashboard/lib/types.ts`). The dashboard's cron (`/api/cron/queue`, every 5 minutes) reads the email with its own Gmail read-only token and either drafts it with the PDF attached (`action` draft, never sent) or files it to Drive, lists it in Documents and copies it to SkySlope (`action` file), or copies an already filed document once the SkySlope address is confirmed (`action` skyslope). It writes Done or Error and the result back on the row.
 
 - Quick Abstract takes no cashier's checks over $25,000. Buyers wire.
 - Never put "wire instructions" in an email subject to title (Safiya's request; it helps scammers).
