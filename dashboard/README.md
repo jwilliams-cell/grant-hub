@@ -68,3 +68,5 @@ npm test            # date math, contract to plan, email drafts, MIME, dashboard
 npm run typecheck
 npm run build
 ```
+
+**Queue worker:** `vercel.json` runs `/api/cron/queue` every 5 minutes. It works through the tracker's `Queue` tab (see `lib/queue.ts`): drafts that carry a PDF from Gmail, and PDFs filed to Drive and copied to SkySlope. Optionally set `CRON_SECRET` in Vercel; Vercel then sends it with each cron call and the route refuses anything else. The route skips the dashboard password.

@@ -3,6 +3,8 @@ import { NextResponse, type NextRequest } from "next/server";
 // The dashboard shows client names and creates drafts in Jaz's Gmail, so anything beyond
 // localhost needs DASHBOARD_PASSWORD set. Basic auth; the user name is ignored.
 export function middleware(req: NextRequest) {
+  // The queue worker has its own check (CRON_SECRET or Vercel's cron agent) in its route.
+  if (req.nextUrl.pathname === "/api/cron/queue") return NextResponse.next();
   const password = process.env.DASHBOARD_PASSWORD;
   if (!password) return NextResponse.next();
   const header = req.headers.get("authorization") ?? "";

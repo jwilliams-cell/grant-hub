@@ -121,6 +121,8 @@ This keeps the dashboard current when an agent, title or lender emails.
 
 **Find the emails.** Search Gmail for messages since the last check that mention an active file. Match on any of these: street address (with or without "St", "Ave" and so on), title file number (QA20…), client last name, or the email address of anyone on the file.
 
+**Attachments.** Don't push PDFs through the connectors. Add a row to the tracker's `Queue` tab: `action` file (with `drive_subfolder` and the `filename` from the naming rule) to save it to Drive and copy it to SkySlope, or `action` draft (with `to`, `cc`, `subject`, `body`) for a draft that carries the PDF. Give `gmail_message_id`, and `attachment` when the email has more than one PDF. The dashboard does the work within 5 minutes and writes the result on the row.
+
 **File it.** Add the file's Gmail label (`Transactions/[Address]`) to every matching thread, creating the label if it's missing. Never remove the inbox label, archive, or delete anything.
 
 **Read each one and decide what it means.** Then update the dashboard, the calendar and drafts using this table:
