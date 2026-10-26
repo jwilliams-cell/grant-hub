@@ -30,6 +30,7 @@ The step-by-step coordinator playbook lives in `transaction-coordinator.md`, in 
 | Active file folders | 5722 Malcolm St – McIntosh `19YY-VR8AFhgoJHIMGQYJ760GBHojICzj` (subfolders 1–6 created) · 7076 Forrest Ave `1jVrV4FBHCLb7GtJWfB136ywyndH7nEFd` · 148 Millick St `1MIblRaKMAW1CB6dEwqV5cWtrnBhBPnpb` · 125 S 54th St `13Z93C9oth1QdcRZF9L9C4NhTcuXKutZ_` · 1218 S Peach St `1mWQ4MgnscSr_KU6xK9sqJlhyom0RTXPH` · 237 Albanus St `1RP1Z5MJ-hr1Vdj9XyRDzkU8WZs9iI-7r` | The last five still need subfolders 1–6 |
 | Dashboard (live) | https://grant-hub-dashboard-sgph.vercel.app on Vercel (Pro), deploys from `claude/new-session-t9shcl`, Root Directory `dashboard`, password protected | Live Oct 24, 2026. Reads the tracker Sheet |
 | Prototype dashboard | https://claude.ai/artifact/BbChcRBdS8T11CdZN8DWEE | Reference only; replaced by this build |
+| Gmail folders | One label per active file, `Transactions/[Address]`, plus `Transactions/Closed`. Emails stay in the inbox too | Created Oct 26, 2026, and existing threads filed (automated alerts such as Redfin, ShowingTime and MLS left out) |
 | Weekday scheduled task "TC morning drafts" | claude.ai, 6:42am Eastern, Mon–Fri | Interim. Pause it once phase 4 is live |
 
 Connected accounts available: Gmail, Google Calendar, Google Drive, Google Sheets. SkySlope has no connector. It's reached by email (section 6).
@@ -203,7 +204,6 @@ The Sheet is `BuySmart TC Tracker` (id `1ZfCzjEUzYzWSyrKvm_Pti4rFywcJC8gBCZTcQL8
 
 ## 10. Open questions for Jaz
 
-- Reconnect the Gmail connector with label permission so the `Transactions/[Address]` labels can be created (Jaz chose Gmail folders, Oct 26, 2026; emails stay in the inbox).
 - The exact SkySlope address for each active file, and whether to turn on automatic SkySlope uploads.
 - Should Kenya see the dashboard? (This affects sharing on the Sheet and the app.)
 - Mortgage commitment date for 5722 Malcolm St (it's in the Agreement of Sale, not in email).
