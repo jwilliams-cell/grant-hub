@@ -7,6 +7,7 @@ import { driveFileUrl, driveFolderUrl, gmailSearchUrl } from "@/lib/google";
 import { SetupNeeded, Stepper, Tag } from "@/components/bits";
 import { PEOPLE_FIELDS, type PeopleField } from "@/lib/people";
 import { EditPeople } from "./EditPeople";
+import { gmailLabelName, gmailLabelUrl } from "@/lib/naming";
 
 export default async function FileDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -55,7 +56,8 @@ export default async function FileDetail({ params }: { params: Promise<{ id: str
           {deal.drive_folder_id && (
             <a className="btn btn-secondary" href={driveFolderUrl(deal.drive_folder_id)} target="_blank" rel="noreferrer">Open Drive folder</a>
           )}
-          <a className="btn btn-ghost" href={gmailSearchUrl(gmailQuery)} target="_blank" rel="noreferrer">Open in Gmail</a>
+          <a className="btn btn-secondary" href={gmailLabelUrl(gmailLabelName(deal.address, deal.status !== "Active"))} target="_blank" rel="noreferrer">Open Gmail folder</a>
+          <a className="btn btn-ghost" href={gmailSearchUrl(gmailQuery)} target="_blank" rel="noreferrer">Search Gmail</a>
         </div>
         {deal.notes && <p className="muted">{deal.notes}</p>}
       </div>

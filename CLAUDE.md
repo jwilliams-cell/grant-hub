@@ -121,7 +121,7 @@ SkySlope gives every property file its own email address. Anything emailed to th
 | Job | When | What |
 |---|---|---|
 | **Intake** | When Jaz drops a contract, or an "under contract" or "fully executed" email arrives for a new address | Workflow 1 in `transaction-coordinator.md`: extract dates and contacts; create the deal, milestones, Drive folder, calendar events and the day-one drafts (including the deposit instructions request to the title clerk) |
-| **Inbound email** | Weekdays 6:45am, 12pm and 4pm Eastern | Workflow 2: match emails to deals by address, title file number, client name or party email; update the Sheet; file attachments; copy to SkySlope; draft replies |
+| **Inbound email** | Weekdays 6:45am, 12pm and 4pm Eastern | Workflow 2: match emails to deals by address, title file number, client name or party email; add the file's Gmail label (`Transactions/[Address]`, built by `gmailLabelName` in `dashboard/lib/naming.ts`; closed files move to `Transactions/Closed/[Address]`), never archiving or deleting; update the Sheet; file attachments; copy to SkySlope; draft replies |
 | **Deadline sweep** | Weekdays 6:45am | Workflow 3: follow-up drafts for anything due in 2 days, late flags, closing disclosure reminder 3 business days before settlement |
 | **Morning summary** | Weekdays, done by 7:30am | One summary to Jaz, by push notification and email to herself only: late items, what's due today and tomorrow, drafts waiting (recipient and subject), decisions only she can make. Under 250 words |
 
@@ -159,7 +159,7 @@ Run these as Claude Code scheduled tasks (cloud). Each job reads `CLAUDE.md` and
    - Documents, with Drive and SkySlope status
    - People on the file, with click-to-email
    - The activity log
-   - Buttons: Open Drive folder, Open in Gmail (search by address)
+   - Buttons: Open Drive folder, Open Gmail folder (the file's label), Search Gmail (by address)
 4. **Playbook** — Sarah's process by stage, rendered from `transaction-coordinator.md`.
 5. **Templates** — the email templates, each with a Copy button.
 6. **Contacts** — searchable.
@@ -203,6 +203,7 @@ The Sheet is `BuySmart TC Tracker` (id `1ZfCzjEUzYzWSyrKvm_Pti4rFywcJC8gBCZTcQL8
 
 ## 10. Open questions for Jaz
 
+- Reconnect the Gmail connector with label permission so the `Transactions/[Address]` labels can be created (Jaz chose Gmail folders, Oct 26, 2026; emails stay in the inbox).
 - The exact SkySlope address for each active file, and whether to turn on automatic SkySlope uploads.
 - Should Kenya see the dashboard? (This affects sharing on the Sheet and the app.)
 - Mortgage commitment date for 5722 Malcolm St (it's in the Agreement of Sale, not in email).

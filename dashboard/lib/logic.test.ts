@@ -454,3 +454,10 @@ test("deposit instructions request: to Safiya and the buyer, safe subject, title
   const other = buildPlan(resolveDates(sampleContract({ title: { company: "Other Title Co", file_no: null } })));
   assert.ok(!other.drafts.some((x) => x.kind === "deposit_instructions"));
 });
+
+test("Gmail folder per file: named by address under Transactions", async () => {
+  const { gmailLabelName, gmailLabelUrl } = await import("./naming.ts");
+  assert.equal(gmailLabelName("5722 Malcolm St"), "Transactions/5722 Malcolm St");
+  assert.equal(gmailLabelName("5722 Malcolm St", true), "Transactions/Closed/5722 Malcolm St");
+  assert.equal(gmailLabelUrl("Transactions/5722 Malcolm St"), "https://mail.google.com/mail/u/0/#label/Transactions%2F5722+Malcolm+St");
+});
