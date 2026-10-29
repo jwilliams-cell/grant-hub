@@ -70,3 +70,16 @@ npm run build
 ```
 
 **Queue worker:** `vercel.json` runs `/api/cron/queue` every 5 minutes. It works through the tracker's `Queue` tab (see `lib/queue.ts`): drafts that carry a PDF from Gmail, and PDFs filed to Drive and copied to SkySlope. Optionally set `CRON_SECRET` in Vercel; Vercel then sends it with each cron call and the route refuses anything else. The route skips the dashboard password.
+
+## Accelerator enrollment
+
+`POST /api/accelerator/enroll` is called by the GoHighLevel workflow (see `../coaching/ghl-enrollment-workflow.md`) when a client enrolls. For each new client it:
+- creates `02 — Clients / Accelerator / [Name] – Accelerator`, with subfolders 1 Money & Pre-Approval, 2 Company & Bank, 3 Brand & Website, 4 Deal Analyses, 5 Team & Contracts and 6 Closing & Renovation
+- copies the blank checklist (`Accelerator 12-Week Checklist – TEMPLATE`) into it, and fills in the client name and the start date (the first Monday)
+- shares the folder with the client as an editor. Drive stays silent if it can; for an address with no Google account, Drive sends its own invite
+- adds a row to the tracker's `Accelerator` tab and logs it in Activity
+- with `GHL_ENROLL_TOKEN` set, writes the links to the contact's `accel_folder_link` and `accel_checklist_link` custom fields so the welcome email can use them
+
+It's safe to call twice: a second call finds the client's row or folder and returns the same links.
+
+Setup: set `ACCELERATOR_DRIVE_ROOT_ID`, `ACCELERATOR_CHECKLIST_TEMPLATE_ID` and `ACCELERATOR_WEBHOOK_SECRET` in Vercel. In GoHighLevel, add a **Webhook** action at the start of the enrollment workflow: method POST, URL `https://grant-hub-dashboard-sgph.vercel.app/api/accelerator/enroll?key=<secret>`. Then add a **Wait** of 1 minute before the welcome email, so the links are on the contact when it sends.

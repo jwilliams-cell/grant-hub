@@ -61,7 +61,7 @@ function cell(value: string | number | boolean | null | undefined): string | num
 
 /** Appends rows to a tab, in that tab's column order. */
 export async function appendRows<C extends readonly string[]>(
-  tab: Tab,
+  tab: Tab | "Accelerator",
   cols: C,
   rows: Partial<Record<C[number], string | number | boolean | null>>[],
 ): Promise<void> {

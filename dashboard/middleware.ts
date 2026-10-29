@@ -5,6 +5,8 @@ import { NextResponse, type NextRequest } from "next/server";
 export function middleware(req: NextRequest) {
   // The queue worker has its own check (CRON_SECRET or Vercel's cron agent) in its route.
   if (req.nextUrl.pathname === "/api/cron/queue") return NextResponse.next();
+  // GoHighLevel's enrollment webhook checks ACCELERATOR_WEBHOOK_SECRET in its route.
+  if (req.nextUrl.pathname === "/api/accelerator/enroll") return NextResponse.next();
   const password = process.env.DASHBOARD_PASSWORD;
   if (!password) return NextResponse.next();
   const header = req.headers.get("authorization") ?? "";
