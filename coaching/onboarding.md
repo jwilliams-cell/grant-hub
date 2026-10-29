@@ -39,7 +39,7 @@ From Impact Plus Holdings' "Next Steps" email, which got the fastest start:
 - The last 3 months of bank statements, personal and business
 - Most recent pay stub
 - Driver's license
-- Mission statement workbook (feeds their website)
+- Mission statement, from the [Mission Statement Guide](https://claude.ai/artifact/NPPXHcW7dtNYLBkMyBUFY9) (feeds their brand kit and website)
 
 Send scans, never phone photos. Use a scanner app.
 
@@ -69,7 +69,7 @@ We build each client a website on GoHighLevel so their company looks established
 > 1. Join our Slack for check-ins: [link]
 > 2. Fill in your Money Map and record a quick Loom walking me through it: [link]
 > 3. Send me the documents on the list below, **by [kickoff − 2 days]**
-> 4. Start your mission statement workbook. It's the foundation for the website we build for you: [link]
+> 4. Write your mission statement with my guide: https://claude.ai/artifact/NPPXHcW7dtNYLBkMyBUFY9. It's the foundation for the brand kit and website we build for you.
 >
 > Documents: [intake packet list]
 >

@@ -23,8 +23,8 @@ These emails go out on their own. That's different from the transaction files, w
 3. **Calendars:** `Accelerator Kickoff`, `Accelerator Midpoint`, `Accelerator Graduation`, `Accelerator 1:1` (the extra-call link already exists)
 4. **Forms:**
    - `Accelerator Intake`, with file uploads: bank statements, tax returns, W-2s or 1099s, pay stub, driver's license, company documents, plus a Loom link for the Money Map. On submit, add the tag `accel-intake-received`.
-   - `Mission Statement Workbook`, the workbook questions as a form. On submit, add the tag `accel-mission-received`.
-5. **Custom values:** `accel_slack_link`, `accel_money_map_link`, `accel_intake_form_link`, `accel_mission_form_link`, `accel_kickoff_link`, `accel_midpoint_link`, `accel_graduation_link`, `accel_office_hours_link`
+   - `Mission Statement`, a short form with one box: "Paste your mission statement draft". The client fills in the [Mission Statement Guide](https://claude.ai/artifact/NPPXHcW7dtNYLBkMyBUFY9), clicks **Copy my mission** and pastes it here. On submit, add the tag `accel-mission-received`. (The guide saves answers only in the client's own browser, so this form is how the mission reaches the website team.)
+5. **Custom values:** `accel_slack_link`, `accel_money_map_link`, `accel_intake_form_link`, `accel_mission_guide_link` (https://claude.ai/artifact/NPPXHcW7dtNYLBkMyBUFY9), `accel_mission_form_link`, `accel_kickoff_link`, `accel_midpoint_link`, `accel_graduation_link`, `accel_office_hours_link`
 
 ## The workflow
 
@@ -91,7 +91,7 @@ Stop condition: the opportunity moves to **Under contract**. That client then mo
 > 2. **Join our Slack** for check-ins: {{custom_values.accel_slack_link}}
 > 3. **Fill in your Money Map** and record a quick Loom walking me through it: {{custom_values.accel_money_map_link}}
 > 4. **Send your documents** at least 2 days before your kickoff: {{custom_values.accel_intake_form_link}}
-> 5. **Start your mission statement workbook.** We use it to build your brand kit and your website: {{custom_values.accel_mission_form_link}}
+> 5. **Write your mission statement** with my guide: {{custom_values.accel_mission_guide_link}}. When you're done, click **Copy my mission** and paste it here: {{custom_values.accel_mission_form_link}}. We use it to build your brand kit and your website.
 >
 > Documents: your last 3 months of bank statements, your last 2 years of tax returns and W-2s or 1099s, your most recent pay stub, your driver's license, and your company documents if you already have a company.
 >
