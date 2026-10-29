@@ -35,7 +35,7 @@ Add a second trigger, *Contact Tag Added* = `accelerator`, so Jaz can enroll som
 |---|---|---|
 | 1 | Add tag | `accelerator` |
 | 2 | Create/update opportunity | Pipeline `Accelerator`, stage **Enrolled** |
-| 3 | Send email | **Welcome** (below) |
+| 3 | Send 3 emails, a few minutes apart | **Pre-approval list + document folder** (shares the folder), then **Mission statement** (the guide link), then **Your 12-week checklist**. One job per email, so each one gets done. Wording: the drafts made for Selya Rollins on Oct 29, 2026 |
 | 4 | Send SMS | "Welcome to the Accelerator, {{contact.first_name}}! Check your email for your next steps, and book your kickoff here: {{custom_values.accel_kickoff_link}} – Jasmine" |
 | 5 | Internal notification + task for Jaz/Kenya | "New Accelerator client: {{contact.name}}. Make their copy of the 12-week checklist, add them to Slack and the coach." Due in 1 day |
 | 6 | Wait for event | Appointment booked on `Accelerator Kickoff`. **Timeout 2 days** |
@@ -76,6 +76,8 @@ Add one Monday email per week. Each one says what's unlocking that week, links t
 Stop condition: the opportunity moves to **Under contract**. That client then moves to the transaction coordinator system.
 
 ## Emails
+
+Enrollment sends three separate emails (step 3): the pre-approval list with the document folder, the mission statement request, and the checklist. The Welcome email below is the short version for clients who need less.
 
 ### Welcome
 
