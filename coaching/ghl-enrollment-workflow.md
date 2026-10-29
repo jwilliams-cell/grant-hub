@@ -23,7 +23,7 @@ These emails go out on their own. That's different from the transaction files, w
 3. **Calendars:** `Accelerator Kickoff`, `Accelerator Midpoint`, `Accelerator Graduation`, `Accelerator 1:1` (the extra-call link already exists)
 4. **Forms:**
    - `Accelerator Intake`, with file uploads: bank statements, tax returns, W-2s or 1099s, pay stub, driver's license, company documents, plus a Loom link for the Money Map. On submit, add the tag `accel-intake-received`.
-   - `Mission Statement`, a short form with one box: "Paste your mission statement draft". The client fills in the [Mission Statement Guide](https://claude.ai/artifact/NPPXHcW7dtNYLBkMyBUFY9), clicks **Copy my mission** and pastes it here. On submit, add the tag `accel-mission-received`. (The guide saves answers only in the client's own browser, so this form is how the mission reaches the website team.)
+   - `Mission Statement`, optional. The [Mission Statement Guide](https://claude.ai/artifact/NPPXHcW7dtNYLBkMyBUFY9) ends with **Send to Jaz**, which opens an email to jwilliams@gremom.com with every answer filled in (or the client copies them into a reply). When it arrives, add the tag `accel-mission-received` to start the brand kit. A one-box form that takes the pasted answers can add the tag on its own instead.
 5. **Custom values:** `accel_slack_link`, `accel_money_map_link`, `accel_intake_form_link`, `accel_mission_guide_link` (https://claude.ai/artifact/NPPXHcW7dtNYLBkMyBUFY9), `accel_mission_form_link`, `accel_kickoff_link`, `accel_midpoint_link`, `accel_graduation_link`, `accel_office_hours_link`
 
 ## The workflow
