@@ -30,7 +30,7 @@ The step-by-step coordinator playbook lives in `transaction-coordinator.md`, in 
 | Active file folders | 5722 Malcolm St – McIntosh `19YY-VR8AFhgoJHIMGQYJ760GBHojICzj` (subfolders 1–6 created) · 7076 Forrest Ave `1jVrV4FBHCLb7GtJWfB136ywyndH7nEFd` · 148 Millick St `1MIblRaKMAW1CB6dEwqV5cWtrnBhBPnpb` · 125 S 54th St `13Z93C9oth1QdcRZF9L9C4NhTcuXKutZ_` · 1218 S Peach St `1mWQ4MgnscSr_KU6xK9sqJlhyom0RTXPH` · 237 Albanus St `1RP1Z5MJ-hr1Vdj9XyRDzkU8WZs9iI-7r` | The last five still need subfolders 1–6 |
 | Dashboard (live) | https://grant-hub-dashboard-sgph.vercel.app on Vercel (Pro), deploys from `claude/new-session-t9shcl`, Root Directory `dashboard`, password protected | Live Oct 24, 2026. Reads the tracker Sheet |
 | Prototype dashboard | https://claude.ai/artifact/BbChcRBdS8T11CdZN8DWEE | Reference only; replaced by this build |
-| Gmail folders | One label per active file, `Transactions/[Address]`, plus `Transactions/Closed`. Emails stay in the inbox too | Created Oct 26, 2026, and existing threads filed (automated alerts such as Redfin, ShowingTime and MLS left out) |
+| Gmail folders | One label per active file, `1 Deals/[Address]`, plus `1 Deals/Closed`. Emails stay in the inbox too | Created Oct 26, 2026 and existing threads filed; Jaz renamed the parent to "1 Deals" (part of her numbered labels: 2 Leads & Clients, 3 Showings & MLS, 4 Money …) (automated alerts such as Redfin, ShowingTime and MLS left out) |
 | Weekday scheduled task "TC morning drafts" | claude.ai, 6:42am Eastern, Mon–Fri | Interim. Pause it once phase 4 is live |
 
 Connected accounts available: Gmail, Google Calendar, Google Drive, Google Sheets. SkySlope has no connector. It's reached by email (section 6).
@@ -122,7 +122,7 @@ SkySlope gives every property file its own email address. Anything emailed to th
 | Job | When | What |
 |---|---|---|
 | **Intake** | When Jaz drops a contract, or an "under contract" or "fully executed" email arrives for a new address | Workflow 1 in `transaction-coordinator.md`: extract dates and contacts; create the deal, milestones, Drive folder, calendar events and the day-one drafts (including the deposit instructions request to the title clerk) |
-| **Inbound email** | Weekdays 6:45am, 12pm and 4pm Eastern | Workflow 2: match emails to deals by address, title file number, client name or party email; add the file's Gmail label (`Transactions/[Address]`, built by `gmailLabelName` in `dashboard/lib/naming.ts`; closed files move to `Transactions/Closed/[Address]`), never archiving or deleting; update the Sheet; file attachments; copy to SkySlope; draft replies |
+| **Inbound email** | Weekdays 6:45am, 12pm and 4pm Eastern | Workflow 2: match emails to deals by address, title file number, client name or party email; add the file's Gmail label (`1 Deals/[Address]`, built by `gmailLabelName` in `dashboard/lib/naming.ts`; closed files move to `1 Deals/Closed/[Address]`), never archiving or deleting; update the Sheet; file attachments; copy to SkySlope; draft replies |
 | **Deadline sweep** | Weekdays 6:45am | Workflow 3: follow-up drafts for anything due in 2 days, late flags, closing disclosure reminder 3 business days before settlement |
 | **Morning summary** | Weekdays, done by 7:30am | One summary to Jaz, by push notification and email to herself only: late items, what's due today and tomorrow, drafts waiting (recipient and subject), decisions only she can make. Under 250 words |
 

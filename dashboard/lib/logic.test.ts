@@ -455,11 +455,11 @@ test("deposit instructions request: to Safiya and the buyer, safe subject, title
   assert.ok(!other.drafts.some((x) => x.kind === "deposit_instructions"));
 });
 
-test("Gmail folder per file: named by address under Transactions", async () => {
+test("Gmail folder per file: named by address under 1 Deals", async () => {
   const { gmailLabelName, gmailLabelUrl } = await import("./naming.ts");
-  assert.equal(gmailLabelName("5722 Malcolm St"), "Transactions/5722 Malcolm St");
-  assert.equal(gmailLabelName("5722 Malcolm St", true), "Transactions/Closed/5722 Malcolm St");
-  assert.equal(gmailLabelUrl("Transactions/5722 Malcolm St"), "https://mail.google.com/mail/u/0/#label/Transactions%2F5722+Malcolm+St");
+  assert.equal(gmailLabelName("5722 Malcolm St"), "1 Deals/5722 Malcolm St");
+  assert.equal(gmailLabelName("5722 Malcolm St", true), "1 Deals/Closed/5722 Malcolm St");
+  assert.equal(gmailLabelUrl("1 Deals/5722 Malcolm St"), "https://mail.google.com/mail/u/0/#label/1+Deals%2F5722+Malcolm+St");
 });
 
 test("mortgage commitment goes to the listing agent, signed Jasmine, no conditions", async () => {

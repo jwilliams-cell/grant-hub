@@ -78,7 +78,7 @@ Show it in chat before you do anything else: a short table of dates and contacts
    Save the ratified contract into `1 Contract & Addenda` as `[Address] – [Client last name] – Agreement of Sale – [execution date].pdf`. Every document filed later follows the same pattern: `[Address] – [Client last name] – [Document] – [YYYY-MM-DD].pdf`.
 2. **Calendar:** add one event per deadline on Jaz's calendar. Title each one `[Address] – [Deadline]`, for example "5722 Malcolm – Reply to inspection due". Make it all-day, with reminders 2 days before and the morning of. Put the client, the deal and the Drive folder link in the description.
 3. **Dashboard:** add the deal to the deals list and its milestones to the milestone list (see "Updating the dashboard").
-4. **Gmail folder:** create the label `Transactions/[Address]` (for example `Transactions/5722 Malcolm St`). It shows as a folder in Jaz's Gmail sidebar. Put every email about the file in it, including the day-one drafts once they're sent. Leave the emails in the inbox too.
+4. **Gmail folder:** create the label `1 Deals/[Address]` (for example `1 Deals/5722 Malcolm St`). It shows as a folder in Jaz's Gmail sidebar. Put every email about the file in it, including the day-one drafts once they're sent. Leave the emails in the inbox too.
 
 ### Step 4. Draft the four day-one emails (into Gmail drafts)
 
@@ -123,7 +123,7 @@ This keeps the dashboard current when an agent, title or lender emails.
 
 **Attachments.** Don't push PDFs through the connectors. Add a row to the tracker's `Queue` tab: `action` file (with `drive_subfolder` and the `filename` from the naming rule) to save it to Drive and copy it to SkySlope, or `action` draft (with `to`, `cc`, `subject`, `body`) for a draft that carries the PDF. Give `gmail_message_id`, and `attachment` when the email has more than one PDF. The dashboard does the work within 5 minutes and writes the result on the row.
 
-**File it.** Add the file's Gmail label (`Transactions/[Address]`) to every matching thread, creating the label if it's missing. Never remove the inbox label, archive, or delete anything.
+**File it.** Add the file's Gmail label (`1 Deals/[Address]`) to every matching thread, creating the label if it's missing. Never remove the inbox label, archive, or delete anything.
 
 **Read each one and decide what it means.** Then update the dashboard, the calendar and drafts using this table:
 
@@ -173,7 +173,7 @@ Every weekday morning, for each active file:
 
 1. Save the final signed documents and settlement statement to `5 Closing`.
 2. Check the compliance file in `6 Compliance`: consumer notice signed, buyer agency contract (or listing contract), seller's property disclosure, lead paint disclosure if the home was built before 1978, final settlement statement. List anything missing for Jaz. Commission disbursement waits on this.
-3. Set the dashboard status → Closed, and move the Gmail label to `Transactions/Closed/[Address]` (rename the label; the emails stay with it).
+3. Set the dashboard status → Closed, and move the Gmail label to `1 Deals/Closed/[Address]` (rename the label; the emails stay with it).
 4. Draft a closing congratulations note to the client.
 
 ---

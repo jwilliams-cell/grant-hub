@@ -14,9 +14,9 @@ export function documentFilename(parts: { address: string; clientLastName: strin
   return [clean(parts.address), clean(parts.clientLastName) || "Client", clean(parts.document), date].join(" – ") + ".pdf";
 }
 
-// One Gmail label per file, nested under "Transactions" so they show as folders in Jaz's Gmail sidebar.
-// Closed and terminated files move under "Transactions/Closed".
-export const GMAIL_LABEL_ROOT = "Transactions";
+// One Gmail label per file, nested under "1 Deals" so they show as folders in Jaz's Gmail sidebar.
+// Closed and terminated files move under "1 Deals/Closed".
+export const GMAIL_LABEL_ROOT = "1 Deals";
 
 export function gmailLabelName(address: string, closed = false): string {
   return [GMAIL_LABEL_ROOT, closed ? "Closed" : "", clean(address)].filter(Boolean).join("/");
