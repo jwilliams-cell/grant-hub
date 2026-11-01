@@ -1,0 +1,84 @@
+<!-- key-handoff (top): a key ring on a leather strap is lowered in from above the frame (the hand stays off frame)
+     and lands with weight: the strap gives, the ring swings on the strap and the keys and the paper tag swing on the
+     ring with lag (a damped multi-pendulum simulated in fx.js and keyed frame by frame), the keys knocking together.
+     On the cue word the blank tag turns to face us (rotateY with perspective) and reads TAG_TEXT, The Dot as its full
+     stop. Then the keys are taken: a quick yank up and out, trailing. Every part sits in its own frame (px): the strap
+     hangs from the hand at 0,0; each key and the tag hang from their pivot on the ring at 0,0. -->
+<div class="kh-rig" data-layout-allow-overflow data-layout-allow-overlap>
+  <div class="kh-strap" data-layout-allow-overflow data-layout-allow-overlap>
+    <svg class="kh-strap-svg" viewBox="-30 -10 60 360" width="60" height="360">
+      <path class="kh-leather" d=""/>
+      <path class="kh-stitch" d=""/>
+      <circle class="kh-rivet" cx="0" cy="0" r="5.5"/>
+    </svg>
+    <svg class="kh-ring-svg" viewBox="-40 -40 80 80" width="80" height="80">
+      <circle class="kh-ring-o" cx="0" cy="0" r="22"/>
+      <circle class="kh-ring-i" cx="0" cy="0" r="22"/>
+      <path class="kh-ring-o" d="M -21.2 -8.4 A 23 23 0 0 1 -8.6 -21.4"/>
+      <path class="kh-ring-i kh-coil" d="M -21.2 -8.4 A 23 23 0 0 1 -8.6 -21.4"/>
+    </svg>
+  </div>
+  <div class="kh-tag" data-layout-allow-overflow data-layout-allow-overlap>
+    <svg class="kh-string" viewBox="-20 -6 40 200" width="40" height="200">
+      <path d=""/>
+    </svg>
+    <div class="kh-card" data-layout-allow-overflow data-layout-allow-overlap>
+      <svg class="kh-card-svg" viewBox="0 0 204 116" width="204" height="116">
+        <path class="kh-paper" fill-rule="evenodd" d="M10 0 H194 A10 10 0 0 1 204 10 V106 A10 10 0 0 1 194 116 H10 A10 10 0 0 1 0 106 V10 A10 10 0 0 1 10 0 Z M108.5 13 A6.5 6.5 0 1 0 95.5 13 A6.5 6.5 0 1 0 108.5 13 Z"/>
+        <path class="kh-reinf" fill-rule="evenodd" d="M116 13 A14 14 0 1 0 88 13 A14 14 0 1 0 116 13 Z M108.5 13 A6.5 6.5 0 1 0 95.5 13 A6.5 6.5 0 1 0 108.5 13 Z"/>
+        <path class="kh-shade" fill-rule="evenodd" d="M10 0 H194 A10 10 0 0 1 204 10 V106 A10 10 0 0 1 194 116 H10 A10 10 0 0 1 0 106 V10 A10 10 0 0 1 10 0 Z M108.5 13 A6.5 6.5 0 1 0 95.5 13 A6.5 6.5 0 1 0 108.5 13 Z"/>
+      </svg>
+      <div class="kh-face" data-layout-allow-overflow data-layout-allow-overlap><span class="kh-word" data-layout-allow-overflow data-layout-allow-overlap></span><i class="kh-dot"></i></div>
+    </div>
+  </div>
+  <div class="kh-key kh-kb" data-layout-allow-overflow data-layout-allow-overlap>
+    <svg viewBox="-50 -18 100 210" width="100" height="210"><g class="kh-sc">
+      <path class="kh-metal" fill-rule="evenodd" d="M-10 46 L-13 46 C-21 46 -27 40 -27 30 L-27 6 C-27 -3 -20 -8 -10 -8 L10 -8 C20 -8 27 -3 27 6 L27 30 C27 40 21 46 13 46 L10 46 L10 52 L15 52 L15 58 L10 58 L10 64 L4 69 L4 72 L10 77 L10 84 L2 90 L2 93 L10 99 L10 104 L5 108 L5 111 L10 115 L10 122 L3 127 L3 129 L10 133 L4 139 L-6 139 L-10 135 L-10 52 Z M6.5 6 A6.5 6.5 0 1 0 -6.5 6 A6.5 6.5 0 1 0 6.5 6 Z"/>
+      <path class="kh-line" d="M-5 58 V130 M-1 62 V126"/>
+      <path class="kh-line kh-faint" d="M-20 24 H20 M-20 30 H20"/>
+    </g></svg>
+  </div>
+  <div class="kh-key kh-ka" data-layout-allow-overflow data-layout-allow-overlap>
+    <svg viewBox="-50 -18 100 210" width="100" height="210"><g class="kh-sc">
+      <path class="kh-metal" fill-rule="evenodd" d="M-12 50 L-14 50 C-22 48 -29 41 -29 30 L-29 19 C-29 3 -17 -8 0 -8 C17 -8 29 3 29 19 L29 30 C29 41 22 48 14 50 L12 50 L12 58 L17 58 L17 66 L11 66 L11 72 L3 77 L3 79 L11 85 L11 90 L7 94 L7 96 L11 100 L11 105 L4 110 L4 112 L11 117 L11 122 L6 127 L6 129 L11 134 L11 141 L4 150 L-4 148 L-11 136 L-11 60 L-12 58 Z M7 7 A7 7 0 1 0 -7 7 A7 7 0 1 0 7 7 Z"/>
+      <path class="kh-line" d="M-5 66 V136 M1 70 V138"/>
+      <path class="kh-line kh-faint" d="M-12.5 7 A12.5 12.5 0 0 1 12.5 7 A12.5 12.5 0 0 1 -12.5 7"/>
+    </g></svg>
+  </div>
+</div>
+<style>
+#{{ID}} .kh-rig { position:absolute; left:0; top:0; width:0; height:0;
+  filter:drop-shadow(0 12px 14px color-mix(in srgb, var(--c-ink) 30%, transparent)); }
+/* the strap: its frame's 0,0 is the hand (off frame); fx.js sizes the leather and places the ring at its end */
+#{{ID}} .kh-strap { position:absolute; left:0; top:0; width:0; height:0; }
+#{{ID}} .kh-strap-svg { position:absolute; left:-30px; top:-10px; overflow:visible; }
+#{{ID}} .kh-leather { fill:var(--c-dark); }
+#{{ID}} .kh-stitch { fill:none; stroke:var(--c-light); stroke-opacity:.55; stroke-width:1.6; stroke-dasharray:6 5; }
+#{{ID}} .kh-rivet { fill:var(--c-light); stroke:var(--c-ink); stroke-width:2; }
+#{{ID}} .kh-ring-svg { position:absolute; left:-40px; top:-40px; overflow:visible; }
+#{{ID}} .kh-ring-o { fill:none; stroke:var(--c-ink); stroke-width:8.5; }
+#{{ID}} .kh-ring-i { fill:none; stroke:var(--c-light); stroke-width:4.5; }
+#{{ID}} .kh-coil { stroke:color-mix(in srgb, var(--c-light) 82%, var(--c-ink)); }
+/* the tag: its frame's 0,0 is where its string loops over the ring */
+#{{ID}} .kh-tag { position:absolute; left:0; top:0; width:0; height:0; }
+#{{ID}} .kh-string { position:absolute; left:-20px; top:-6px; overflow:visible; }
+#{{ID}} .kh-string path { fill:none; stroke:var(--c-ink); stroke-width:2.2; stroke-linecap:round; }
+#{{ID}} .kh-card { position:absolute; left:-102px; top:0; width:204px; height:116px; }
+#{{ID}} .kh-card-svg { position:absolute; left:0; top:0; overflow:visible; }
+#{{ID}} .kh-paper { fill:var(--c-light); stroke:color-mix(in srgb, var(--c-ink) 38%, var(--c-light)); stroke-width:1.5; }
+#{{ID}} .kh-reinf { fill:color-mix(in srgb, var(--c-light) 84%, var(--c-ink)); stroke:color-mix(in srgb, var(--c-ink) 45%, var(--c-light)); stroke-width:1.2; }
+#{{ID}} .kh-shade { fill:var(--c-ink); opacity:0; }
+#{{ID}} .kh-face { position:absolute; left:0; top:38px; width:204px; height:70px; display:flex; justify-content:center;
+  align-items:baseline; white-space:nowrap; }
+#{{ID}} .kh-word { font-family:var(--font-display); font-style:var(--display-style); font-weight:var(--display-weight);
+  font-size:60px; line-height:70px; letter-spacing:-.015em; color:var(--c-ink); }
+#{{ID}} .kh-dot { display:block; width:15px; height:15px; margin-left:4px; border-radius:50%; background:var(--c-accent); flex:none; }
+/* the keys: each frame's 0,0 is the top of its bow hole, where it hangs on the ring */
+#{{ID}} .kh-key { position:absolute; left:0; top:0; width:0; height:0; }
+#{{ID}} .kh-key svg { position:absolute; left:-50px; top:-18px; overflow:visible; }
+#{{ID}} .kh-metal { stroke:var(--c-ink); stroke-width:1.85; stroke-linejoin:round; }
+#{{ID}} .kh-ka .kh-metal { fill:var(--c-light); }
+#{{ID}} .kh-kb .kh-metal { fill:color-mix(in srgb, var(--c-light) 84%, var(--c-ink)); }
+#{{ID}} .kh-line { fill:none; stroke:var(--c-ink); stroke-width:1.5; stroke-linecap:round; }
+#{{ID}} .kh-faint { stroke-opacity:.3; }
+</style>

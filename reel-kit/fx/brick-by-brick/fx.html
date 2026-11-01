@@ -1,0 +1,27 @@
+<!-- brick-by-brick (behind the head): one word laid in bricks behind the speaker, like a Philly row-home wall going up.
+     The letters are only bricks: an SVG text in the pack's display face is the clip, every brick a rect inside it, the
+     mortar joints open to the footage (no outline). The build lays run r0 course by course; r1-r3 hold each letter's
+     own top course, a third of the word each, and drop in as units on the three beats (each run carries its own copy
+     of the clip, so its pieces keep their letter shapes while they fall). #-wall takes the weight of each beat.
+     fx.js builds the bricks from the GEN line gen.py writes (positions, courses, runs, light or ink per brick). -->
+<svg id="{{ID}}-svg" width="1080" height="1920" viewBox="0 0 1080 1920" data-layout-allow-overlap data-layout-allow-occlusion>
+  <defs><clipPath id="{{ID}}-clip"><text id="{{ID}}-word" class="{{ID}}-word" data-layout-allow-overlap data-layout-allow-occlusion data-layout-allow-overflow></text></clipPath></defs>
+  <g id="{{ID}}-wall">
+    <g id="{{ID}}-r0" class="{{ID}}-run"><g class="{{ID}}-bed" clip-path="url(#{{ID}}-clip)"></g></g>
+    <g id="{{ID}}-r1" class="{{ID}}-run"><g class="{{ID}}-bed" clip-path="url(#{{ID}}-clip)"></g></g>
+    <g id="{{ID}}-r2" class="{{ID}}-run"><g class="{{ID}}-bed" clip-path="url(#{{ID}}-clip)"></g></g>
+    <g id="{{ID}}-r3" class="{{ID}}-run"><g class="{{ID}}-bed" clip-path="url(#{{ID}}-clip)"></g></g>
+  </g>
+</svg>
+<style>
+#{{ID}}-svg { position:absolute; left:0; top:0; width:1080px; height:1920px; overflow:visible; }
+#{{ID}} .{{ID}}-word { font-family:var(--font-display); font-style:var(--display-style); font-weight:var(--display-weight);
+  font-kerning:none; letter-spacing:0; }
+/* light bricks where the room behind is dark, ink where it is light; shades 1-2 are the seeded few a little off */
+#{{ID}} .{{ID}}-t00 { fill:var(--c-light); }
+#{{ID}} .{{ID}}-t01 { fill:color-mix(in srgb, var(--c-light) 82%, var(--c-hair-light)); }
+#{{ID}} .{{ID}}-t02 { fill:color-mix(in srgb, var(--c-light) 58%, var(--c-hair-light)); }
+#{{ID}} .{{ID}}-t10 { fill:var(--c-ink); }
+#{{ID}} .{{ID}}-t11 { fill:color-mix(in srgb, var(--c-ink) 84%, var(--c-muted-light)); }
+#{{ID}} .{{ID}}-t12 { fill:color-mix(in srgb, var(--c-ink) 62%, var(--c-muted-light)); }
+</style>

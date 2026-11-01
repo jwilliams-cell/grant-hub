@@ -1,0 +1,23 @@
+<!-- row-home-block (behind the head): a Philadelphia row-home block drawn behind the speaker as an architect's line
+     drawing, the light colour on the creator's dark ground. The ground cuts in at A; fx.js builds the whole drawing
+     (houses, street, her house's lit windows and The Dot) as one inline SVG from its constants and draws every stroke
+     on with stroke-dashoffset, on the words. Four weights: outlines (-o: party walls, roofline, sidewalk, curb), main
+     lines (-a: openings, steps, lamps, trees), detail in the muted light (-b), hairlines (-c). No fills, except her
+     house's lit panes and The Dot. Words, sizes and beat times live in fx.js. -->
+<div id="{{ID}}-field" class="ground-dark"></div>
+<svg id="{{ID}}-draw" width="1080" height="1920" viewBox="0 0 1080 1920" aria-hidden="true">
+  <g id="{{ID}}-row"></g>
+  <g id="{{ID}}-st"></g>
+</svg>
+<style>
+#{{ID}}-field { position:absolute; left:0; top:0; width:1080px; height:1920px; }
+#{{ID}}-draw { position:absolute; left:0; top:0; overflow:visible; }
+#{{ID}} path { fill:none; stroke-linecap:round; stroke-linejoin:round; }
+#{{ID}} .{{ID}}-o { stroke:var(--c-light); stroke-width:4; }
+#{{ID}} .{{ID}}-a { stroke:var(--c-light); stroke-width:3; }
+#{{ID}} .{{ID}}-b { stroke:var(--c-muted-dark); stroke-width:2; }
+#{{ID}} .{{ID}}-c { stroke:var(--c-hair-dark); stroke-width:1.5; }
+#{{ID}} .{{ID}}-bold { stroke:var(--c-light); stroke-width:6.5; }
+#{{ID}} path.{{ID}}-lit { fill:var(--c-light); stroke:none; }
+#{{ID}} .{{ID}}-dot { fill:var(--c-accent); stroke:none; }
+</style>

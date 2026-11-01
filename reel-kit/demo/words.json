@@ -1,0 +1,584 @@
+[
+ {
+  "text": "Buying",
+  "start": 0.3,
+  "end": 0.505,
+  "src": 0.3
+ },
+ {
+  "text": "your",
+  "start": 0.54,
+  "end": 0.745,
+  "src": 0.54
+ },
+ {
+  "text": "first",
+  "start": 0.78,
+  "end": 0.985,
+  "src": 0.78
+ },
+ {
+  "text": "home",
+  "start": 1.02,
+  "end": 1.225,
+  "src": 1.02
+ },
+ {
+  "text": "in",
+  "start": 1.26,
+  "end": 1.465,
+  "src": 1.26
+ },
+ {
+  "text": "Philly",
+  "start": 1.5,
+  "end": 1.84,
+  "src": 1.5
+ },
+ {
+  "text": "starts",
+  "start": 1.875,
+  "end": 2.08,
+  "src": 1.875
+ },
+ {
+  "text": "with",
+  "start": 2.115,
+  "end": 2.32,
+  "src": 2.115
+ },
+ {
+  "text": "a",
+  "start": 2.355,
+  "end": 2.56,
+  "src": 2.355
+ },
+ {
+  "text": "plan.",
+  "start": 2.595,
+  "end": 2.8,
+  "src": 2.595
+ },
+ {
+  "text": "It's",
+  "start": 3.22,
+  "end": 3.425,
+  "src": 3.22
+ },
+ {
+  "text": "how",
+  "start": 3.46,
+  "end": 3.665,
+  "src": 3.46
+ },
+ {
+  "text": "my",
+  "start": 3.7,
+  "end": 3.905,
+  "src": 3.7
+ },
+ {
+  "text": "buyers",
+  "start": 3.94,
+  "end": 4.145,
+  "src": 3.94
+ },
+ {
+  "text": "go",
+  "start": 4.18,
+  "end": 4.385,
+  "src": 4.18
+ },
+ {
+  "text": "from",
+  "start": 4.42,
+  "end": 4.625,
+  "src": 4.42
+ },
+ {
+  "text": "not",
+  "start": 4.66,
+  "end": 4.865,
+  "src": 4.66
+ },
+ {
+  "text": "ready",
+  "start": 4.9,
+  "end": 5.24,
+  "src": 4.9
+ },
+ {
+  "text": "to",
+  "start": 5.275,
+  "end": 5.48,
+  "src": 5.275
+ },
+ {
+  "text": "under",
+  "start": 5.515,
+  "end": 5.855,
+  "src": 5.515
+ },
+ {
+  "text": "contract.",
+  "start": 5.89,
+  "end": 6.23,
+  "src": 5.89
+ },
+ {
+  "text": "Here's",
+  "start": 6.65,
+  "end": 6.99,
+  "src": 6.65
+ },
+ {
+  "text": "the",
+  "start": 7.025,
+  "end": 7.23,
+  "src": 7.025
+ },
+ {
+  "text": "part",
+  "start": 7.265,
+  "end": 7.47,
+  "src": 7.265
+ },
+ {
+  "text": "nobody",
+  "start": 7.505,
+  "end": 7.98,
+  "src": 7.505
+ },
+ {
+  "text": "explains.",
+  "start": 8.015,
+  "end": 8.355,
+  "src": 8.015
+ },
+ {
+  "text": "There",
+  "start": 8.775,
+  "end": 8.98,
+  "src": 8.775
+ },
+ {
+  "text": "are",
+  "start": 9.015,
+  "end": 9.22,
+  "src": 9.015
+ },
+ {
+  "text": "four",
+  "start": 9.255,
+  "end": 9.46,
+  "src": 9.255
+ },
+ {
+  "text": "stops",
+  "start": 9.495,
+  "end": 9.7,
+  "src": 9.495
+ },
+ {
+  "text": "between",
+  "start": 9.735,
+  "end": 10.075,
+  "src": 9.735
+ },
+ {
+  "text": "you",
+  "start": 10.11,
+  "end": 10.315,
+  "src": 10.11
+ },
+ {
+  "text": "and",
+  "start": 10.35,
+  "end": 10.555,
+  "src": 10.35
+ },
+ {
+  "text": "the",
+  "start": 10.59,
+  "end": 10.795,
+  "src": 10.59
+ },
+ {
+  "text": "keys.",
+  "start": 10.83,
+  "end": 11.035,
+  "src": 10.83
+ },
+ {
+  "text": "One:",
+  "start": 11.455,
+  "end": 11.66,
+  "src": 11.455
+ },
+ {
+  "text": "your",
+  "start": 11.88,
+  "end": 12.085,
+  "src": 11.88
+ },
+ {
+  "text": "middle",
+  "start": 12.12,
+  "end": 12.46,
+  "src": 12.12
+ },
+ {
+  "text": "score.",
+  "start": 12.495,
+  "end": 12.7,
+  "src": 12.495
+ },
+ {
+  "text": "Say",
+  "start": 13.12,
+  "end": 13.325,
+  "src": 13.12
+ },
+ {
+  "text": "yours",
+  "start": 13.36,
+  "end": 13.565,
+  "src": 13.36
+ },
+ {
+  "text": "are",
+  "start": 13.6,
+  "end": 13.805,
+  "src": 13.6
+ },
+ {
+  "text": "641,",
+  "start": 13.84,
+  "end": 14.45,
+  "src": 13.84
+ },
+ {
+  "text": "668",
+  "start": 14.67,
+  "end": 15.28,
+  "src": 14.67
+ },
+ {
+  "text": "and",
+  "start": 15.315,
+  "end": 15.52,
+  "src": 15.315
+ },
+ {
+  "text": "702.",
+  "start": 15.555,
+  "end": 16.165,
+  "src": 15.555
+ },
+ {
+  "text": "Lenders",
+  "start": 16.585,
+  "end": 16.925,
+  "src": 16.585
+ },
+ {
+  "text": "use",
+  "start": 16.96,
+  "end": 17.165,
+  "src": 16.96
+ },
+ {
+  "text": "the",
+  "start": 17.2,
+  "end": 17.405,
+  "src": 17.2
+ },
+ {
+  "text": "middle",
+  "start": 17.44,
+  "end": 17.78,
+  "src": 17.44
+ },
+ {
+  "text": "one.",
+  "start": 17.815,
+  "end": 18.02,
+  "src": 17.815
+ },
+ {
+  "text": "Two:",
+  "start": 18.44,
+  "end": 18.645,
+  "src": 18.44
+ },
+ {
+  "text": "savings.",
+  "start": 18.865,
+  "end": 19.205,
+  "src": 18.865
+ },
+ {
+  "text": "Less",
+  "start": 19.545,
+  "end": 19.75,
+  "src": 19.545
+ },
+ {
+  "text": "than",
+  "start": 19.785,
+  "end": 19.99,
+  "src": 19.785
+ },
+ {
+  "text": "you",
+  "start": 20.025,
+  "end": 20.23,
+  "src": 20.025
+ },
+ {
+  "text": "think.",
+  "start": 20.265,
+  "end": 20.47,
+  "src": 20.265
+ },
+ {
+  "text": "Three:",
+  "start": 20.89,
+  "end": 21.095,
+  "src": 20.89
+ },
+ {
+  "text": "down",
+  "start": 21.315,
+  "end": 21.52,
+  "src": 21.315
+ },
+ {
+  "text": "payment",
+  "start": 21.555,
+  "end": 21.895,
+  "src": 21.555
+ },
+ {
+  "text": "help.",
+  "start": 21.93,
+  "end": 22.135,
+  "src": 21.93
+ },
+ {
+  "text": "Philly",
+  "start": 22.475,
+  "end": 22.815,
+  "src": 22.475
+ },
+ {
+  "text": "has",
+  "start": 22.85,
+  "end": 23.055,
+  "src": 22.85
+ },
+ {
+  "text": "grants.",
+  "start": 23.09,
+  "end": 23.295,
+  "src": 23.09
+ },
+ {
+  "text": "Four:",
+  "start": 23.715,
+  "end": 23.92,
+  "src": 23.715
+ },
+ {
+  "text": "pre-approval.",
+  "start": 24.14,
+  "end": 24.885,
+  "src": 24.14
+ },
+ {
+  "text": "Then",
+  "start": 25.305,
+  "end": 25.51,
+  "src": 25.305
+ },
+ {
+  "text": "we",
+  "start": 25.545,
+  "end": 25.75,
+  "src": 25.545
+ },
+ {
+  "text": "find",
+  "start": 25.785,
+  "end": 25.99,
+  "src": 25.785
+ },
+ {
+  "text": "your",
+  "start": 26.025,
+  "end": 26.23,
+  "src": 26.025
+ },
+ {
+  "text": "block.",
+  "start": 26.265,
+  "end": 26.47,
+  "src": 26.265
+ },
+ {
+  "text": "Your",
+  "start": 26.81,
+  "end": 27.015,
+  "src": 26.81
+ },
+ {
+  "text": "street.",
+  "start": 27.05,
+  "end": 27.255,
+  "src": 27.05
+ },
+ {
+  "text": "Your",
+  "start": 27.595,
+  "end": 27.8,
+  "src": 27.595
+ },
+ {
+  "text": "house.",
+  "start": 27.835,
+  "end": 28.04,
+  "src": 27.835
+ },
+ {
+  "text": "And",
+  "start": 28.46,
+  "end": 28.665,
+  "src": 28.46
+ },
+ {
+  "text": "one",
+  "start": 28.7,
+  "end": 28.905,
+  "src": 28.7
+ },
+ {
+  "text": "day,",
+  "start": 28.94,
+  "end": 29.145,
+  "src": 28.94
+ },
+ {
+  "text": "the",
+  "start": 29.365,
+  "end": 29.57,
+  "src": 29.365
+ },
+ {
+  "text": "keys",
+  "start": 29.605,
+  "end": 29.81,
+  "src": 29.605
+ },
+ {
+  "text": "are",
+  "start": 29.845,
+  "end": 30.05,
+  "src": 29.845
+ },
+ {
+  "text": "yours.",
+  "start": 30.085,
+  "end": 30.29,
+  "src": 30.085
+ },
+ {
+  "text": "That's",
+  "start": 30.71,
+  "end": 30.915,
+  "src": 30.71
+ },
+ {
+  "text": "how",
+  "start": 30.95,
+  "end": 31.155,
+  "src": 30.95
+ },
+ {
+  "text": "you",
+  "start": 31.19,
+  "end": 31.395,
+  "src": 31.19
+ },
+ {
+  "text": "build",
+  "start": 31.43,
+  "end": 31.635,
+  "src": 31.43
+ },
+ {
+  "text": "wealth,",
+  "start": 31.67,
+  "end": 31.875,
+  "src": 31.67
+ },
+ {
+  "text": "brick",
+  "start": 32.095,
+  "end": 32.3,
+  "src": 32.095
+ },
+ {
+  "text": "by",
+  "start": 32.335,
+  "end": 32.54,
+  "src": 32.335
+ },
+ {
+  "text": "brick.",
+  "start": 32.575,
+  "end": 32.78,
+  "src": 32.575
+ },
+ {
+  "text": "Comment",
+  "start": 33.2,
+  "end": 33.54,
+  "src": 33.2
+ },
+ {
+  "text": "PLAN",
+  "start": 33.575,
+  "end": 33.78,
+  "src": 33.575
+ },
+ {
+  "text": "and",
+  "start": 33.815,
+  "end": 34.02,
+  "src": 33.815
+ },
+ {
+  "text": "I'll",
+  "start": 34.055,
+  "end": 34.26,
+  "src": 34.055
+ },
+ {
+  "text": "send",
+  "start": 34.295,
+  "end": 34.5,
+  "src": 34.295
+ },
+ {
+  "text": "you",
+  "start": 34.535,
+  "end": 34.74,
+  "src": 34.535
+ },
+ {
+  "text": "yours.",
+  "start": 34.775,
+  "end": 34.98,
+  "src": 34.775
+ }
+]

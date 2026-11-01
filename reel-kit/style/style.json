@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "creator": {"name": "Jasmine Williams", "handle": "", "site": ""},
+  "fonts": {
+    "display": {"family": "League Spartan", "italic": false, "weight": 700},
+    "text": {"family": "Mulish", "italic": false, "weight": 700},
+    "mono": {"family": "IBM Plex Mono", "italic": false, "weight": 500},
+    "caption": {"family": "Mulish", "italic": false, "weight": 800}
+  },
+  "colors": {
+    "light": "#F5F1E6",
+    "dark": "#36552F",
+    "ink": "#1E2B2A",
+    "muted_light": "#3A4746",
+    "muted_dark": "rgba(245,241,230,.74)",
+    "hair_light": "#C9C2AD",
+    "hair_dark": "rgba(245,241,230,.24)",
+    "accent": "#F2631D",
+    "accent_on_light": "#B8470F",
+    "negative": "#F4A3A8",
+    "negative_on_light": "#A3243B",
+    "positive": "#89A484",
+    "positive_on_light": "#41643C",
+    "series": ["#F2631D", "#89A484", "#7BB5B1"],
+    "caption_box": "rgba(30,43,42,.92)",
+    "caption_ink": "#F5F1E6",
+    "caption_dim": "rgba(245,241,230,.45)",
+    "textbox_bg": "#F5F1E6",
+    "textbox_ink": "#1E2B2A"
+  },
+  "grounds": {"grid": false, "radius": 12},
+  "captions": {
+    "hifi": {"box": true, "uppercase": false, "size": 56, "y": 1236},
+    "lofi": {"box": true, "uppercase": false, "size": 66, "y": 1318}
+  },
+  "modes": {
+    "hifi": {"hook": "two-line", "captions": "phrases", "emphasis": ["thesis", "big"], "behind_head": "sometimes",
+             "cards": "often", "camera": "settle", "bw": false, "j_lead": 0.3},
+    "lofi": {"captions": "word-by-word", "max_words": 4, "max_chars": 24, "text_boxes": true, "overlays": "sometimes",
+             "backdrops": "sometimes", "zooms": false, "bw": false, "j_lead": 0.3},
+    "showcase": {"emphasis_word": "scale", "transitions": ["push", "reveal", "zoom"], "density": "medium",
+                 "motif": "dot-route: The Dot rides a route line above the head, one station per named step", "j_lead": 0.3}
+  },
+  "grade": "contrast(1.03) saturate(1.02)",
+  "motion": "calm",
+  "sound": {"sfx": "normal", "music": "none"},
+  "end_card": false
+}

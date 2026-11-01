@@ -1,0 +1,32 @@
+<!-- full-stop (behind the head): the calm hook, and the video's first frame (its thumbnail). The creator's ground fills
+     the room behind the speaker from frame 0 with line one already set above the head in the display face; line two
+     rises word by word through its masks, big, the head breaking its first row and the neck standing in the word
+     space of its second; the creator's dot falls from above the frame and lands where the full stop belongs.
+     fx.js builds the words (one mask per word), fits each row with the pack's display face (the sizes in fx.js are
+     maxima), sits every word on a measured baseline and sizes the dot from the face's own period. The ink copy is
+     used only with GROUND 'none' (the type over the room itself): it shows through mask.png (mkmask.py) wherever the
+     room behind it is light. Words, cue words, positions and times live in fx.js. -->
+<div id="{{ID}}-sheet">
+  <div id="{{ID}}-ground"></div>
+  <div id="{{ID}}-lt" class="{{ID}}-cp" data-layout-allow-overlap></div>
+  <div id="{{ID}}-dk" class="{{ID}}-cp" data-layout-allow-overlap></div>
+</div>
+<style>
+#{{ID}}-sheet { position:absolute; left:0; top:0; width:1080px; height:1920px; }
+#{{ID}}-ground { position:absolute; left:0; top:0; width:1080px; height:1920px; background:var(--c-dark); }
+#{{ID}} .{{ID}}-cp, #{{ID}} .{{ID}}-ln { position:absolute; left:0; top:0; width:1080px; height:1920px; }
+/* a word's mask: one line box tall (ascenders and descenders inside), a little wider than the word so no ink is cut */
+#{{ID}} .{{ID}}-m { position:absolute; left:0; top:0; padding:0 0.1em; overflow:hidden; font-size:100px; }
+#{{ID}} .{{ID}}-in { display:block; line-height:1; white-space:nowrap; font-family:var(--font-display);
+  font-style:var(--display-style); font-weight:var(--display-weight); letter-spacing:-0.02em; color:var(--c-light); }
+/* a zero-size mark on the baseline: fx.js reads where the face puts its baseline */
+#{{ID}} .{{ID}}-bl { display:inline-block; width:0; height:0; vertical-align:baseline; }
+#{{ID}} .{{ID}}-dot { position:absolute; left:0; top:0; width:32px; height:32px; border-radius:50%; background:var(--c-accent); }
+#{{ID}}-dk { -webkit-mask-image:url(fx/{{ID}}/mask.png); mask-image:url(fx/{{ID}}/mask.png);
+  -webkit-mask-size:1080px 1920px; mask-size:1080px 1920px; -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat; }
+#{{ID}}-dk .{{ID}}-in { color:var(--c-ink); }
+/* GROUND 'light': the cream ground, ink type, the deeper dot made for cream */
+#{{ID}}-sheet.{{ID}}-light #{{ID}}-ground { background:var(--c-light); }
+#{{ID}}-sheet.{{ID}}-light .{{ID}}-in { color:var(--c-ink); }
+#{{ID}}-sheet.{{ID}}-light .{{ID}}-dot { background:var(--c-accent-light); }
+</style>

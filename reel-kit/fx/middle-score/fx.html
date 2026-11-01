@@ -1,0 +1,78 @@
+<!-- middle-score: three score cards deal in face up on the numbers, sort themselves low to high, and the middle one
+     lifts out with The Dot pinned on it and a tag under it. Everything sits in the band above the head (y 225-560).
+     Built from tokens; the bureaus, scores, words and positions are constants at the top of fx.js, which fills these
+     three cards (in deal order) and places them. The card size is CARD in fx.js. data-layout-allow-orbit: a card
+     travels while it turns over (the auditor reads rotateY(180) as a spin); the tag waits above its mask. -->
+<div id="{{ID}}-stage">
+  <div class="{{ID}}-slot" id="{{ID}}-s0" data-layout-allow-orbit><div class="{{ID}}-card">
+    <div class="{{ID}}-face {{ID}}-front">
+      <div class="{{ID}}-lab" data-layout-allow-overlap data-layout-allow-occlusion></div>
+      <div class="{{ID}}-num" data-layout-allow-overlap data-layout-allow-occlusion></div>
+      <div class="{{ID}}-meter"><i class="{{ID}}-fill"></i></div>
+      <div class="{{ID}}-ends"><span class="{{ID}}-lo" data-layout-allow-overlap data-layout-allow-occlusion></span><span class="{{ID}}-hi" data-layout-allow-overlap data-layout-allow-occlusion></span></div>
+      <div class="{{ID}}-veil"></div>
+    </div>
+    <div class="{{ID}}-face {{ID}}-back"><span class="{{ID}}-bl" data-layout-allow-overlap data-layout-allow-occlusion></span></div>
+  </div></div>
+  <div class="{{ID}}-slot" id="{{ID}}-s1" data-layout-allow-orbit><div class="{{ID}}-card">
+    <div class="{{ID}}-face {{ID}}-front">
+      <div class="{{ID}}-lab" data-layout-allow-overlap data-layout-allow-occlusion></div>
+      <div class="{{ID}}-num" data-layout-allow-overlap data-layout-allow-occlusion></div>
+      <div class="{{ID}}-meter"><i class="{{ID}}-fill"></i></div>
+      <div class="{{ID}}-ends"><span class="{{ID}}-lo" data-layout-allow-overlap data-layout-allow-occlusion></span><span class="{{ID}}-hi" data-layout-allow-overlap data-layout-allow-occlusion></span></div>
+      <div class="{{ID}}-veil"></div>
+    </div>
+    <div class="{{ID}}-face {{ID}}-back"><span class="{{ID}}-bl" data-layout-allow-overlap data-layout-allow-occlusion></span></div>
+  </div></div>
+  <div class="{{ID}}-slot" id="{{ID}}-s2" data-layout-allow-orbit><div class="{{ID}}-card">
+    <div class="{{ID}}-face {{ID}}-front">
+      <div class="{{ID}}-lab" data-layout-allow-overlap data-layout-allow-occlusion></div>
+      <div class="{{ID}}-num" data-layout-allow-overlap data-layout-allow-occlusion></div>
+      <div class="{{ID}}-meter"><i class="{{ID}}-fill"></i></div>
+      <div class="{{ID}}-ends"><span class="{{ID}}-lo" data-layout-allow-overlap data-layout-allow-occlusion></span><span class="{{ID}}-hi" data-layout-allow-overlap data-layout-allow-occlusion></span></div>
+      <div class="{{ID}}-veil"></div>
+    </div>
+    <div class="{{ID}}-face {{ID}}-back"><span class="{{ID}}-bl" data-layout-allow-overlap data-layout-allow-occlusion></span></div>
+  </div></div>
+  <div id="{{ID}}-tagm"><div id="{{ID}}-tag" data-layout-allow-overlap data-layout-allow-occlusion data-layout-allow-overflow></div></div>
+  <div id="{{ID}}-pin"></div>
+</div>
+<style>
+#{{ID}}-stage { --cw:250px; --ch:200px; position:absolute; left:0; top:0; width:1080px; height:1920px; }
+/* a card: the slot carries position, scale and dimming; the card inside turns (rotateY) between its two faces.
+   --cw / --ch (the card's size) are set from CARD in fx.js. */
+#{{ID}} .{{ID}}-slot { position:absolute; left:0; top:0; width:var(--cw); height:var(--ch); }
+#{{ID}} .{{ID}}-card { position:absolute; left:0; top:0; width:var(--cw); height:var(--ch); transform-style:preserve-3d; }
+#{{ID}} .{{ID}}-face { position:absolute; left:0; top:0; width:var(--cw); height:var(--ch); box-sizing:border-box; border-radius:20px;
+  backface-visibility:hidden; -webkit-backface-visibility:hidden;
+  box-shadow:0 14px 30px color-mix(in srgb, var(--c-ink) 22%, transparent), 0 3px 7px color-mix(in srgb, var(--c-ink) 14%, transparent),
+             0 0 0 1px color-mix(in srgb, var(--c-ink) 9%, transparent); }
+#{{ID}} .{{ID}}-front { background:var(--c-light); }
+#{{ID}} .{{ID}}-back { background:var(--c-dark); transform:rotateY(180deg); display:flex; align-items:center; justify-content:center; }
+#{{ID}} .{{ID}}-back::after { content:''; position:absolute; left:10px; top:10px; right:10px; bottom:10px; border-radius:12px;
+  border:1.5px solid var(--c-hair-dark); }
+#{{ID}} .{{ID}}-bl { font-family:var(--font-text); font-weight:700; font-size:17px; line-height:1; letter-spacing:.24em;
+  text-transform:uppercase; color:var(--c-light); white-space:nowrap; padding-left:.24em; }
+/* the face: the bureau as a tracked label, the score in the display face, the meter on the scale, its two ends */
+#{{ID}} .{{ID}}-lab { position:absolute; left:0; top:23px; width:var(--cw); text-align:center; font-family:var(--font-text); font-weight:700;
+  font-size:17px; line-height:20px; letter-spacing:.18em; text-transform:uppercase; color:var(--c-muted-light); white-space:nowrap; }
+#{{ID}} .{{ID}}-num { position:absolute; left:0; top:60px; width:var(--cw); text-align:center; font-family:var(--font-display);
+  font-style:var(--display-style); font-weight:var(--display-weight); font-size:108px; line-height:76px; letter-spacing:-.02em;
+  color:var(--c-ink); white-space:nowrap; font-variant-numeric:lining-nums; }
+#{{ID}} .{{ID}}-meter { position:absolute; left:24px; top:calc(var(--ch) - 54px); width:calc(var(--cw) - 48px); height:8px; border-radius:4px;
+  background:var(--c-hair-light); }
+#{{ID}} .{{ID}}-fill { position:absolute; left:0; top:0; width:100%; height:8px; border-radius:4px; background:var(--c-pos-light); display:block; }
+#{{ID}} .{{ID}}-ends { position:absolute; left:24px; top:calc(var(--ch) - 36px); width:calc(var(--cw) - 48px); height:16px; display:flex;
+  justify-content:space-between; font-family:var(--font-mono); font-weight:500; font-size:14px; line-height:16px; letter-spacing:.04em;
+  color:var(--c-muted-light); }
+/* the veil: a stepped-back card's face washes out under it (opacity set in fx.js), the card stays solid */
+#{{ID}} .{{ID}}-veil { position:absolute; left:0; top:0; width:100%; height:100%; border-radius:20px; opacity:0;
+  background:color-mix(in srgb, var(--c-light) 90%, var(--c-ink)); }
+/* the tag under the lifted card: it drops out of a mask that starts just under the card's edge */
+#{{ID}}-tagm { position:absolute; left:0; top:0; width:1080px; height:60px; overflow:hidden; display:flex; justify-content:center; }
+#{{ID}}-tag { height:46px; box-sizing:border-box; padding:0 18px; border-radius:var(--radius); background:var(--c-dark); color:var(--c-light);
+  font-family:var(--font-text); font-weight:700; font-size:24px; line-height:44px; letter-spacing:-.005em; white-space:nowrap; }
+/* The Dot, as a pin */
+#{{ID}}-pin { position:absolute; left:0; top:0; z-index:100; width:36px; height:36px; border-radius:50%; background:var(--c-accent);
+  box-shadow:0 3px 5px color-mix(in srgb, var(--c-ink) 26%, transparent); }
+</style>

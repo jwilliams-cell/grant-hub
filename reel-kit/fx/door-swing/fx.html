@@ -1,0 +1,50 @@
+<!-- door-swing (cam). A Philadelphia row-home front door, drawn full frame in the pack's colours by fx.js: a cream
+     casing with plinths and a cornice, a transom with glazing bars, the slab in the dark ground with raised panels
+     (four with arched tops, or six), a knob and a keyhole on a long plate, a mail slot, a marble step, and a doorbell
+     that is the one accent dot. No footage in here: the picture under it is the video's own. Back to front inside the
+     doorway: the ink behind the shut slab, the slab (CSS 3D, hinged on HINGE), the hinge-side shadow band, the casing.
+     The doorway scales as one piece about the frame's middle (where the door's perspective vanishes): the camera
+     dollying out of it and back through it. -->
+<div id="{{ID}}-root">
+  <div id="{{ID}}-way">
+    <div id="{{ID}}-back"></div>
+    <div id="{{ID}}-persp">
+      <div id="{{ID}}-slab">
+        <svg id="{{ID}}-door" aria-hidden="true"></svg>
+        <div id="{{ID}}-shade"></div>
+      </div>
+    </div>
+    <svg id="{{ID}}-band" width="1080" height="1920" viewBox="0 0 1080 1920" aria-hidden="true"><polygon id="{{ID}}-bandp" class="{{ID}}-ink" points="0,0 0,0 0,0"/></svg>
+    <svg id="{{ID}}-frame" width="1560" height="2400" viewBox="-240 -240 1560 2400" aria-hidden="true"></svg>
+  </div>
+</div>
+<style>
+#{{ID}}-root { position:absolute; left:0; top:0; width:1080px; height:1920px; overflow:hidden; }
+#{{ID}}-way { position:absolute; left:0; top:0; width:1080px; height:1920px; }
+#{{ID}}-back { position:absolute; left:0; top:0; width:0; height:0; background:var(--c-ink); }
+#{{ID}}-persp { position:absolute; left:0; top:0; width:1080px; height:1920px; }
+#{{ID}}-slab { position:absolute; left:0; top:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; }
+#{{ID}}-door { position:absolute; left:0; top:0; display:block; }
+#{{ID}}-shade { position:absolute; left:0; top:0; width:100%; height:100%; background:var(--c-ink); opacity:0; }
+#{{ID}}-band { position:absolute; left:0; top:0; }
+#{{ID}}-frame { position:absolute; left:-240px; top:-240px; }
+/* fills. Creams: the light ground, the second cream (light + the hairline tone), a deeper one, the warm shadow line.
+   The slab: the dark ground, its panel bevels lit (top and left) and in shade (bottom and right). Ink, glass, the dot. */
+#{{ID}} .{{ID}}-c1 { fill:var(--c-light); }
+#{{ID}} .{{ID}}-c2 { fill:color-mix(in srgb, var(--c-light) 55%, var(--c-hair-light)); }
+#{{ID}} .{{ID}}-c3 { fill:color-mix(in srgb, var(--c-light) 15%, var(--c-hair-light)); }
+#{{ID}} .{{ID}}-ln { fill:color-mix(in srgb, var(--c-hair-light) 45%, var(--c-ink)); }
+#{{ID}} .{{ID}}-ink { fill:var(--c-ink); }
+#{{ID}} .{{ID}}-fo { fill:var(--c-dark); }
+#{{ID}} .{{ID}}-fo2 { fill:color-mix(in srgb, var(--c-dark) 70%, var(--c-ink)); }
+#{{ID}} .{{ID}}-fo3 { fill:color-mix(in srgb, var(--c-dark) 87%, var(--c-light)); }
+#{{ID}} .{{ID}}-gl { fill:color-mix(in srgb, var(--c-ink) 90%, var(--c-dark)); }
+#{{ID}} .{{ID}}-gli { fill:color-mix(in srgb, var(--c-ink) 86%, var(--c-light)); }
+#{{ID}} .{{ID}}-dot { fill:var(--c-accent); }
+/* strokes: the panel moulding, its outer bead, the raised field's edge, hardware outlines */
+#{{ID}} .{{ID}}-m1 { fill:none; stroke:var(--c-light); stroke-width:5; stroke-linejoin:round; }
+#{{ID}} .{{ID}}-m2 { fill:none; stroke:color-mix(in srgb, var(--c-light) 45%, var(--c-dark)); stroke-width:2; }
+#{{ID}} .{{ID}}-fe { stroke:color-mix(in srgb, var(--c-dark) 80%, var(--c-light)); stroke-width:2; }
+#{{ID}} .{{ID}}-ol { stroke:color-mix(in srgb, var(--c-hair-light) 45%, var(--c-ink)); stroke-width:2; }
+#{{ID}} .{{ID}}-num { fill:var(--c-light); font-family:var(--font-mono); font-weight:500; font-size:104px; letter-spacing:.04em; }
+</style>

@@ -1,0 +1,66 @@
+<!-- sign-rider (top): a hanging real-estate sign. A slim iron bracket arm slides in from the left edge carrying a
+     panel that hangs from one ring on two short chains; when the arm stops, the panel swings on the ring (a damped
+     pendulum, simulated in fx.js and keyed frame by frame). On the cue word a status rider falls from above with
+     gravity and catches on the panel's two eyes: the arm dips, the sign swings again, smaller, and settles. The arm
+     pulls back out left at the end with the sign trailing. Everything sits in rig px: origin on the arm's centre line
+     over the sign's centre (fx.js places it at SIGN_X, ARM_Y); the chains are built by fx.js from its geometry. -->
+<div class="sr-rig" data-layout-allow-overflow data-layout-allow-overlap>
+  <svg class="sr-arm" viewBox="-900 -40 1260 260" width="1260" height="260" data-layout-allow-overflow>
+    <path class="sr-brace" d=""/>
+    <rect class="sr-bar" x="-900" y="-5" width="1196" height="10" rx="5"/>
+    <rect class="sr-collar" x="291" y="-9" width="8" height="18" rx="2.5"/>
+    <circle class="sr-ball" cx="311" cy="0" r="11"/>
+    <circle class="sr-eye" cx="0" cy="9.5" r="5.5"/>
+  </svg>
+  <div class="sr-swing" data-layout-allow-overflow data-layout-allow-overlap>
+    <div class="sr-panel" data-layout-allow-overflow data-layout-allow-overlap>
+      <div class="sr-rule"></div>
+      <div class="sr-word" data-layout-allow-overflow data-layout-allow-overlap><span class="sr-wt" data-layout-allow-overflow data-layout-allow-overlap></span><i class="sr-base"></i></div>
+    </div>
+    <svg class="sr-hw" viewBox="-160 0 320 120" width="320" height="120" data-layout-allow-overflow>
+      <g class="sr-links"></g>
+      <circle class="sr-ring" cx="0" cy="18" r="8.5"/>
+      <g class="sr-eyes"></g>
+    </svg>
+    <div class="sr-rider" data-layout-allow-overflow data-layout-allow-overlap>
+      <svg class="sr-hooks" viewBox="-160 -30 320 40" width="320" height="40"><g class="sr-hk"></g></svg>
+      <div class="sr-pillbox"><div class="sr-pill"><i class="sr-dot"></i><span class="sr-label" data-layout-allow-overflow data-layout-allow-overlap></span></div></div>
+    </div>
+  </div>
+</div>
+<style>
+/* rig px: the rig's top-left is the origin (fx.js moves it to SIGN_X, ARM_Y and keys x and the flex rotation) */
+#{{ID}} .sr-rig { position:absolute; left:0; top:0; width:0; height:0;
+  filter:drop-shadow(0 14px 16px color-mix(in srgb, var(--c-ink) 30%, transparent)); }
+#{{ID}} .sr-arm { position:absolute; left:-900px; top:-40px; overflow:visible; }
+#{{ID}} .sr-bar, #{{ID}} .sr-collar, #{{ID}} .sr-ball { fill:var(--c-ink); }
+#{{ID}} .sr-brace { fill:none; stroke:var(--c-ink); stroke-width:7; stroke-linecap:round; }
+#{{ID}} .sr-eye { fill:none; stroke:var(--c-ink); stroke-width:3.2; }
+/* the swing: everything that hangs, rotating about the pivot (fx.js sets its origin) */
+#{{ID}} .sr-swing { position:absolute; left:0; top:0; width:0; height:0; }
+#{{ID}} .sr-hw { position:absolute; left:-160px; top:0; overflow:visible; }
+#{{ID}} .sr-ring { fill:none; stroke:var(--c-ink); stroke-width:3.6; }
+#{{ID}} .sr-lk { fill:none; stroke:var(--c-ink); stroke-width:3; }
+#{{ID}} .sr-le { fill:var(--c-ink); }
+#{{ID}} .sr-ey { fill:none; stroke:var(--c-ink); stroke-width:3; }
+#{{ID}} .sr-es { fill:var(--c-ink); }
+#{{ID}} .sr-panel { position:absolute; left:-240px; top:104px; width:480px; height:236px; border-radius:var(--radius);
+  background:var(--c-dark); box-shadow:inset 0 -5px 0 color-mix(in srgb, var(--c-dark) 70%, var(--c-ink)); }
+#{{ID}} .sr-rule { position:absolute; left:90px; width:300px; top:200px; height:3px; border-radius:2px;
+  background:var(--c-light); }
+#{{ID}} .sr-base { display:inline-block; width:0; height:0; vertical-align:baseline; }
+#{{ID}} .sr-word { position:absolute; left:0; width:480px; top:108px; height:96px; text-align:center; white-space:nowrap;
+  font-family:var(--font-display); font-style:var(--display-style); font-weight:var(--display-weight); font-size:104px;
+  line-height:96px; letter-spacing:-.012em; color:var(--c-light); }
+/* the rider: its origin is its top centre (fx.js keys it falling, then hanging on the panel's eyes) */
+#{{ID}} .sr-rider { position:absolute; left:0; top:0; width:0; height:0; }
+#{{ID}} .sr-hooks { position:absolute; left:-160px; top:-30px; overflow:visible; }
+#{{ID}} .sr-hk path { fill:none; stroke:var(--c-ink); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; }
+#{{ID}} .sr-pillbox { position:absolute; left:-200px; top:0; width:400px; height:76px; display:flex; justify-content:center; }
+#{{ID}} .sr-pill { display:flex; align-items:center; justify-content:center; gap:15px; min-width:290px; height:76px; padding:0 31px;
+  border-radius:38px; box-sizing:border-box;
+  background:var(--c-light); border:2.7px solid var(--c-ink); box-shadow:0 4px 8px color-mix(in srgb, var(--c-ink) 30%, transparent); }
+#{{ID}} .sr-dot { display:block; width:21px; height:21px; border-radius:50%; background:var(--c-accent); flex:none; }
+#{{ID}} .sr-label { font-family:var(--font-text); font-weight:700; font-size:34px; line-height:70px;
+  letter-spacing:-.005em; white-space:nowrap; color:var(--c-ink); }
+</style>

@@ -1,0 +1,63 @@
+<!-- dot-route, the motif (top): the plan as a transit line, and The Dot (the logo's orange dot) is you, riding it
+     stop by stop to the keys. A cream panel above the head carries the route (a start node labelled YOU, the
+     numbered stops, a key at the end) and one label at a time under the line. Her stepper's states: done = forest
+     fill, current = a forest ring round The Dot, upcoming = a hairline. The same component, place and in and out
+     every time: gen.py writes each appearance from one BEATS table. fx.js builds the nodes and labels from its
+     constants and places the panel (PANEL); every colour and font is a token. -->
+<div class="dr" data-layout-allow-overflow data-layout-allow-overlap>
+  <div class="dr-panel" data-layout-allow-overflow data-layout-allow-overlap>
+    <svg class="dr-lines" width="940" height="180" viewBox="0 0 940 180" aria-hidden="true">
+      <line class="dr-plan" x1="0" y1="0" x2="0" y2="0"/>
+      <line class="dr-went" x1="0" y1="0" x2="0" y2="0"/>
+    </svg>
+    <span class="dr-you" data-layout-allow-overlap data-layout-allow-occlusion></span>
+    <div class="dr-nodes"></div>
+    <div class="dr-key">
+      <svg class="dr-kring" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27.5" transform="rotate(-90 32 32)"/></svg>
+      <div class="dr-kg">
+        <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="21" cy="32" r="8.6"/><path d="M29.6 32 H51.5 M44.2 32 V39.4 M50.2 32 V37.6"/></svg>
+      </div>
+    </div>
+    <div class="dr-dot"></div>
+    <div class="dr-row" data-layout-allow-overflow></div>
+  </div>
+</div>
+<style>
+/* panel px: 940 x 180; fx.js places it (PANEL) and sets the route from ROUTE, so these sizes and the constants agree */
+#{{ID}} .dr { position:absolute; left:0; top:0; width:940px; height:180px; }
+#{{ID}} .dr-panel { position:absolute; left:0; top:0; width:940px; height:180px; border-radius:min(20px, calc(var(--radius) * 2));
+  background:var(--c-light);
+  box-shadow:0 20px 38px -12px color-mix(in srgb, var(--c-dark) 46%, transparent),
+             0 3px 9px color-mix(in srgb, var(--c-dark) 16%, transparent),
+             inset 0 0 0 1px color-mix(in srgb, var(--c-ink) 7%, transparent); }
+#{{ID}} .dr-lines { position:absolute; left:0; top:0; width:940px; height:180px; overflow:visible; }
+/* the plan is a hairline; where The Dot has been is a forest line */
+#{{ID}} .dr-plan { fill:none; stroke:var(--c-hair-light); stroke-width:3; stroke-linecap:round; }
+#{{ID}} .dr-went { fill:none; stroke:var(--c-pos-light); stroke-width:6; stroke-linecap:round; }
+/* small labels: the label role in the mono face (tracked caps) */
+#{{ID}} .dr-you { position:absolute; top:0; height:26px; font:500 22px/26px var(--font-mono); letter-spacing:.16em;
+  margin-right:-.16em; color:var(--c-muted-light); white-space:nowrap; text-transform:uppercase; }
+/* a node: a cream disc with a hairline (upcoming), a forest fill (done), a forest ring (current), its number */
+#{{ID}} .dr-node { position:absolute; top:0; width:56px; height:56px; }
+#{{ID}} .dr-node i, #{{ID}} .dr-node b { position:absolute; left:0; top:0; width:56px; height:56px; border-radius:50%; }
+#{{ID}} .dr-base { background:var(--c-light); box-shadow:inset 0 0 0 2px var(--c-hair-light); }
+#{{ID}} .dr-fill { background:var(--c-pos-light); }
+#{{ID}} .dr-ring { box-shadow:inset 0 0 0 4px var(--c-pos-light); }
+#{{ID}} .dr-node b { display:flex; align-items:center; justify-content:center; padding-top:1px;
+  font:500 26px/1 var(--font-mono); letter-spacing:0; }
+#{{ID}} .dr-num { color:color-mix(in srgb, var(--c-muted-light) 82%, var(--c-light)); }
+#{{ID}} .dr-numd { color:var(--c-light); }
+/* the destination: a key in ink (its ring draws when it is the next stop) */
+#{{ID}} .dr-key { position:absolute; left:0; top:0; width:64px; height:64px; }
+#{{ID}} .dr-kring, #{{ID}} .dr-kg, #{{ID}} .dr-kg svg { position:absolute; left:0; top:0; width:64px; height:64px; overflow:visible; }
+#{{ID}} .dr-kring circle { fill:none; stroke:var(--c-ink); stroke-width:2.5; }
+#{{ID}} .dr-kg svg * { fill:none; stroke:var(--c-ink); stroke-width:3.4; stroke-linecap:round; stroke-linejoin:round; }
+/* The Dot: the only accent-coloured thing in view */
+#{{ID}} .dr-dot { position:absolute; left:-16px; top:-16px; width:32px; height:32px; border-radius:50%; background:var(--c-accent); }
+/* one label at a time, rising through a mask: the kicker (mono caps, muted) and the stop's name (text face, ink) */
+#{{ID}} .dr-row { position:absolute; left:46px; top:102px; width:848px; height:60px; overflow:hidden; }
+#{{ID}} .dr-lab { position:absolute; left:0; top:0; height:60px; display:flex; align-items:baseline; gap:22px; white-space:nowrap; }
+#{{ID}} .dr-lab b { font:500 22px/60px var(--font-mono); letter-spacing:.16em; color:var(--c-muted-light); text-transform:uppercase; }
+#{{ID}} .dr-lab span { font-family:var(--font-text); font-weight:var(--text-weight); font-size:46px; line-height:60px;
+  letter-spacing:-.012em; color:var(--c-ink); }
+</style>
